@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mysql:9.3
+    ports:
+      - "3307:3306"
+    container_name: wizis_db
+    hostname: "wizis_db"
+    env_file:
+      - .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_PASSWORD_ROOT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 60s
+      retries: 20
+      start_period: 30s
