@@ -1,0 +1,9 @@
+# ignora cache y la carpeta migraciones
+__pycache__/
+migrations/
+
+# ignora entornos virtuales
+env/
+
+# ignora el archivo .env
+.env
