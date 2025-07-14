@@ -1,0 +1,62 @@
+{% extends "body.html" %}
+
+{% block formulario %}
+<form method="post" id = "formulario-persona">
+    {% csrf_token %}
+    <div class="form-section">
+        <div class="form-grid">
+            <div class="form-group">
+                {{formulario.as_p}}
+            </div>
+        </div>
+        <button id="boton" class="btn btn-success" type="submit">Aceptar</button>
+    </div>
+</form>
+<table id = "tabla">
+    <thead>
+        <th scope="col">id</th>
+        <th scope="col">Nombre</th>
+        <th scope="col">Edad</th>
+    </thead>
+    <tbody id="filas">
+        {% for i in object_list %}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.nombre}}</td>
+                <td>{{i.edad}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script>
+    document.querySelector('#formulario-persona').addEventListener('submit', (e)=>{
+        e.preventDefault()
+        fetch('{% url "crear_persona" %}',{
+            method: "POST",
+            body: new FormData(document.querySelector('#formulario-persona')),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success"){
+                console.log(data)
+                document.querySelector('#filas').insertAdjacentHTML('beforeend', 
+                    `<tr>
+                        <td>${data.nombre}</td>
+                        <td>${data.edad}</td>
+                    </tr>`
+                )
+            }
+        })
+    })
+	
+    $(document).ready( function () {
+        $('#tabla').DataTable({
+            responsive: true,
+            
+        });
+    } );
+</script>
+{% endblock %}
