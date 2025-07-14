@@ -17,6 +17,15 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from apl.views.persona.views import PersonaListView, PerosnaCreate
+from apl.views.pse.views import EpaycoView
+from apl.views.control_salud.views import health_check
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('persona/', PersonaListView.as_view(), name='listar_persona'),
+    path('crear_persona/', PerosnaCreate.as_view(), name='crear_persona'),
+    path('pse_response/', EpaycoView.as_view(), name="pse_response"),
+    #Este endpoint es para ver si el proyecto de django es saludable
+    path('healthy/', health_check, name="healthy"),
 ]
