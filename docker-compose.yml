@@ -12,8 +12,47 @@ services:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
+    volumes:
+      - db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 60s
       retries: 20
       start_period: 30s
+
+  web:
+    build: .
+    container_name: Wizis_web
+    ports:
+    - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DEBUG=${DEBUG}
+      - PYTHONUNBUFFERED=1 #Para ver los logs en tiempo real
+    volumes:
+      - .:/django
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthy"]
+      interval: 60s
+      retries: 5
+      start_period: 30s
+
+  ngrok:
+    image: ngrok/ngrok:latest
+    depends_on:
+      web:
+        condition: service_healthy
+    ports:
+      - 4040:4040 #creo que esto es para ingresar al dashboard de ngrok
+    environment:
+      NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
+    command: 
+      - "http"
+      - "http://host.docker.internal:8000"
+    
+
+volumes:
+  db:
