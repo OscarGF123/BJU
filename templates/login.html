@@ -1,0 +1,21 @@
+<!-- templates/registration/login.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Iniciar Sesión</h2>
+    
+    {% load socialaccount %}
+    
+    <a href="{% provider_login_url 'google' %}">
+        <button>Iniciar sesión con Google</button>
+    </a>
+    
+    {% if user.is_authenticated %}
+        <p>Bienvenido {{ user.username }}</p>
+        <a href="{% url 'account_logout' %}">Cerrar sesión</a>
+    {% endif %}
+</body>
+</html>

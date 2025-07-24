@@ -13,7 +13,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
     volumes:
-      - db:/var/lib/mysql
+      - db:/var/lib/mysql # Persistencia de datos
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 60s
@@ -46,7 +46,7 @@ services:
       web:
         condition: service_healthy
     ports:
-      - 4040:4040 #creo que esto es para ingresar al dashboard de ngrok
+      - 4040:4040 # puerto para ingresar al dashboard
     environment:
       NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
     command: 

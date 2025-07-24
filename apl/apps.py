@@ -1,6 +1,4 @@
 import requests
-import re
-import traceback
 import time
 from django.apps import AppConfig
 from config import settings
@@ -18,8 +16,8 @@ class AplConfig(AppConfig):
             thread.start()
 
 
-def esperar_contenedor_ngrok(tiempo_max=60, intervalo=2):
-    import requests
+def esperar_contenedor_ngrok(tiempo_max=120, intervalo=2):
+
     """
     Este metodo esperara hasta que el contenedor de ngrok este activo por medio de peticiones de tipo GET
     para despues añadir el dominio y url que genero ngrok a las configuraciones de django
@@ -36,7 +34,7 @@ def esperar_contenedor_ngrok(tiempo_max=60, intervalo=2):
 
             # El tunel esta disponible?
             if not response.json()["tunnels"]:
-                print("aun no hay un tunel disponible")
+                print("Cargando tunel...")
                 time.sleep(intervalo)
                 continue
             

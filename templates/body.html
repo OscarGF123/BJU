@@ -1,7 +1,119 @@
 {% extends "home.html" %}
-
 {% block body %}
-    {% block formulario %}
 
-    {% endblock %}
+<body>
+    <!-- ========================================
+         ELEMENTOS FLOTANTES DECORATIVOS
+         ======================================== -->
+    <div class="floating-elements">
+        <div class="floating-element">👕</div>
+        <div class="floating-element">👖</div>
+        <div class="floating-element">🧥</div>
+        <div class="floating-element">👟</div>
+    </div>
+
+    {% include "header.html" %}
+
+    <main>
+        <!-- Hero Section - Sección principal -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1 class="hero-title">Box Jeans Urban</h1>
+                <p class="hero-subtitle">Estilo urbano que define tu personalidad</p>
+                <button class="cta-button" onclick="scrollToProducts()">Descubre Colección</button>
+            </div>
+        </section>
+
+        <!-- Sección de Productos -->
+        <section class="products-section" id="productos">
+            <h2 class="section-title fade-in">Productos Destacados</h2>
+            
+            <div class="products-grid">
+                <!-- Producto 1: Jean Urban Classic -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Urban Classic</h3>
+                        <p class="product-price">$89.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Urban Classic', 89900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 2: Sudadera Street Style -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Street Style</h3>
+                        <p class="product-price">$65.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Street Style', 65900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 3: Jean Ripped Dark -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Ripped Dark</h3>
+                        <p class="product-price">$95.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Ripped Dark', 95900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 4: Sudadera Oversized -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Oversized</h3>
+                        <p class="product-price">$72.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Oversized', 72900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 5: Jean Skinny Black -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Skinny Black</h3>
+                        <p class="product-price">$82.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Skinny Black', 82900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 6: Sudadera Hoodie Red -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Hoodie Red</h3>
+                        <p class="product-price">$69.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Hoodie Red', 69900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Ofertas Especiales -->
+        <section class="offers-section" id="ofertas">
+            <h2 class="offer-title">¡Ofertas Especiales!</h2>
+            <p class="offer-subtitle">Descuentos de hasta 50% en productos seleccionados</p>
+            <button class="cta-button">Ver Todas las Ofertas</button>
+        </section>
+    </main>
+
+    {% include "footer.html" %}
+    {% block formulario %}{% endblock %}
+
+</body>
+
 {% endblock %}

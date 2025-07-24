@@ -14,3 +14,15 @@ def health_check(request):
             "status": "unhealthy",
             "error": str(e),
         }, status=500)
+
+def retornar_url_ngrok(request):
+    import config.settings as config
+    try:
+        return JsonResponse({
+            "status": "success",
+            "url": config.CSRF_TRUSTED_ORIGINS[-1]
+        })
+    except Exception as e:
+        return JsonResponse({"status": "error", 
+                             "message": "ocurrio un error inesperado al intentar retornar la url de ngrok"
+                             }, status=500)

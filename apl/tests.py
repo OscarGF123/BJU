@@ -1,10 +1,13 @@
+import hashlib
 import os
 import requests
 import json
 import base64
-from django.test import TestCase
-import epaycosdk.epayco as epayco
 from dotenv import load_dotenv
+from django.test import TestCase
+from config import settings
+
+
 
 load_dotenv()
 
@@ -100,6 +103,8 @@ class ServicioEpayco():
             "Content-Type": "Application/json",
             "Authorization": F"Bearer {self.token}"
         }
+        url_ngrok = requests.request("GET", url="http://localhost:8000/url_ngrok/").json()
+
         payload = json.dumps({
             "quantity": 1,
             "onePayment":True,
@@ -111,9 +116,9 @@ class ServicioEpayco():
             "typeSell": "1",
             "tax": "0",
             "email": "oscarhappy456@gmail.com",
-            # "urlResponse": "http://localhost:8000/pse_response",
-            # "urlConfirmation": "http://localhost:8000/pse_response",
-            # "methodConfirmation": "GET"
+            "urlResponse": f"{url_ngrok.get("url", "https://localhost:8000/")}/pse_response/",
+            "urlConfirmation": f"{url_ngrok.get("url", "https://localhost:8000/")}/pse_response/",
+            "methodConfirmation": "POST"
         })
 
         response = requests.request("POST", url=url, headers=headers, data=payload)
@@ -235,43 +240,46 @@ class ServicioTrack123():
 
         return requests.request("GET", url=url, headers=self.headers).json()
 
-    def registrar_seguimiento(self):
+    def registrar_envio(self, numero_envio):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/import"
         data = [
             {
-                "trackNo": "IR247954192CO"
+                "trackNo": numero_envio
             }
         ]
 
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
     
-    def rastrear_envio_nuevamente(self):
+    def registrar_envio(self, numero_envio, transportista):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/refresh"
         data = {
-            "trackNo": "IR247954192CO",
-            "courierCode": "cainiao"
+            "trackNo": numero_envio,
+            "courierCode": transportista
         }
 
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
-    
-    def rastrear_envio(self):
+
+
+
+    def rastrear_envio(self, numero_envio):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/query"
         data = {
             "trackNoInfos": [
                 {
-                    "trackNo": "IR247954192CO"
+                    "trackNo": numero_envio
                 }
             ]
         }
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
 
-print(requests.get('http://ngrok:4040/api/tunnels').json())
-
+# print(requests.request("DELETE", url="http://localhost:8000/eliminar_persona/126").text)
+# print(ServicioEpayco().crear_link_cobro()
+print(ServicioTrack123().registrar_envio_aereo("GSH1CY13N000NER", "ninjavan-my"))
 
 # Listar informacion de interapidisimo en la API Track123
 # with open("transportadores.txt", "w") as archivo:
 #     for i in ServicioTrack123().lista_transportistas()["data"]:
-#         if i["courierCode"] == "inter-rapidisimo-inter-rapidsimo":
+#         # if i["courierCode"] == "inter-rapidisimo-inter-rapidsimo":
 #             for k, e in i.items():
 #                 archivo.write(f"{k}: {e}\n")
 

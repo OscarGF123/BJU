@@ -2,3 +2,16 @@ django
 mysqlclient
 django-widget-tweaks
 python-dotenv
+requests
+django-allauth
+# para manejar JWT de google
+PyJWT
+
+# para operaciones criptograficas de seguridad
+cryptography
+
+# para el flujo de OAuth2
+requests-oauthlib
+
+# para la mejora del rendimiento de cryptography
+cffi

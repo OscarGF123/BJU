@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Jeans Urban - Tienda Virtual</title>
+    
+    <!-- ESTILOS CSS -->
+    <style>
+        /* ==================== RESET Y CONFIGURACIÓN BÁSICA ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            overflow-x: hidden;
+        }
+
+        /* ==================== HEADER (NAVEGACIÓN SUPERIOR) ==================== */
+        /* Inicio del Header - Línea 50 */
+        .header {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 0.5rem 0;
+        }
+
+        .navbar {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 5px #ff4444; }
+            to { text-shadow: 0 0 20px #ff4444, 0 0 30px #ff4444; }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #ff4444;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links li a:hover {
+            color: #ff4444;
+            transform: translateY(-2px);
+        }
+
+        .cart-icon {
+            background: #ff4444;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cart-icon:hover {
+            background: #cc3333;
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: white;
+            color: #ff4444;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        /* Fin del Header - Línea 125 */
+
+        /* ==================== BODY/MAIN CONTENT (CONTENIDO PRINCIPAL) ==================== */
+        /* Inicio del Body - Línea 128 */
+        
+        /* HERO SECTION (Sección Principal) */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="urban" patternUnits="userSpaceOnUse" width="100" height="100"><rect width="100" height="100" fill="%23333"/><rect x="20" y="20" width="60" height="60" fill="%23444"/></pattern></defs><rect width="100%" height="100%" fill="url(%23urban)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            color: white;
+            z-index: 2;
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, white, #ff4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff4444, #cc3333);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 68, 68, 0.4);
+        }
+
+        /* PRODUCTOS DESTACADOS */
+        .featured-products {
+            padding: 5rem 2rem;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #333;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: #ff4444;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .product-image {
+            height: 250px;
+            background: linear-gradient(45deg, #666, #999);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #ff4444;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: #333;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: #ff4444;
+            transform: translateY(-2px);
+        }
+
+        /* ABOUT SECTION */
+        .about {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            color: white;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ff4444;
+        }
+
+        .about p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+        /* Fin del Body - Línea 315 */
+
+        /* ==================== FOOTER (PIE DE PÁGINA) ==================== */
+        /* Inicio del Footer - Línea 318 */
+        .footer {
+            background: #000;
+            color: white;
+            padding: 3rem 2rem 1rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #ff4444;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            display: block;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #ff4444;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-icon {
+            background: #333;
+            color: white;
+            padding: 0.8rem;
+            border-radius: 50%;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #ff4444;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #333;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: #666;
+        }
+        /* Fin del Footer - Línea 370 */
+
+        /* ==================== ANIMACIONES Y EFECTOS ==================== */
+        
+        /* Partículas flotantes */
+        .particle {
+            position: absolute;
+            background: rgba(255, 68, 68, 0.1);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 0.5; }
+        }
+
+        /* Efecto de scroll suave */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ==================== HEADER/NAVEGACIÓN ==================== -->
+    <!-- INICIO DEL HEADER - Esta sección contiene la navegación principal -->
+    <header class="header" id="header">
+        <nav class="navbar">
+            <!-- Logo de la tienda -->
+            <div class="logo">Box Jeans Urban</div>
+            
+            <!-- Enlaces de navegación -->
+            <ul class="nav-links">
+                <li><a href="#home">Inicio</a></li>
+                <li><a href="#products">Productos</a></li>
+                <li><a href="#about">Nosotros</a></li>
+                <li><a href="#contact">Contacto</a></li>
+            </ul>
+            
+            <!-- Icono del carrito de compras -->
+            <div class="cart-icon" onclick="toggleCart()">
+                🛒
+                <span class="cart-count" id="cartCount">0</span>
+            </div>
+        </nav>
+    </header>
+    <!-- FIN DEL HEADER -->
+
+    <!-- ==================== MAIN/BODY CONTENT ==================== -->
+    <!-- INICIO DEL CONTENIDO PRINCIPAL (BODY) -->
+    
+    <!-- Sección Hero (Portada principal) -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Box Jeans Urban</h1>
+            <p>Descubre el estilo urbano más auténtico con nuestra colección de jeans y sudaderas</p>
+            <a href="#products" class="cta-button">Ver Colección</a>
+        </div>
+        
+        <!-- Partículas animadas decorativas -->
+        <div class="particle" style="top: 10%; left: 10%; width: 10px; height: 10px; animation-delay: 0s;"></div>
+        <div class="particle" style="top: 20%; left: 80%; width: 6px; height: 6px; animation-delay: 2s;"></div>
+        <div class="particle" style="top: 60%; left: 20%; width: 8px; height: 8px; animation-delay: 4s;"></div>
+        <div class="particle" style="top: 80%; left: 70%; width: 12px; height: 12px; animation-delay: 1s;"></div>
+    </section>
+
+    <!-- Sección de Productos Destacados -->
+    <section class="featured-products" id="products">
+        <div class="container">
+            <h2 class="section-title">Productos Destacados</h2>
+            
+            <div class="products-grid">
+                <!-- Producto 1: Jeans -->
+                <div class="product-card" onclick="addToCart('Jean Urbano Classic', 89000)">
+                    <div class="product-image">Jean Urbano Classic</div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Urbano Classic</h3>
+                        <p class="product-price">$89.000</p>
+                        <button class="add-to-cart">Agregar al Carrito</button>
+                    </div>
+                </div>
+                
+                <!-- Producto 2: Sudadera -->
+                <div class="product-card" onclick="addToCart('Sudadera Street Pro', 125000)">
+                    <div class="product-image">Sudadera Street Pro</div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Street Pro</h3>
+                        <p class="product-price">$125.000</p>
+                        <button class="add-to-cart">Agregar al Carrito</button>
+                    </div>
+                </div>
+                
+                <!-- Producto 3: Jean Premium -->
+                <div class="product-card" onclick="addToCart('Jean Premium Dark', 149000)">
+                    <div class="product-image">Jean Premium Dark</div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Premium Dark</h3>
+                        <p class="product-price">$149.000</p>
+                        <button class="add-to-cart">Agregar al Carrito</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Acerca de Nosotros -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <h2>Box Jeans Urban</h2>
+            <p>Somos una marca colombiana especializada en ropa urbana de alta calidad. Desde 2020, hemos estado creando piezas únicas que reflejan el espíritu de la ciudad y la autenticidad del street style.</p>
+            <p>Nuestra misión es vestir a quienes viven la ciudad con pasión, ofreciendo jeans y sudaderas que combinan comodidad, durabilidad y un diseño urbano incomparable.</p>
+        </div>
+    </section>
+    <!-- FIN DEL CONTENIDO PRINCIPAL (BODY) -->
+
+    <!-- ==================== FOOTER ==================== -->
+    <!-- INICIO DEL FOOTER - Esta sección contiene información de contacto y enlaces -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <!-- Información de contacto -->
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p>📍 Bogotá, Colombia</p>
+                <p>📞 +57 300 123 4567</p>
+                <p>✉️ info@boxjeansurban.co</p>
+            </div>
+            
+            <!-- Enlaces rápidos -->
+            <div class="footer-section">
+                <h3>Enlaces</h3>
+                <a href="#home">Inicio</a>
+                <a href="#products">Productos</a>
+                <a href="#about">Nosotros</a>
+                <a href="#contact">Contacto</a>
+            </div>
+            
+            <!-- Redes sociales -->
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">📷</a>
+                    <a href="#" class="social-icon">🐦</a>
+                    <a href="#" class="social-icon">📱</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Línea final del footer -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Box Jeans Urban. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+    <!-- FIN DEL FOOTER -->
+
+    <!-- ==================== JAVASCRIPT (FUNCIONALIDAD) ==================== -->
+    <script>
+        // VARIABLES GLOBALES
+        let cartItems = 0; // Contador de productos en el carrito
+        
+        // FUNCIÓN: Efecto de scroll en el header
+        // Esta función cambia el estilo del header cuando el usuario hace scroll
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled'); // Agrega clase cuando se hace scroll
+            } else {
+                header.classList.remove('scrolled'); // Quita clase cuando está en el top
+            }
+        });
+        
+        // FUNCIÓN: Agregar producto al carrito
+        // Esta función se ejecuta cuando el usuario hace clic en "Agregar al Carrito"
+        function addToCart(productName, price) {
+            cartItems++; // Incrementa el contador
+            
+            // Actualiza el número en el icono del carrito
+            document.getElementById('cartCount').textContent = cartItems;
+            
+            // Muestra una alerta de confirmación
+            alert(`¡${productName} agregado al carrito!\nPrecio: $${price.toLocaleString()}`);
+            
+            // Animación del carrito (efecto de rebote)
+            const cartIcon = document.querySelector('.cart-icon');
+            cartIcon.style.transform = 'scale(1.2)';
+            
+            // Vuelve al tamaño normal después de 200ms
+            setTimeout(() => {
+                cartIcon.style.transform = 'scale(1)';
+            }, 200);
+        }
+        
+        // FUNCIÓN: Toggle del carrito (mostrar/ocultar)
+        // Esta función se ejecuta cuando el usuario hace clic en el icono del carrito
+        function toggleCart() {
+            if (cartItems > 0) {
+                alert(`Tienes ${cartItems} producto(s) en tu carrito.\n\n¡Próximamente: Página de checkout completa!`);
+            } else {
+                alert('Tu carrito está vacío.\n\n¡Explora nuestros productos y agrega algunos!');
+            }
+        }
+        
+        // ANIMACIÓN: Aparición suave de productos al hacer scroll
+        // Observer para detectar cuando los elementos entran en pantalla
+        const observerOptions = {
+            threshold: 0.1, // Se activa cuando el 10% del elemento es visible
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Agrega animación de aparición
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // INICIALIZACIÓN: Configura las animaciones al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Selecciona todas las tarjetas de producto
+            const productCards = document.querySelectorAll('.product-card');
+            
+            // Aplica estilo inicial (invisible) a cada tarjeta
+            productCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card); // Observa cada tarjeta
+            });
+            
+            // EFECTO: Scroll suave para los enlaces de navegación
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault(); // Previene el comportamiento por defecto
+                    
+                    const targetId = this.getAttribute('href'); // Obtiene el destino
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        // Hace scroll suave hacia el elemento
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+        
+        // EFECTO: Parallax suave en el hero
+        // Crea un efecto de profundidad al hacer scroll
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                // Mueve el fondo más lentamente que el scroll
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>

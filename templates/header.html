@@ -1,15 +1,21 @@
-{% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- css -->
-    <link href="{% static 'bootstrap-5.3.7-dist\css\bootstrap.min.css' %}" rel="stylesheet">
-    <link href="{% static 'DataTables\datatables.css' %}" rel="stylesheet">
- 
-    
-    <!-- scripts -->
-    <script src="{% static 'JQuery\jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'DataTables\datatables.js' %}"></script>
-    <script src="{% static 'bootstrap-5.3.7-dist\js\bootstrap.bundle.min.js' %}"></script>
-</head>
+    <header class="header" id="header">
+        <nav class="nav-container">
+            <!-- Logo de la marca -->
+            <div class="logo">Box Jeans Urban</div>
+            
+            <!-- Menú de navegación -->
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#home" class="nav-link">Inicio</a></li>
+                <li><a href="#jeans" class="nav-link">Jeans</a></li>
+                <li><a href="#sudaderas" class="nav-link">Sudaderas</a></li>
+                <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            
+            <!-- Acciones del usuario -->
+            <div class="nav-actions">
+                <button class="cart-btn" onclick="showCart()">🛒 Carrito (0)</button>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+        </nav>
+    </header>

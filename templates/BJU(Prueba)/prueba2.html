@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Jeans Urban - Tienda de Jeans y Sudaderas</title>
+    <style>
+        /* ========================================
+           ESTILOS GLOBALES Y RESET
+           ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           HEADER - INICIO (línea 35-180)
+           Contiene: Logo, menú de navegación, carrito
+           ======================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .header.scrolled {
+            background: rgba(0, 0, 0, 0.98);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            text-shadow: 0 0 15px rgba(220, 53, 69, 0.8);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #dc3545;
+            transform: translateY(-2px);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #dc3545, #ffffff);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cart-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+        }
+
+        /* Mobile menu button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ========================================
+           HEADER - FIN
+           ======================================== */
+
+        /* ========================================
+           BODY/MAIN CONTENT - INICIO (línea 180-650)
+           Contiene: Hero section, productos, ofertas
+           ======================================== */
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(220, 53, 69, 0.3)), 
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="urbanPattern" patternUnits="userSpaceOnUse" width="60" height="60"><rect width="60" height="60" fill="%23000"/><rect width="30" height="30" fill="%23333" x="0" y="0"/><rect width="30" height="30" fill="%23333" x="30" y="30"/></pattern></defs><rect width="100%" height="100%" fill="url(%23urbanPattern)"/></svg>');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(220, 53, 69, 0.1), transparent);
+            animation: heroGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroGlow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #ffffff, #dc3545);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titlePulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes titlePulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #cccccc;
+            animation: subtitleFade 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes subtitleFade {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #dc3545, #000000);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(220, 53, 69, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(220, 53, 69, 0.6);
+        }
+
+        /* Products Section */
+        .products-section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #dc3545, #ffffff);
+            border-radius: 2px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(220, 53, 69, 0.3);
+            border-color: rgba(220, 53, 69, 0.6);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(45deg, #333, #555);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image::before {
+            content: '👕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            opacity: 0.7;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #dc3545;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: linear-gradient(45deg, #c82333, #dc3545);
+            transform: translateY(-2px);
+        }
+
+        /* Special Offers Section */
+        .offers-section {
+            background: linear-gradient(135deg, #dc3545, #000000);
+            padding: 4rem 2rem;
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .offer-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: offerBlink 2s infinite;
+        }
+
+        @keyframes offerBlink {
+            0%, 50% { opacity: 1; }
+            25%, 75% { opacity: 0.7; }
+        }
+
+        .offer-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* ========================================
+           BODY/MAIN CONTENT - FIN
+           ======================================== */
+
+        /* ========================================
+           FOOTER - INICIO (línea 650-750)
+           Contiene: Links, redes sociales, copyright
+           ======================================== */
+        .footer {
+            background: linear-gradient(135deg, #000000, #1a1a1a);
+            padding: 3rem 2rem 1rem;
+            border-top: 3px solid #dc3545;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #dc3545;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #cccccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #dc3545;
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #dc3545, #000000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #999;
+        }
+
+        /* ========================================
+           FOOTER - FIN
+           ======================================== */
+
+        /* ========================================
+           RESPONSIVE DESIGN - INICIO (línea 750-850)
+           Estilos para móviles y tablets
+           ======================================== */
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                padding: 1rem 0;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN - FIN
+           ======================================== */
+
+        /* ========================================
+           ANIMACIONES ADICIONALES - INICIO (línea 850-900)
+           Efectos visuales y animaciones especiales
+           ======================================== */
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .floating-element {
+            position: absolute;
+            color: rgba(220, 53, 69, 0.1);
+            font-size: 2rem;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
+        .floating-element:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
+        .floating-element:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Scroll animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========================================
+           ANIMACIONES ADICIONALES - FIN
+           ======================================== */
+    </style>
+</head>
+<body>
+    <!-- ========================================
+         ELEMENTOS FLOTANTES DECORATIVOS
+         ======================================== -->
+    <div class="floating-elements">
+        <div class="floating-element">👕</div>
+        <div class="floating-element">👖</div>
+        <div class="floating-element">🧥</div>
+        <div class="floating-element">👟</div>
+    </div>
+
+    <!-- ========================================
+         HEADER - INICIO
+         Navegación principal y logo
+         ======================================== -->
+    <header class="header" id="header">
+        <nav class="nav-container">
+            <!-- Logo de la marca -->
+            <div class="logo">Box Jeans Urban</div>
+            
+            <!-- Menú de navegación -->
+            <ul class="nav-menu" id="nav-menu">
+                <li><a href="#home" class="nav-link">Inicio</a></li>
+                <li><a href="#jeans" class="nav-link">Jeans</a></li>
+                <li><a href="#sudaderas" class="nav-link">Sudaderas</a></li>
+                <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            
+            <!-- Acciones del usuario -->
+            <div class="nav-actions">
+                <button class="cart-btn" onclick="showCart()">🛒 Carrito (0)</button>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+        </nav>
+    </header>
+    <!-- HEADER - FIN -->
+
+    <!-- ========================================
+         MAIN/BODY CONTENT - INICIO
+         Contenido principal de la página
+         ======================================== -->
+    <main>
+        <!-- Hero Section - Sección principal -->
+        <section class="hero" id="home">
+            <div class="hero-content">
+                <h1 class="hero-title">Box Jeans Urban</h1>
+                <p class="hero-subtitle">Estilo urbano que define tu personalidad</p>
+                <button class="cta-button" onclick="scrollToProducts()">Descubre Colección</button>
+            </div>
+        </section>
+
+        <!-- Sección de Productos -->
+        <section class="products-section" id="productos">
+            <h2 class="section-title fade-in">Productos Destacados</h2>
+            
+            <div class="products-grid">
+                <!-- Producto 1: Jean Urban Classic -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Urban Classic</h3>
+                        <p class="product-price">$89.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Urban Classic', 89900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 2: Sudadera Street Style -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Street Style</h3>
+                        <p class="product-price">$65.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Street Style', 65900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 3: Jean Ripped Dark -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Ripped Dark</h3>
+                        <p class="product-price">$95.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Ripped Dark', 95900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 4: Sudadera Oversized -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Oversized</h3>
+                        <p class="product-price">$72.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Oversized', 72900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 5: Jean Skinny Black -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Jean Skinny Black</h3>
+                        <p class="product-price">$82.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Jean Skinny Black', 82900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 6: Sudadera Hoodie Red -->
+                <div class="product-card fade-in">
+                    <div class="product-image"></div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sudadera Hoodie Red</h3>
+                        <p class="product-price">$69.900</p>
+                        <button class="add-to-cart" onclick="addToCart('Sudadera Hoodie Red', 69900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Ofertas Especiales -->
+        <section class="offers-section" id="ofertas">
+            <h2 class="offer-title">¡Ofertas Especiales!</h2>
+            <p class="offer-subtitle">Descuentos de hasta 50% en productos seleccionados</p>
+            <button class="cta-button">Ver Todas las Ofertas</button>
+        </section>
+    </main>
+    <!-- MAIN/BODY CONTENT - FIN -->
+
+    <!-- ========================================
+         FOOTER - INICIO
+         Información de contacto y enlaces
+         ======================================== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <!-- Sección de Navegación -->
+            <div class="footer-section">
+                <h3>Navegación</h3>
+                <ul>
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#jeans">Jeans</a></li>
+                    <li><a href="#sudaderas">Sudaderas</a></li>
+                    <li><a href="#ofertas">Ofertas</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección de Atención al Cliente -->
+            <div class="footer-section">
+                <h3>Atención al Cliente</h3>
+                <ul>
+                    <li><a href="#contacto">Contacto</a></li>
+                    <li><a href="#envios">Envíos</a></li>
+                    <li><a href="#devoluciones">Devoluciones</a></li>
+                    <li><a href="#faq">Preguntas Frecuentes</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección de Información -->
+            <div class="footer-section">
+                <h3>Información</h3>
+                <ul>
+                    <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+                    <li><a href="#politica-privacidad">Política de Privacidad</a></li>
+                    <li><a href="#terminos">Términos y Condiciones</a></li>
+                </ul>
+            </div>
+
+            <!-- Sección de Redes Sociales -->
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="social-links">
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">📷</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">📱</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Box Jeans Urban. Todos los derechos reservados. Diseño web urbano y moderno.</p>
+        </div>
+    </footer>
+    <!-- FOOTER - FIN -->
+
+    <!-- ========================================
+         JAVASCRIPT - INICIO
+         Funcionalidades e interactividad
+         ======================================== -->
+    <script>
+        // Variables globales para el carrito
+        let cart = [];
+        let cartCount = 0;
+
+        // ========================================
+        // FUNCIONES DEL HEADER
+        // ========================================
+        
+        // Cambiar estilo del header al hacer scroll
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Toggle del menú móvil
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.toggle('active');
+        }
+
+        // ========================================
+        // FUNCIONES DE NAVEGACIÓN
+        // ========================================
+        
+        // Scroll suave a la sección de productos
+        function scrollToProducts() {
+            document.getElementById('productos').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // ========================================
+        // FUNCIONES DEL CARRITO DE COMPRAS
+        // ========================================
+        
+        // Agregar producto al carrito
+        function addToCart(productName, price) {
+            cart.push({
+                name: productName,
+                price: price
+            });
+            cartCount++;
+            updateCartButton();
+            
+            // Animación de confirmación
+            showNotification(`${productName} agregado al carrito!`);
+        }
+
+        // Actualizar el botón del carrito
+        function updateCartButton() {
+            const cartBtn = document.querySelector('.cart-btn');
+            cartBtn.textContent = `🛒 Carrito (${cartCount})`;
+            
+            // Animación del botón
+            cartBtn.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                cartBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        // Mostrar carrito (función placeholder)
+        function showCart() {
+            let cartMessage = 'Productos en el carrito:\n\n';
+            let total = 0;
+            
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            cart.forEach(item => {
+                cartMessage += `${item.name} - $${item.price.toLocaleString()}\n`;
+                total += item.price;
+            });
+            
+            cartMessage += `\nTotal: $${total.toLocaleString()}`;
+            alert(cartMessage);
+        }
+
+        // ========================================
+        // SISTEMA DE NOTIFICACIONES
+        // ========================================
+        
+        // Mostrar notificación
+        function showNotification(message) {
+            // Crear elemento de notificación
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(45deg, #dc3545, #28a745);
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 10px;
+                z-index: 10000;
+                font-weight: bold;
+                box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            // Agregar al DOM
+            document.body.appendChild(notification);
+            
+            // Animar entrada
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // ========================================
+        // ANIMACIONES DE SCROLL
+        // ========================================
+        
+        // Observer para animaciones al hacer scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observar todos los elementos con clase 'fade-in'
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            fadeElements.forEach(element => {
+                observer.observe(element);
+            });
+        });
+
+        // ========================================
+        // EFECTOS ADICIONALES Y INTERACTIVIDAD
+        // ========================================
+        
+        // Efecto parallax en el hero
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const rate = scrolled * -0.5;
+            
+            if (hero) {
+                hero.style.transform = `translateY(${rate}px)`;
+            }
+        });
+
+        // Animación de hover en las tarjetas de productos
+        document.addEventListener('DOMContentLoaded', function() {
+            const productCards = document.querySelectorAll('.product-card');
+            
+            productCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+        });
+
+        // Función para smooth scroll en los enlaces del nav
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    }
+                    
+                    // Cerrar menú móvil si está abierto
+                    const navMenu = document.getElementById('nav-menu');
+                    navMenu.classList.remove('active');
+                });
+            });
+        });
+
+        // Efecto de typing en el título del hero (opcional)
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // Inicializar efectos cuando la página carga
+        window.addEventListener('load', function() {
+            // Pequeño delay para que se vea el efecto
+            setTimeout(() => {
+                const heroTitle = document.querySelector('.hero-title');
+                if (heroTitle) {
+                    typeWriter(heroTitle, 'BOX JEANS URBAN', 150);
+                }
+            }, 500);
+        });
+
+        // ========================================
+        // FUNCIONES DE UTILIDAD
+        // ========================================
+        
+        // Formatear precios en pesos colombianos
+        function formatPrice(price) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+                minimumFractionDigits: 0
+            }).format(price);
+        }
+
+        // Validar email (para futuros formularios)
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Función para cambiar tema (light/dark) - funcionalidad futura
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            // Guardar preferencia en localStorage sería ideal aquí
+            // pero recordemos que localStorage no está disponible en artifacts
+        }
+
+        console.log('🎉 Box Jeans Urban - Sitio web cargado correctamente!');
+        console.log('📱 Responsive design activado');
+        console.log('🛒 Sistema de carrito funcional');
+        console.log('✨ Animaciones y efectos activos');
+
+        // ========================================
+        // JAVASCRIPT - FIN
+        // ========================================
+    </script>
+</body>
+</html>

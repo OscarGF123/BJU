@@ -17,18 +17,27 @@
         <th scope="col">id</th>
         <th scope="col">Nombre</th>
         <th scope="col">Edad</th>
+        <th>opciones</th>
     </thead>
     <tbody id="filas">
         {% for i in object_list %}
-            <tr>
+            <tr id = "{{i.id}}">
                 <td>{{i.id}}</td>
                 <td>{{i.nombre}}</td>
                 <td>{{i.edad}}</td>
+                <td><button class = "btn btn-danger" onclick="eliminar('{{i.id}}')"><i class="fa-solid fa-trash"></i></button></td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 <script>
+    var tabla
+    $(document).ready( function () {
+        tabla = new DataTable("#tabla", {
+            responsive: true
+        })
+    } );
+
     document.querySelector('#formulario-persona').addEventListener('submit', (e)=>{
         e.preventDefault()
         fetch('{% url "crear_persona" %}',{
@@ -42,21 +51,41 @@
         .then(data => {
             if (data.status === "success"){
                 console.log(data)
-                document.querySelector('#filas').insertAdjacentHTML('beforeend', 
-                    `<tr>
-                        <td>${data.nombre}</td>
-                        <td>${data.edad}</td>
-                    </tr>`
-                )
+                
+                // Agregar la fila usando la API de DataTables
+
+                let fila = tabla.row.add([
+                    data.id,
+                    data.nombre,
+                    data.edad,
+                    `<button class = 'btn btn-danger'  onclick="eliminar(${data.id})">
+                        <i class = 'fa-solid fa-trash'></i>
+                    </button>`
+                ]).draw(false);
+
+                fila.node().id = data.id
             }
         })
     })
 	
-    $(document).ready( function () {
-        $('#tabla').DataTable({
-            responsive: true,
-            
-        });
-    } );
+    let eliminar = (id) =>{
+    
+        let url = "{% url 'eliminar_persona' 0 %}"
+        url = url.replace("0", id)
+        fetch(url,{
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": "{{csrf_token}}"
+            },
+            method: "DELETE"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                tabla.rows(`#${data.id}`).remove().draw()
+            }
+        })
+        .catch(error => console.log(`ocurrio un error ${error}`))
+    }
 </script>
 {% endblock %}

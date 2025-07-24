@@ -15,17 +15,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 
-from apl.views.persona.views import PersonaListView, PerosnaCreate
+from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView, LoginView
 from apl.views.pse.views import EpaycoView
-from apl.views.control_salud.views import health_check
+from apl.views.control_salud.views import health_check, retornar_url_ngrok
+from apl.views.prueba_diseño.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('persona/', PersonaListView.as_view(), name='listar_persona'),
     path('crear_persona/', PerosnaCreate.as_view(), name='crear_persona'),
+    path('eliminar_persona/<int:pk>', PersonaDeleteView.as_view(), name="eliminar_persona"),
+    path('diseno1/', PruebaDisenoView.as_view(), name='prueba'),
+    path('diseno2/', PruebaDiseno2View.as_view(), name="diseno2"),
+    path('diseno3/', PruebaDiseno3View.as_view(), name="diseno3" ),
+    path('diseno4/', PruebaDiseno4View.as_view(), name="diseno4"),
     path('pse_response/', EpaycoView.as_view(), name="pse_response"),
+    path('login/', LoginView.as_view(), name = "login"),
+
     #Este endpoint es para ver si el proyecto de django es saludable
     path('healthy/', health_check, name="healthy"),
+    path('url_ngrok/', retornar_url_ngrok, name="url_ngrok"),
+
+    # Url de Google
+    path('accounts/', include('allauth.urls')),
 ]

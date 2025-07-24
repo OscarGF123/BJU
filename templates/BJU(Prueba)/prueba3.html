@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Jeans Urban - Tienda de Jeans y Sudaderas</title>
+    <style>
+        /* ==================== RESET Y CONFIGURACIÓN BASE ==================== */
+        /* Elimina los márgenes y rellenos predeterminados del navegador */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Configuración de la fuente principal y colores base */
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #fff;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            overflow-x: hidden;
+        }
+
+        /* ==================== HEADER - NAVEGACIÓN SUPERIOR ==================== */
+        /* El header contiene el logo, menú de navegación y carrito de compras */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 2px solid #dc2626;
+            transition: all 0.3s ease;
+        }
+
+        /* Contenedor que mantiene el contenido del header centrado */
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        /* Estilo del logo con efecto de grafiti */
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #dc2626;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(220, 38, 38, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        /* Menú de navegación horizontal */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu li a:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+
+        /* Sección del carrito de compras */
+        .cart-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .cart-icon {
+            font-size: 1.5rem;
+            color: #dc2626;
+            transition: transform 0.3s ease;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* ==================== BODY - CONTENIDO PRINCIPAL ==================== */
+        /* El main contiene todo el contenido principal de la página */
+        .main-content {
+            margin-top: 80px; /* Espacio para el header fijo */
+        }
+
+        /* ==================== SECCIÓN HERO - BANNER PRINCIPAL ==================== */
+        /* Esta es la primera sección que ven los usuarios, con mensaje principal */
+        .hero-section {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23111" width="1200" height="600"/><path fill="%23dc2626" opacity="0.1" d="M0,300L50,280C100,260,200,220,300,200C400,180,500,180,600,190C700,200,800,220,900,210C1000,200,1100,160,1150,140L1200,120V600H0Z"/></svg>');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Contenido principal del hero */
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, #dc2626, #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #ccc;
+        }
+
+        /* Botón principal de llamada a la acción */
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #dc2626, #b91c1c);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        /* ==================== SECCIÓN DE PRODUCTOS DESTACADOS ==================== */
+        /* Muestra los productos más populares de la tienda */
+        .featured-section {
+            padding: 5rem 0;
+            background: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 3rem;
+            color: #dc2626;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        /* Línea decorativa debajo del título */
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, #dc2626, #fff);
+        }
+
+        /* Grid de productos - se adapta a diferentes tamaños de pantalla */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        /* Tarjeta individual de producto */
+        .product-card {
+            background: #2d2d2d;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.2);
+        }
+
+        /* Imagen del producto */
+        .product-image {
+            height: 250px;
+            background: linear-gradient(135deg, #4a4a4a, #6a6a6a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: #dc2626;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Etiqueta de "Nuevo" o "Oferta" */
+        .product-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #dc2626;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* Información del producto */
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #dc2626;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* Botón de agregar al carrito */
+        .add-to-cart {
+            width: 100%;
+            padding: 0.8rem;
+            background: linear-gradient(45deg, #dc2626, #b91c1c);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background: linear-gradient(45deg, #b91c1c, #991b1b);
+            transform: translateY(-2px);
+        }
+
+        /* ==================== SECCIÓN DE CATEGORÍAS ==================== */
+        /* Muestra las diferentes categorías de productos */
+        .categories-section {
+            padding: 5rem 0;
+            background: #2d2d2d;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .category-card {
+            background: #1a1a1a;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .category-card:hover {
+            border-color: #dc2626;
+            transform: translateY(-5px);
+        }
+
+        .category-icon {
+            font-size: 4rem;
+            color: #dc2626;
+            margin-bottom: 1rem;
+        }
+
+        .category-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ==================== SECCIÓN DE GRAFITI URBANO ==================== */
+        /* Elementos decorativos que dan la estética urbana */
+        .graffiti-section {
+            padding: 5rem 0;
+            background: #111;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Texto de grafiti decorativo */
+        .graffiti-text {
+            position: absolute;
+            font-size: 8rem;
+            font-weight: bold;
+            color: rgba(220, 38, 38, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            transform: rotate(-15deg);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .graffiti-1 { top: 20%; left: -10%; }
+        .graffiti-2 { bottom: 20%; right: -10%; }
+
+        /* ==================== FOOTER - PIE DE PÁGINA ==================== */
+        /* El footer contiene información de contacto, redes sociales y enlaces */
+        .footer {
+            background: #0a0a0a;
+            padding: 3rem 0 1rem;
+            border-top: 3px solid #dc2626;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #dc2626;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section ul li a {
+            color: #ccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section ul li a:hover {
+            color: #dc2626;
+        }
+
+        /* Redes sociales */
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: #dc2626;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: #b91c1c;
+            transform: translateY(-3px);
+        }
+
+        /* Copyright al final */
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #333;
+            color: #666;
+        }
+
+        /* ==================== ANIMACIONES ==================== */
+        /* Definición de las animaciones CSS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Animación flotante para algunos elementos */
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        /* Adaptación para dispositivos móviles y tablets */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .section-title { font-size: 2rem; }
+            
+            .nav-menu {
+                display: none; /* En móviles se ocultaría y se usaría un menú hamburguesa */
+            }
+            
+            .header-container {
+                padding: 0 1rem;
+            }
+            
+            .graffiti-text {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ==================== HEADER - INICIO ==================== -->
+    <!-- Esta sección contiene la navegación principal que se mantiene fija en la parte superior -->
+    <header class="header">
+        <div class="header-container">
+            <!-- Logo de la tienda -->
+            <div class="logo">Box Jeans Urban</div>
+            
+            <!-- Menú de navegación principal -->
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#categories">Categorías</a></li>
+                    <li><a href="#contact">Contacto</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Sección del carrito de compras -->
+            <div class="cart-section">
+                <span class="cart-icon">🛒</span>
+                <span class="cart-count">0</span>
+            </div>
+        </div>
+    </header>
+    <!-- ==================== HEADER - FIN ==================== -->
+
+    <!-- ==================== BODY - CONTENIDO PRINCIPAL - INICIO ==================== -->
+    <main class="main-content">
+        
+        <!-- ==================== SECCIÓN HERO - INICIO ==================== -->
+        <!-- Esta es la sección principal que los usuarios ven primero -->
+        <section class="hero-section" id="home">
+            <div class="hero-content">
+                <h1 class="hero-title floating">Box Jeans Urban</h1>
+                <p class="hero-subtitle">Estilo urbano auténtico. Jeans y sudaderas que definen tu actitud.</p>
+                <a href="#products" class="cta-button">Explorar Colección</a>
+            </div>
+            
+            <!-- Elementos decorativos de grafiti -->
+            <div class="graffiti-text graffiti-1">URBAN</div>
+            <div class="graffiti-text graffiti-2">STYLE</div>
+        </section>
+        <!-- ==================== SECCIÓN HERO - FIN ==================== -->
+
+        <!-- ==================== SECCIÓN PRODUCTOS DESTACADOS - INICIO ==================== -->
+        <section class="featured-section" id="products">
+            <div class="container">
+                <h2 class="section-title">Productos Destacados</h2>
+                
+                <!-- Grid de productos - aquí se muestran los productos más populares -->
+                <div class="products-grid">
+                    
+                    <!-- Producto 1: Jean Urbano -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            👖
+                            <span class="product-badge">Nuevo</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Jean Urban Classic</h3>
+                            <p class="product-price">$89.99</p>
+                            <button class="add-to-cart" onclick="addToCart('Jean Urban Classic', 89.99)">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2: Sudadera -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            🧥
+                            <span class="product-badge">Oferta</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Sudadera Street Style</h3>
+                            <p class="product-price">$59.99</p>
+                            <button class="add-to-cart" onclick="addToCart('Sudadera Street Style', 59.99)">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3: Jean Premium -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            👖
+                            <span class="product-badge">Premium</span>
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Jean Premium Ripped</h3>
+                            <p class="product-price">$119.99</p>
+                            <button class="add-to-cart" onclick="addToCart('Jean Premium Ripped', 119.99)">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Producto 4: Sudadera con capucha -->
+                    <div class="product-card">
+                        <div class="product-image">
+                            👘
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">Hoodie Urban Graffiti</h3>
+                            <p class="product-price">$79.99</p>
+                            <button class="add-to-cart" onclick="addToCart('Hoodie Urban Graffiti', 79.99)">
+                                Agregar al Carrito
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- ==================== SECCIÓN PRODUCTOS DESTACADOS - FIN ==================== -->
+
+        <!-- ==================== SECCIÓN CATEGORÍAS - INICIO ==================== -->
+        <section class="categories-section" id="categories">
+            <div class="container">
+                <h2 class="section-title">Categorías</h2>
+                
+                <!-- Grid de categorías -->
+                <div class="categories-grid">
+                    
+                    <!-- Categoría Jeans -->
+                    <div class="category-card">
+                        <div class="category-icon">👖</div>
+                        <h3 class="category-name">Jeans</h3>
+                        <p>Descubre nuestra colección de jeans urbanos con diferentes cortes y estilos.</p>
+                    </div>
+
+                    <!-- Categoría Sudaderas -->
+                    <div class="category-card">
+                        <div class="category-icon">🧥</div>
+                        <h3 class="category-name">Sudaderas</h3>
+                        <p>Sudaderas cómodas y con estilo para completar tu look urbano.</p>
+                    </div>
+
+                    <!-- Categoría Hoodies -->
+                    <div class="category-card">
+                        <div class="category-icon">👘</div>
+                        <h3 class="category-name">Hoodies</h3>
+                        <p>Hoodies con diseños únicos inspirados en el arte urbano.</p>
+                    </div>
+
+                    <!-- Categoría Accesorios -->
+                    <div class="category-card">
+                        <div class="category-icon">🎒</div>
+                        <h3 class="category-name">Accesorios</h3>
+                        <p>Complementa tu estilo con nuestros accesorios urbanos.</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- ==================== SECCIÓN CATEGORÍAS - FIN ==================== -->
+
+        <!-- ==================== SECCIÓN GRAFITI DECORATIVA - INICIO ==================== -->
+        <section class="graffiti-section">
+            <div class="container">
+                <h2 class="section-title">Únete al Movimiento Urbano</h2>
+                <p style="text-align: center; font-size: 1.2rem; color: #ccc; max-width: 600px; margin: 0 auto;">
+                    Box Jeans Urban no es solo ropa, es una actitud. Expresamos la cultura urbana a través de cada prenda.
+                </p>
+            </div>
+        </section>
+        <!-- ==================== SECCIÓN GRAFITI DECORATIVA - FIN ==================== -->
+
+    </main>
+    <!-- ==================== BODY - CONTENIDO PRINCIPAL - FIN ==================== -->
+
+    <!-- ==================== FOOTER - PIE DE PÁGINA - INICIO ==================== -->
+    <!-- El footer contiene información adicional, enlaces y redes sociales -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            
+            <!-- Sección de información de la empresa -->
+            <div class="footer-section">
+                <h3>Box Jeans Urban</h3>
+                <p>Tu tienda de confianza para ropa urbana de calidad. Expresamos tu personalidad a través del estilo.</p>
+                <div class="social-links">
+                    <a href="#" title="Facebook">📘</a>
+                    <a href="#" title="Instagram">📷</a>
+                    <a href="#" title="Twitter">🐦</a>
+                    <a href="#" title="TikTok">🎵</a>
+                </div>
+            </div>
+
+            <!-- Enlaces rápidos -->
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="#home">Inicio</a></li>
+                    <li><a href="#products">Productos</a></li>
+                    <li><a href="#categories">Categorías</a></li>
+                    <li><a href="#">Ofertas</a></li>
+                    <li><a href="#">Nueva Colección</a></li>
+                </ul>
+            </div>
+
+            <!-- Información de contacto -->
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li>📧 info@boxjeansurban.com</li>
+                    <li>📞 +57 300 123 4567</li>
+                    <li>📍 Bogotá, Colombia</li>
+                    <li>🕒 Lun - Sáb: 9AM - 8PM</li>
+                </ul>
+            </div>
+
+            <!-- Información legal -->
+            <div class="footer-section">
+                <h3>Información</h3>
+                <ul>
+                    <li><a href="#">Política de Privacidad</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Envíos y Devoluciones</a></li>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                    <li><a href="#">Tallas</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Box Jeans Urban. Todos los derechos reservados. Diseño urbano auténtico.</p>
+        </div>
+    </footer>
+    <!-- ==================== FOOTER - PIE DE PÁGINA - FIN ==================== -->
+
+    <!-- ==================== JAVASCRIPT - FUNCIONALIDAD INTERACTIVA - INICIO ==================== -->
+    <script>
+        // ==================== VARIABLES GLOBALES ====================
+        // Contador del carrito de compras
+        let cartCount = 0;
+        // Array para almacenar los productos del carrito
+        let cartItems = [];
+
+        // ==================== FUNCIÓN PARA AGREGAR PRODUCTOS AL CARRITO ====================
+        function addToCart(productName, price) {
+            // Incrementa el contador del carrito
+            cartCount++;
+            
+            // Agrega el producto al array del carrito
+            cartItems.push({
+                name: productName,
+                price: price,
+                id: Date.now() // ID único basado en timestamp
+            });
+            
+            // Actualiza el número mostrado en el carrito
+            document.querySelector('.cart-count').textContent = cartCount;
+            
+            // Muestra una notificación al usuario
+            showNotification(`${productName} agregado al carrito`);
+            
+            // Opcional: Guarda el carrito en el almacenamiento local del navegador
+            // localStorage.setItem('cart', JSON.stringify(cartItems));
+        }
+
+        // ==================== FUNCIÓN PARA MOSTRAR NOTIFICACIONES ====================
+        function showNotification(message) {
+            // Crea el elemento de notificación
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            
+            // Estilos de la notificación
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #dc2626;
+                color: white;
+                padding: 1rem 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                font-weight: bold;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            
+            // Agrega la notificación al documento
+            document.body.appendChild(notification);
+            
+            // Anima la entrada de la notificación
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remueve la notificación después de 3 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // ==================== EFECTOS DE SCROLL ====================
+        // Función que se ejecuta cuando el usuario hace scroll
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            
+            // Cambia la opacidad del header basado en el scroll
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(26, 26, 26, 0.98)';
+                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.3)';
+            } else {
+                header.style.background = 'rgba(26, 26, 26, 0.95)';
+                header.style.boxShadow = 'none';
+            }
+        });
+
+        // ==================== NAVEGACIÓN SUAVE ====================
+        // Función para navegación suave entre secciones
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // ==================== ANIMACIONES AL CARGAR LA PÁGINA ====================
+        // Función que se ejecuta cuando la página termina de cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Anima las tarjetas de productos cuando aparecen en pantalla
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // Agrega clase de animación cuando el elemento es visible
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Aplica el observer a todas las tarjetas de productos
+            const productCards = document.querySelectorAll('.product-card');
+            const categoryCards = document.querySelectorAll('.category-card');
+            
+            // Establece estado inicial de animación
+            [...productCards, ...categoryCards].forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease-out';
+                observer.observe(card);
+            });
+
+            // Efecto de escritura para el título principal
+            const heroTitle = document.querySelector('.hero-title');
+            const titleText = heroTitle.textContent;
+            heroTitle.textContent = '';
+            
+            let i = 0;
+            const typeWriter = setInterval(() => {
+                if (i < titleText.length) {
+                    heroTitle.textContent += titleText.charAt(i);
+                    i++;
+                } else {
+                    clearInterval(typeWriter);
+                }
+            }, 100);
+        });
+
+        // ==================== EFECTOS ADICIONALES ====================
+        // Efecto de partículas en movimiento (opcional)
+        function createFloatingElements() {
+            const container = document.querySelector('.hero-section');
+            
+            for (let i = 0; i < 5; i++) {
+                const element = document.createElement('div');
+                element.style.cssText = `
+                    position: absolute;
+                    width: 4px;
+                    height: 4px;
+                    background: #dc2626;
+                    border-radius: 50%;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation: float ${3 + Math.random() * 4}s ease-in-out infinite;
+                    animation-delay: ${Math.random() * 2}s;
+                    opacity: 0.6;
+                `;
+                container.appendChild(element);
+            }
+        }
+
+        // Llama a la función de elementos flotantes
+        createFloatingElements();
+
+        // ==================== FUNCIÓN DEL CARRITO ====================
+        // Función para mostrar/ocultar el contenido del carrito
+        document.querySelector('.cart-section').addEventListener('click', function() {
+            if (cartItems.length === 0) {
+                showNotification('El carrito está vacío');
+                return;
+            }
+            
+            // Calcula el total
+            const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+            
+            // Crea la lista de productos
+            const itemsList = cartItems.map(item => 
+                `• ${item.name} - ${item.price.toFixed(2)}`
+            ).join('\n');
+            
+            // Muestra el contenido del carrito
+            alert(`Carrito de Compras:\n\n${itemsList}\n\nTotal: ${total.toFixed(2)}`);
+        });
+
+        // ==================== EFECTOS HOVER MEJORADOS ====================
+        // Agrega efectos adicionales a las tarjetas de productos
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        console.log('Box Jeans Urban - Sitio web cargado correctamente ✅');
+    </script>
+    <!-- ==================== JAVASCRIPT - FUNCIONALIDAD INTERACTIVA - FIN ==================== -->
+
+</body>
+</html>

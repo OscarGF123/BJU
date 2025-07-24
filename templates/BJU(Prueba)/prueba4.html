@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Box Jeans Urban</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <style>
+    /* ========================== GENERALES ========================== */
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background-color: #111;
+      color: #fff;
+    }
+
+    a {
+      color: white;
+      text-decoration: none;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    /* ========================== HEADER ========================== */
+    header {
+      background-color: #000;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid red;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      color: red;
+      text-shadow: 2px 2px 5px #444;
+    }
+
+    nav a:hover {
+      color: red;
+      transition: color 0.3s ease;
+    }
+
+    /* ========================== HERO ========================== */
+    .hero {
+      background: url('fondo-graffiti.jpg') no-repeat center center/cover;
+      padding: 6rem 2rem;
+      text-align: center;
+      animation: fadeIn 2s ease-in;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      background-color: red;
+      padding: 0.8rem 2rem;
+      border-radius: 30px;
+      font-weight: bold;
+      color: white;
+      transition: background-color 0.3s ease, transform 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #c00;
+      transform: scale(1.05);
+    }
+
+    /* ========================== CATEGORÍAS ========================== */
+    .categoria {
+      padding: 3rem 2rem;
+      background-color: #1a1a1a;
+      border-top: 4px dashed #333;
+    }
+
+    .categoria h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: red;
+      text-align: center;
+    }
+
+    .productos {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .producto {
+      background-color: #222;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+      max-width: 200px;
+      text-align: center;
+    }
+
+    .producto img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .producto:hover {
+      transform: translateY(-5px);
+    }
+
+    /* ========================== FOOTER ========================== */
+    footer {
+      background-color: #000;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      border-top: 2px solid red;
+    }
+
+    footer .redes img {
+      width: 30px;
+      margin: 0 0.5rem;
+      transition: transform 0.2s;
+    }
+
+    footer .redes img:hover {
+      transform: scale(1.2);
+    }
+
+    /* ========================== ANIMACIONES ========================== */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========================== HEADER ========================== -->
+  <!-- Contiene el logotipo, navegación y búsqueda -->
+  <header>
+    <div class="logo">Box Jeans Urban</div>
+    <nav>
+      <ul>
+        <li><a href="#home">Inicio</a></li>
+        <li><a href="#jeans">Jeans</a></li>
+        <li><a href="#sudaderas">Sudaderas</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- ========================== BODY ========================== -->
+  <!-- Contiene secciones del contenido principal -->
+  <main>
+    <!-- Sección Principal (Hero) -->
+    <section id="home" class="hero">
+      <h1>Estilo Urbano, Auténtico y Rebelde</h1>
+      <p>Descubre la nueva colección de jeans y sudaderas</p>
+      <a href="#jeans" class="btn">Explorar ahora</a>
+    </section>
+
+    <!-- Sección de Jeans -->
+    <section id="jeans" class="categoria">
+      <h2>Jeans</h2>
+      <div class="productos">
+        <div class="producto">
+          <img src="jean1.jpg" alt="Jean 1">
+          <p>Jean Urbano Tiro Alto</p>
+        </div>
+        <div class="producto">
+          <img src="jean2.jpg" alt="Jean 2">
+          <p>Jean Skinny Destroyed</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de Sudaderas -->
+    <section id="sudaderas" class="categoria">
+      <h2>Sudaderas</h2>
+      <div class="productos">
+        <div class="producto">
+          <img src="sudadera1.jpg" alt="Sudadera 1">
+          <p>Sudadera Oversize Roja</p>
+        </div>
+        <div class="producto">
+          <img src="sudadera2.jpg" alt="Sudadera 2">
+          <p>Sudadera con Capucha Negra</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========================== FOOTER ========================== -->
+  <!-- Contiene información de contacto y redes sociales -->
+  <footer>
+    <p>© 2025 Box Jeans Urban | Todos los derechos reservados</p>
+    <div class="redes">
+      <a href="#"><img src="icono-fb.png" alt="Facebook"></a>
+      <a href="#"><img src="icono-ig.png" alt="Instagram"></a>
+      <a href="#"><img src="icono-tt.png" alt="TikTok"></a>
+    </div>
+  </footer>
+
+  <!-- ========================== JAVASCRIPT ========================== -->
+  <!-- Agrega animación de scroll suave al hacer clic -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(enlace => {
+      enlace.addEventListener('click', function(e) {
+        e.preventDefault();
+        const destino = document.querySelector(this.getAttribute('href'));
+        if (destino) {
+          destino.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

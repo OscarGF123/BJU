@@ -1,4 +1,4 @@
-from django.forms import TextInput, ModelForm
+from django.forms import TextInput, NumberInput, ModelForm
 from apl.views.persona.views import Persona
 
 class PersonaForm(ModelForm):
@@ -14,7 +14,7 @@ class PersonaForm(ModelForm):
                     'placeholder': 'Nombre'
                 }
             ),
-            'edad': TextInput(
+            'edad': NumberInput(
                 attrs={
                     'class': 'form-control',
                     'placeholder': 'Edad'
