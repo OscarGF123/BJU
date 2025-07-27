@@ -15,3 +15,5 @@ requests-oauthlib
 
 # para la mejora del rendimiento de cryptography
 cffi
+
+dj-database-url==2.1.0
