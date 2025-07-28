@@ -2,9 +2,6 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DeleteView, View
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import login_required
 from apl.models import Persona
 from apl.forms import PersonaForm
 
@@ -56,9 +53,3 @@ class PersonaDeleteView(DeleteView):
         id = self.object.id
         self.object.delete()
         return JsonResponse({"status": "success", "id": id})
-
-class LoginView(View):
-
-    def get(self, request):
-
-        return render(request, "login.html")
