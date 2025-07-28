@@ -9,3 +9,6 @@ dj-database-url==2.1.0
 
 # para el cargue de los archivos estaticos de railway
 whitenoise
+
+# servidor WSGI para aplicaciones de python (levantamiento de produccion)
+gunicorn
