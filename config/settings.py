@@ -29,10 +29,10 @@ SECRET_KEY = 'django-insecure-!=k^4i&)c5)osl35s&4=#iqy@uvqd7a%kd#e-gt@_7b(y8k-%)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG").lower().__eq__("true") else False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*', "bju-production.up.railway.app"]
 
 # No se como funciona o por que esta aqui, pero hay que averiguar >:v
-CSRF_TRUSTED_ORIGINS = []
+CSRF_TRUSTED_ORIGINS = ["bju-production.up.railway.app"]
 
 # Application definition
 
