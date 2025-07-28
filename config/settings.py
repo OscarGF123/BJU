@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!=k^4i&)c5)osl35s&4=#iqy@uvqd7a%kd#e-gt@_7b(y8k-%)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True if os.getenv("DEBUG").lower().__eq__("true") else False
 
 ALLOWED_HOSTS = ['*']
 
@@ -44,52 +44,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
-    
-    # Allauth apps
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
 
     # Mis apps
     'apl',
     'ePayco',
 ]
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend'
-]
-
-# URLs de redireccion (cuenta Google)
-LOGIN_REDIRECT_URL = "/persona" # redireccion al iniciar sesion
-LOGOUT_REDIRECT_URL = "/pse_response" # redireccion al cerrar sesion
-
-# Sitio del framework
-SITE_ID = 1
-
-#Configuracion adicional de allauth
-ACCOUNT_EMAIL_VERIFICATION = 'none' # Establece none si no se requiere la verificacion
-SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_LOGIN_ON_SET = True
-
-
-# Configuraciones especificas de google
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        },
-        'APP': {
-            'client_id': os.getenv('ID_CLIENT_GOOGLE'),
-            'secret': os.getenv('SECRET_KEY_GOOGLE'),
-        }
-    }
-}
 
 
 MIDDLEWARE = [
@@ -98,7 +58,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]

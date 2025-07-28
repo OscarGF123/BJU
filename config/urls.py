@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView, LoginView
+from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView
 from apl.views.pse.views import EpaycoView
 from apl.views.control_salud.views import health_check, retornar_url_ngrok
 from apl.views.prueba_diseño.views import *
@@ -32,12 +32,8 @@ urlpatterns = [
     path('diseno3/', PruebaDiseno3View.as_view(), name="diseno3" ),
     path('diseno4/', PruebaDiseno4View.as_view(), name="diseno4"),
     path('pse_response/', EpaycoView.as_view(), name="pse_response"),
-    path('login/', LoginView.as_view(), name = "login"),
 
     #Este endpoint es para ver si el proyecto de django es saludable
     path('healthy/', health_check, name="healthy"),
     path('url_ngrok/', retornar_url_ngrok, name="url_ngrok"),
-
-    # Url de Google
-    path('accounts/', include('allauth.urls')),
 ]
