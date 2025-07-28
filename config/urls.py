@@ -39,11 +39,3 @@ urlpatterns = [
     path('healthy/', health_check, name="healthy"),
     path('url_ngrok/', retornar_url_ngrok, name="url_ngrok"),
 ]
-
-# Servir archivos estáticos en desarrollo y producción
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-else:
-    # Para producción, también agregar el soporte de archivos estáticos
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
