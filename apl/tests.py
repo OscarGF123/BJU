@@ -274,7 +274,7 @@ class ServicioTrack123():
 
 # print(requests.request("DELETE", url="http://localhost:8000/eliminar_persona/126").text)
 # print(ServicioEpayco().crear_link_cobro()
-print(ServicioTrack123().registrar_envio_aereo("GSH1CY13N000NER", "ninjavan-my"))
+print(ServicioTrack123().rastrear_envio("GSH1CY13N000NER"))
 
 # Listar informacion de interapidisimo en la API Track123
 # with open("transportadores.txt", "w") as archivo:
