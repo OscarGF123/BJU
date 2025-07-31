@@ -1,0 +1,14 @@
+// static/scss/main.scss
+
+// Importar tu Bootstrap personalizado
+@import "custom-bootstrap";
+
+// Tus estilos adicionales
+body {
+  font-family: $font-family-base;
+}
+
+.mi-clase-custom {
+  color: $primary;
+  padding: 1rem;
+}
