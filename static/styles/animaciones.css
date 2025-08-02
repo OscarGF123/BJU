@@ -1,89 +1,368 @@
 /* ========================================
-    RESPONSIVE DESIGN - INICIO (línea 750-850)
-    Estilos para móviles y tablets
+    BOX JEANS URBAN - ANIMACIONES (SIN CONFLICTOS)
+    Prefijo: .bju- (Box Jeans Urban)
+    ======================================== */
+
+/* ========================================
+    RESPONSIVE DESIGN PARA HEADER
     ======================================== */
 @media (max-width: 768px) {
-    .nav-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.95);
-        padding: 1rem 0;
+    .bju-nav-menu {
+        display: none !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(0, 0, 0, 0.95) !important;
+        padding: 1rem 0 !important;
+        z-index: 9998 !important;
     }
 
-    .nav-menu.active {
-        display: flex;
+    .bju-nav-menu.bju-active {
+        display: flex !important;
     }
 
-    .mobile-menu-btn {
-        display: block;
+    .bju-mobile-menu-btn {
+        display: block !important;
     }
 
-    .hero-title {
-        font-size: 2.5rem;
+    .bju-hero-title {
+        font-size: 2.5rem !important;
     }
 
-    .hero-subtitle {
-        font-size: 1.2rem;
+    .bju-hero-subtitle {
+        font-size: 1.2rem !important;
     }
 
-    .products-grid {
-        grid-template-columns: 1fr;
+    .bju-products-grid {
+        grid-template-columns: 1fr !important;
     }
 
-    .nav-container {
-        padding: 0 1rem;
+    .bju-nav-container {
+        padding: 0 1rem !important;
     }
 }
 
 /* ========================================
-    RESPONSIVE DESIGN - FIN
+    ELEMENTOS FLOTANTES DECORATIVOS
     ======================================== */
-
-/* ========================================
-    ANIMACIONES ADICIONALES - INICIO (línea 850-900)
-    Efectos visuales y animaciones especiales
-    ======================================== */
-.floating-elements {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
+.bju-floating-elements {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
 }
 
-.floating-element {
-    position: absolute;
-    color: rgba(220, 53, 69, 0.1);
-    font-size: 2rem;
-    animation: float 6s ease-in-out infinite;
+.bju-floating-element {
+    position: absolute !important;
+    color: rgba(220, 53, 69, 0.1) !important;
+    font-size: 2rem !important;
+    animation: bju-float 6s ease-in-out infinite !important;
 }
 
-.floating-element:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
-.floating-element:nth-child(2) { top: 20%; right: 10%; animation-delay: 1s; }
-.floating-element:nth-child(3) { bottom: 30%; left: 20%; animation-delay: 2s; }
-.floating-element:nth-child(4) { bottom: 10%; right: 20%; animation-delay: 3s; }
+.bju-floating-element:nth-child(1) { 
+    top: 10% !important; 
+    left: 10% !important; 
+    animation-delay: 0s !important; 
+}
 
-@keyframes float {
+.bju-floating-element:nth-child(2) { 
+    top: 20% !important; 
+    right: 10% !important; 
+    animation-delay: 1s !important; 
+}
+
+.bju-floating-element:nth-child(3) { 
+    bottom: 30% !important; 
+    left: 20% !important; 
+    animation-delay: 2s !important; 
+}
+
+.bju-floating-element:nth-child(4) { 
+    bottom: 10% !important; 
+    right: 20% !important; 
+    animation-delay: 3s !important; 
+}
+
+@keyframes bju-float {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
     50% { transform: translateY(-20px) rotate(5deg); }
 }
 
-/* Scroll animations */
-.fade-in {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.6s ease;
+/* ========================================
+    ANIMACIONES DE SCROLL
+    ======================================== */
+.bju-fade-in {
+    opacity: 0 !important;
+    transform: translateY(30px) !important;
+    transition: all 0.6s ease !important;
 }
 
-.fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
+.bju-fade-in.bju-visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Animación para elementos que aparecen desde la izquierda */
+.bju-slide-in-left {
+    opacity: 0 !important;
+    transform: translateX(-50px) !important;
+    transition: all 0.8s ease !important;
+}
+
+.bju-slide-in-left.bju-visible {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Animación para elementos que aparecen desde la derecha */
+.bju-slide-in-right {
+    opacity: 0 !important;
+    transform: translateX(50px) !important;
+    transition: all 0.8s ease !important;
+}
+
+.bju-slide-in-right.bju-visible {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Animación de escalado */
+.bju-scale-in {
+    opacity: 0 !important;
+    transform: scale(0.8) !important;
+    transition: all 0.6s ease !important;
+}
+
+.bju-scale-in.bju-visible {
+    opacity: 1 !important;
+    transform: scale(1) !important;
+}
+
+/* ========================================
+    ANIMACIONES DE HOVER PERSONALIZADAS
+    ======================================== */
+
+/* Efecto de ondas para botones */
+.bju-ripple-effect {
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.bju-ripple-effect::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: translate(-50%, -50%) !important;
+    transition: width 0.6s, height 0.6s !important;
+}
+
+.bju-ripple-effect:hover::before {
+    width: 200px !important;
+    height: 200px !important;
+}
+
+/* Efecto de rotación sutil */
+.bju-rotate-hover {
+    transition: transform 0.3s ease !important;
+}
+
+.bju-rotate-hover:hover {
+    transform: rotate(2deg) !important;
+}
+
+/* Efecto de brillo */
+.bju-glow-hover {
+    transition: all 0.3s ease !important;
+}
+
+.bju-glow-hover:hover {
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.6) !important;
+}
+
+/* ========================================
+    ANIMACIONES DE CARGA (LOADING)
+    ======================================== */
+
+/* Spinner personalizado */
+.bju-loading-spinner {
+    width: 40px !important;
+    height: 40px !important;
+    border: 4px solid rgba(220, 53, 69, 0.2) !important;
+    border-top: 4px solid #dc3545 !important;
+    border-radius: 50% !important;
+    animation: bju-spin 1s linear infinite !important;
+    margin: 1rem auto !important;
+}
+
+@keyframes bju-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Efecto de pulsación */
+.bju-pulse {
+    animation: bju-pulse 2s ease-in-out infinite !important;
+}
+
+@keyframes bju-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* ========================================
+    ANIMACIONES DE TEXTO
+    ======================================== */
+
+/* Efecto de escritura */
+.bju-typewriter {
+    overflow: hidden !important;
+    border-right: 2px solid #dc3545 !important;
+    white-space: nowrap !important;
+    animation: bju-typing 3.5s steps(40, end), bju-blink-caret 0.75s step-end infinite !important;
+}
+
+@keyframes bju-typing {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+@keyframes bju-blink-caret {
+    from, to { border-color: transparent; }
+    50% { border-color: #dc3545; }
+}
+
+/* Efecto de desvanecimiento de letras */
+.bju-fade-letters {
+    opacity: 0 !important;
+    animation: bju-fade-letters 0.8s ease-in-out forwards !important;
+}
+
+@keyframes bju-fade-letters {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+    ANIMACIONES DE PARTÍCULAS
+    ======================================== */
+
+/* Partículas flotantes */
+.bju-particles {
+    position: absolute !important;
+    width: 100% !important;
+    height: 100% !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+.bju-particle {
+    position: absolute !important;
+    width: 4px !important;
+    height: 4px !important;
+    background: #dc3545 !important;
+    border-radius: 50% !important;
+    animation: bju-particle-float 10s linear infinite !important;
+}
+
+@keyframes bju-particle-float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 1;
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* ========================================
+    UTILIDADES DE ANIMACIÓN
+    ======================================== */
+
+/* Delays para animaciones escalonadas */
+.bju-delay-1 { animation-delay: 0.1s !important; }
+.bju-delay-2 { animation-delay: 0.2s !important; }
+.bju-delay-3 { animation-delay: 0.3s !important; }
+.bju-delay-4 { animation-delay: 0.4s !important; }
+.bju-delay-5 { animation-delay: 0.5s !important; }
+
+/* Duraciones de animación */
+.bju-duration-fast { animation-duration: 0.3s !important; }
+.bju-duration-normal { animation-duration: 0.6s !important; }
+.bju-duration-slow { animation-duration: 1s !important; }
+
+/* Control de animaciones */
+.bju-animation-paused { animation-play-state: paused !important; }
+.bju-animation-running { animation-play-state: running !important; }
+
+/* Reducir animaciones para usuarios que prefieren menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+    .bju-fade-in,
+    .bju-slide-in-left,
+    .bju-slide-in-right,
+    .bju-scale-in,
+    .bju-floating-element,
+    .bju-pulse,
+    .bju-typewriter {
+        animation: none !important;
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ========================================
+    RESPONSIVE ANIMATIONS
+    ======================================== */
+@media (max-width: 768px) {
+    .bju-floating-element {
+        font-size: 1.5rem !important;
+    }
+    
+    .bju-particle {
+        width: 2px !important;
+        height: 2px !important;
+    }
+    
+    /* Reducir intensidad de animaciones en móviles */
+    .bju-fade-in,
+    .bju-slide-in-left,
+    .bju-slide-in-right {
+        animation-duration: 0.4s !important;
+    }
+}
+
+/* ========================================
+    PREVENIR CONFLICTOS CON OTRAS LIBRERÍAS
+    ======================================== */
+
+/* Evitar conflictos con animaciones de Bootstrap */
+.bju-floating-elements .fade,
+.bju-floating-elements .collapse,
+.bju-floating-elements .collapsing {
+    all: unset !important;
+}
+
+/* Evitar conflictos con Animate.css */
+.bju-fade-in:not(.animated),
+.bju-slide-in-left:not(.animated),
+.bju-slide-in-right:not(.animated) {
+    animation-fill-mode: both !important;
 }
 
 /* ========================================
