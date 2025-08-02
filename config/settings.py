@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import sys
+
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -36,6 +38,9 @@ CSRF_TRUSTED_ORIGINS = ["https://bju-production.up.railway.app"]
 
 # Application definition
 
+# Agregar la carpeta applications al Python path
+sys.path.insert(0, os.path.join(BASE_DIR, 'applications'))
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,9 +51,15 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'whitenoise.runserver_nostatic',
 
-    # Mis apps
+    # app de pruebas
     'apl',
-    'ePayco',
+
+    # apps del proyecto
+    'carrito_compras',
+    'clientes',
+    'envios',
+    'pagos',
+    'productos'
 ]
 
 

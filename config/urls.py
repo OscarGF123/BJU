@@ -16,18 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from django.conf import settings
-from django.conf.urls.static import static
 
-from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView
+from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView, PerosnaUpdate
 from apl.views.pse.views import EpaycoView
 from apl.views.control_salud.views import health_check, retornar_url_ngrok
 from apl.views.prueba_diseño.views import *
 
 urlpatterns = [
+
+    path('apl/', include('apl.urls')),
+
+
+    # URLs de prueba
     path('admin/', admin.site.urls),
     path('persona/', PersonaListView.as_view(), name='listar_persona'),
     path('crear_persona/', PerosnaCreate.as_view(), name='crear_persona'),
+    path('editar_perosona/<int:pk>', PerosnaUpdate.as_view(), name='editar_persona'),
     path('eliminar_persona/<int:pk>', PersonaDeleteView.as_view(), name="eliminar_persona"),
     path('diseno1/', PruebaDisenoView.as_view(), name='prueba'),
     path('diseno2/', PruebaDiseno2View.as_view(), name="diseno2"),
