@@ -6,20 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Box Jeans Urban - Tienda de Jeans y Sudaderas</title>
 
-    <!-- Styles -->
+    <!-- DataTables CSS -->
+    <link href="{% static 'DataTables/datatables.css' %}" rel="stylesheet">
+    
+    <!-- Bootstrap -->
+    <link href="{% static 'bootstrap-5.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.css' %}">
+
+    <!-- NUESTROS ESTILOS (CARGAR DESPUÉS PARA SOBRESCRIBIR) -->
     <link rel="stylesheet" href="{% static 'styles/header.css' %}">
     <link rel="stylesheet" href="{% static 'styles/body.css' %}">
     <link rel="stylesheet" href="{% static 'styles/footer.css' %}"> 
     <link rel="stylesheet" href="{% static 'styles/animaciones.css' %}">
-
-    <link href="{% static 'DataTables/datatables.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/datatables.css' %}">
     
-    <!-- Scripts -->
+    <!-- Scripts de librerías -->
     <script src="{% static 'JQuery/jquery-3.7.1.min.js' %}"></script>
     <script src="{% static 'DataTables/datatables.js' %}"></script>
-    <script src="{% static 'scripts/bootstrap_js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'bootstrap-5.3.7-dist\js\bootstrap.bundle.min.js' %}"></script>
+    
+    <!-- Scrtipts -->
     <script src="{% static 'scripts/interactividad.js' %}"></script>
 </head>
 {% block body %}{% endblock %}

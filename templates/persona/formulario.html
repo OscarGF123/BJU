@@ -12,7 +12,7 @@
         <button id="boton" class="btn btn-success" type="submit">Aceptar</button>
     </div>
 </form>
-<table id = "tabla">
+<table id="productsTable" class="display">
     <thead>
         <th scope="col">id</th>
         <th scope="col">Nombre</th>
@@ -25,7 +25,10 @@
                 <td>{{i.id}}</td>
                 <td>{{i.nombre}}</td>
                 <td>{{i.edad}}</td>
-                <td><button class = "btn btn-danger" onclick="eliminar('{{i.id}}')"><i class="fa-solid fa-trash"></i></button></td>
+                <td>
+                    <button class = "btn btn-danger" onclick="eliminar('{{i.id}}')"><i class="fa-solid fa-trash"></i></button>
+                    <button onclick="actualizar('{{i.id}}')"><i class = "fa-solid fa-edit"></i></button>
+                </td>
             </tr>
         {% endfor %}
     </tbody>
@@ -33,13 +36,15 @@
 <script>
     var tabla
     $(document).ready( function () {
-        tabla = new DataTable("#tabla", {
+        tabla = new DataTable("#productsTable", {
             responsive: true
         })
     } );
 
     document.querySelector('#formulario-persona').addEventListener('submit', (e)=>{
         e.preventDefault()
+
+        // Crear Persona
         fetch('{% url "crear_persona" %}',{
             method: "POST",
             body: new FormData(document.querySelector('#formulario-persona')),
@@ -86,6 +91,30 @@
             }
         })
         .catch(error => console.log(`ocurrio un error ${error}`))
+    }
+
+    let actualizar = (id) =>{
+        let url = "{% url 'editar_persona' 0 %}"
+        url = url.replace("0", id)
+
+        fetch(url, {
+            headers:{
+                "X-CSRFToken": "{{csrf_token}}",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: new FormData(document.querySelector('#formulario-persona')),
+            method: "POST"
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status == "success"){
+
+                tabla.row(`#${id}`).edit({
+                    nombre: data.nombre,
+                    edad: data.edad
+                });
+            }
+        })
     }
 </script>
 {% endblock %}
