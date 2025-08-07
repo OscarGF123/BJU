@@ -1,0 +1,102 @@
+{% extends "home.html" %}
+{% load static %}
+
+{% block body %}
+<body class="boxjeans-dashboard">
+    <!-- Elementos flotantes decorativos -->
+    <div class="bj-floating-elements">
+        <div class="bj-floating-element">👕</div>
+        <div class="bj-floating-element">👖</div>
+        <div class="bj-floating-element">🧥</div>
+        <div class="bj-floating-element">👟</div>
+    </div>
+
+    <main class="config-sidebar">
+        <div class="body-sidebar">
+            <!-- Header -->
+            <header class="bj-header-sidebar">
+                <div class="bj-left">
+                    <div class="bj-menu-container">
+                        <div class="bj-menu" id="bjMenu">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="bj-brand">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+CjxwYXRoIGQ9Ik0xMCAxMkgyNlYxNkgxMFYxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMCAyMEgzMFYyNEgxMFYyMFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMCAyOEgyNlYzMkgxMFYyOFoiIGZpbGw9IndoaXRlIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MCIgeDE9IjAiIHkxPSIwIiB4Mj0iNDAiIHkyPSI0MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjREMzNTQ1Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0M4MjMzMyIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Box Jeans Logo" class="bj-logo">
+                        <span class="bj-name">Box Jeans</span>
+                    </div>
+                </div>
+                <div class="bj-right">
+                    <a class="bj-icons-header" href="#" title="Notificaciones">
+                        <i class="fa-solid fa-bell"></i>
+                    </a>
+                    <a class="bj-icons-header" href="#" title="Configuración">
+                        <i class="fa-solid fa-cog"></i>
+                    </a>
+                    <a class="bj-icons-header" href="#" title="Ayuda">
+                        <i class="fa-solid fa-question-circle"></i>
+                    </a>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario">
+                </div>
+            </header>
+
+            <!-- Sidebar -->
+            <div class="bj-sidebar" id="bjSidebar">
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-tshirt"></i>
+                                <span>Productos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-shopping-cart"></i>
+                                <span>Ventas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-chart-bar"></i>
+                                <span>Reportes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-warehouse"></i>
+                                <span>Inventario</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Contenido principal con DataTable -->
+        <div class="bj-main-sidebar" id="bjMain">
+            {% block contenido %}
+            {% endblock %}
+        </div>
+    <!-- Scrtipt de la pagina principal -->
+    <script src="{% static 'scripts/menu_lateral/script.js' %}"></script>
+    <script src="{% static 'bootstrap-5.3.7-dist/mods/modal.js' %}"></script>
+    {% block javascript %}
+    {% endblock %}
+</body>
+
+{% endblock %}

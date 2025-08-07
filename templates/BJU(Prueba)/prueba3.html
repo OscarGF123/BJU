@@ -3,923 +3,637 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Box Jeans Urban - Tienda de Jeans y Sudaderas</title>
+    <title>Box Jeans - Modales Personalizados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Bootstrap CSS (solo para funcionalidad de modales) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
     <style>
-        /* ==================== RESET Y CONFIGURACIÓN BASE ==================== */
-        /* Elimina los márgenes y rellenos predeterminados del navegador */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* ========================================
+           NAMESPACE ESPECÍFICO PARA EVITAR CONFLICTOS
+           ======================================== */
+        
+        .boxjeans-modal-demo {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+            color: #ffffff !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 2rem !important;
+            box-sizing: border-box !important;
         }
 
-        /* Configuración de la fuente principal y colores base */
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #fff;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            overflow-x: hidden;
+        .boxjeans-modal-demo *,
+        .boxjeans-modal-demo *::before,
+        .boxjeans-modal-demo *::after {
+            box-sizing: border-box !important;
         }
 
-        /* ==================== HEADER - NAVEGACIÓN SUPERIOR ==================== */
-        /* El header contiene el logo, menú de navegación y carrito de compras */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            border-bottom: 2px solid #dc2626;
-            transition: all 0.3s ease;
+        /* Variables CSS */
+        .boxjeans-modal-demo {
+            --bj-primary-color: #dc3545;
+            --bj-primary-hover: #c82333;
+            --bj-secondary-color: #ffffff;
+            --bj-dark-bg: #1a1a1a;
+            --bj-dark-secondary: #2d2d2d;
+            --bj-dark-tertiary: #333333;
+            --bj-text-primary: #ffffff;
+            --bj-text-secondary: #cccccc;
+            --bj-text-muted: #999999;
+            --bj-border-color: rgba(220, 53, 69, 0.2);
+            --bj-hover-bg: rgba(220, 53, 69, 0.1);
+            --bj-shadow-primary: 0 8px 25px rgba(220, 53, 69, 0.3);
+            --bj-shadow-secondary: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --bj-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bj-border-radius: 15px;
         }
 
-        /* Contenedor que mantiene el contenido del header centrado */
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
+        /* ========================================
+           ESTILOS DE MODALES PERSONALIZADOS
+           ======================================== */
+
+        /* Backdrop del modal */
+        .boxjeans-modal-demo .modal-backdrop {
+            background: rgba(0, 0, 0, 0.5) !important;
+            backdrop-filter: blur(3px) !important;
         }
 
-        /* Estilo del logo con efecto de grafiti */
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #dc2626;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(220, 38, 38, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s ease;
+        .boxjeans-modal-demo .modal-backdrop.show {
+            opacity: 0.8 !important;
         }
 
-        .logo:hover {
-            transform: scale(1.1);
+        /* Contenedor del modal */
+        .boxjeans-modal-demo .modal {
+            z-index: 1055 !important;
         }
 
-        /* Menú de navegación horizontal */
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
+        .boxjeans-modal-demo .modal-dialog {
+            margin: 1.75rem auto !important;
+            max-width: 500px !important;
+            pointer-events: auto !important;
+            z-index: 1060 !important;
+            position: relative !important;
         }
 
-        .nav-menu li a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            position: relative;
+        /* Contenido del modal */
+        .boxjeans-modal-demo .modal-content {
+            background: linear-gradient(145deg, var(--bj-dark-secondary), var(--bj-dark-bg)) !important;
+            border: 2px solid var(--bj-border-color) !important;
+            border-radius: var(--bj-border-radius) !important;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(220, 53, 69, 0.2) !important;
+            backdrop-filter: blur(20px) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            z-index: 1061 !important;
         }
 
-        .nav-menu li a:hover {
-            background: #dc2626;
-            transform: translateY(-2px);
+        .boxjeans-modal-demo .modal-content::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            height: 3px !important;
+            background: linear-gradient(90deg, var(--bj-primary-color), var(--bj-secondary-color), var(--bj-primary-color)) !important;
+            opacity: 0.8 !important;
         }
 
-        /* Sección del carrito de compras */
-        .cart-section {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
+        /* Header del modal */
+        .boxjeans-modal-demo .modal-header {
+            background: linear-gradient(45deg, rgba(220, 53, 69, 0.1), transparent) !important;
+            border-bottom: 1px solid var(--bj-border-color) !important;
+            padding: 1.5rem !important;
+            position: relative !important;
         }
 
-        .cart-icon {
-            font-size: 1.5rem;
-            color: #dc2626;
-            transition: transform 0.3s ease;
+        .boxjeans-modal-demo .modal-title {
+            color: var(--bj-text-primary) !important;
+            font-weight: 700 !important;
+            font-size: 1.4rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            margin: 0 !important;
         }
 
-        .cart-icon:hover {
-            transform: scale(1.2);
+        .boxjeans-modal-demo .modal-title i {
+            color: var(--bj-primary-color) !important;
+            font-size: 1.2rem !important;
         }
 
-        /* ==================== BODY - CONTENIDO PRINCIPAL ==================== */
-        /* El main contiene todo el contenido principal de la página */
-        .main-content {
-            margin-top: 80px; /* Espacio para el header fijo */
+        /* Botón de cerrar personalizado */
+        .boxjeans-modal-demo .btn-close {
+            background: transparent !important;
+            border: none !important;
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: var(--bj-transition) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            opacity: 1 !important;
         }
 
-        /* ==================== SECCIÓN HERO - BANNER PRINCIPAL ==================== */
-        /* Esta es la primera sección que ven los usuarios, con mensaje principal */
-        .hero-section {
-            height: 100vh;
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23111" width="1200" height="600"/><path fill="%23dc2626" opacity="0.1" d="M0,300L50,280C100,260,200,220,300,200C400,180,500,180,600,190C700,200,800,220,900,210C1000,200,1100,160,1150,140L1200,120V600H0Z"/></svg>');
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
+        .boxjeans-modal-demo .btn-close::before {
+            content: '×' !important;
+            color: var(--bj-text-secondary) !important;
+            font-size: 1.8rem !important;
+            font-weight: 300 !important;
+            line-height: 1 !important;
         }
 
-        /* Contenido principal del hero */
-        .hero-content {
-            max-width: 800px;
-            padding: 0 2rem;
-            animation: fadeInUp 1s ease-out;
+        .boxjeans-modal-demo .btn-close:hover {
+            background: var(--bj-hover-bg) !important;
+            transform: scale(1.1) !important;
         }
 
-        .hero-title {
-            font-size: 4rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            background: linear-gradient(45deg, #dc2626, #fff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        .boxjeans-modal-demo .btn-close:hover::before {
+            color: var(--bj-primary-color) !important;
         }
 
-        .hero-subtitle {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-            color: #ccc;
+        /* Body del modal */
+        .boxjeans-modal-demo .modal-body {
+            padding: 2rem 1.5rem !important;
+            color: var(--bj-text-secondary) !important;
+            line-height: 1.6 !important;
         }
 
-        /* Botón principal de llamada a la acción */
-        .cta-button {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: linear-gradient(45deg, #dc2626, #b91c1c);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        .boxjeans-modal-demo .modal-body p {
+            margin-bottom: 1rem !important;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+        .boxjeans-modal-demo .modal-body .alert {
+            background: rgba(220, 53, 69, 0.1) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            color: var(--bj-text-primary) !important;
+            border-radius: 10px !important;
+            padding: 1rem !important;
+            margin-bottom: 1rem !important;
         }
 
-        /* ==================== SECCIÓN DE PRODUCTOS DESTACADOS ==================== */
-        /* Muestra los productos más populares de la tienda */
-        .featured-section {
-            padding: 5rem 0;
-            background: #1a1a1a;
+        /* Footer del modal */
+        .boxjeans-modal-demo .modal-footer {
+            background: linear-gradient(45deg, transparent, rgba(220, 53, 69, 0.05)) !important;
+            border-top: 1px solid var(--bj-border-color) !important;
+            padding: 1.5rem !important;
+            display: flex !important;
+            gap: 1rem !important;
+            justify-content: flex-end !important;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        /* Botones personalizados */
+        .boxjeans-modal-demo .bj-btn {
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+            transition: var(--bj-transition) !important;
+            border: none !important;
+            cursor: pointer !important;
+            position: relative !important;
+            overflow: hidden !important;
+            font-size: 0.9rem !important;
         }
 
-        .section-title {
-            text-align: center;
-            font-size: 3rem;
-            margin-bottom: 3rem;
-            color: #dc2626;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            position: relative;
+        .boxjeans-modal-demo .bj-btn::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+            transition: left 0.5s !important;
         }
 
-        /* Línea decorativa debajo del título */
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(45deg, #dc2626, #fff);
+        .boxjeans-modal-demo .bj-btn:hover::before {
+            left: 100% !important;
         }
 
-        /* Grid de productos - se adapta a diferentes tamaños de pantalla */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
+        /* Botón primario */
+        .boxjeans-modal-demo .bj-btn-primary {
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-primary-hover)) !important;
+            color: var(--bj-secondary-color) !important;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
         }
 
-        /* Tarjeta individual de producto */
-        .product-card {
-            background: #2d2d2d;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-            position: relative;
+        .boxjeans-modal-demo .bj-btn-primary:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: var(--bj-shadow-primary) !important;
         }
 
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(220, 38, 38, 0.2);
+        /* Botón secundario */
+        .boxjeans-modal-demo .bj-btn-secondary {
+            background: var(--bj-dark-tertiary) !important;
+            color: var(--bj-text-secondary) !important;
+            border: 1px solid var(--bj-border-color) !important;
         }
 
-        /* Imagen del producto */
-        .product-image {
-            height: 250px;
-            background: linear-gradient(135deg, #4a4a4a, #6a6a6a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: #dc2626;
-            position: relative;
-            overflow: hidden;
+        .boxjeans-modal-demo .bj-btn-secondary:hover {
+            background: var(--bj-hover-bg) !important;
+            color: var(--bj-text-primary) !important;
+            transform: translateY(-2px) !important;
         }
 
-        /* Etiqueta de "Nuevo" o "Oferta" */
-        .product-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #dc2626;
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-transform: uppercase;
+        /* Botón de peligro */
+        .boxjeans-modal-demo .bj-btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
         }
 
-        /* Información del producto */
-        .product-info {
-            padding: 1.5rem;
+        .boxjeans-modal-demo .bj-btn-danger:hover {
+            background: linear-gradient(45deg, #c82333, #a71e2a) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
         }
 
-        .product-name {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            color: #fff;
+        /* ========================================
+           ANIMACIONES DE ENTRADA Y SALIDA
+           ======================================== */
+
+        .boxjeans-modal-demo .modal.fade .modal-dialog {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out !important;
+            transform: translate(0, -30px) scale(0.95) !important;
+            opacity: 0 !important;
         }
 
-        .product-price {
-            font-size: 1.5rem;
-            color: #dc2626;
-            font-weight: bold;
-            margin-bottom: 1rem;
+        .boxjeans-modal-demo .modal.show .modal-dialog {
+            transform: translate(0, 0) scale(1) !important;
+            opacity: 1 !important;
         }
 
-        /* Botón de agregar al carrito */
-        .add-to-cart {
-            width: 100%;
-            padding: 0.8rem;
-            background: linear-gradient(45deg, #dc2626, #b91c1c);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* Asegurar que el modal sea visible */
+        .boxjeans-modal-demo .modal.show {
+            display: block !important;
         }
 
-        .add-to-cart:hover {
-            background: linear-gradient(45deg, #b91c1c, #991b1b);
-            transform: translateY(-2px);
+        .boxjeans-modal-demo .modal-open {
+            overflow: hidden !important;
         }
 
-        /* ==================== SECCIÓN DE CATEGORÍAS ==================== */
-        /* Muestra las diferentes categorías de productos */
-        .categories-section {
-            padding: 5rem 0;
-            background: #2d2d2d;
+        /* ========================================
+           FORMULARIOS EN MODALES
+           ======================================== */
+
+        .boxjeans-modal-demo .form-group {
+            margin-bottom: 1.5rem !important;
         }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
+        .boxjeans-modal-demo .form-label {
+            color: var(--bj-text-primary) !important;
+            font-weight: 600 !important;
+            margin-bottom: 0.5rem !important;
+            display: block !important;
         }
 
-        .category-card {
-            background: #1a1a1a;
-            padding: 3rem 2rem;
-            border-radius: 15px;
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
+        .boxjeans-modal-demo .form-control {
+            background: var(--bj-dark-tertiary) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            color: var(--bj-text-primary) !important;
+            padding: 0.75rem 1rem !important;
+            border-radius: 8px !important;
+            transition: var(--bj-transition) !important;
+            width: 100% !important;
         }
 
-        .category-card:hover {
-            border-color: #dc2626;
-            transform: translateY(-5px);
+        .boxjeans-modal-demo .form-control:focus {
+            border-color: var(--bj-primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important;
+            outline: none !important;
+            background: var(--bj-dark-bg) !important;
         }
 
-        .category-icon {
-            font-size: 4rem;
-            color: #dc2626;
-            margin-bottom: 1rem;
+        .boxjeans-modal-demo .form-control::placeholder {
+            color: var(--bj-text-muted) !important;
         }
 
-        .category-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        /* ========================================
+           TAMAÑOS DE MODALES
+           ======================================== */
+
+        .boxjeans-modal-demo .modal-sm {
+            max-width: 300px !important;
         }
 
-        /* ==================== SECCIÓN DE GRAFITI URBANO ==================== */
-        /* Elementos decorativos que dan la estética urbana */
-        .graffiti-section {
-            padding: 5rem 0;
-            background: #111;
-            position: relative;
-            overflow: hidden;
+        .boxjeans-modal-demo .modal-lg {
+            max-width: 800px !important;
         }
 
-        /* Texto de grafiti decorativo */
-        .graffiti-text {
-            position: absolute;
-            font-size: 8rem;
-            font-weight: bold;
-            color: rgba(220, 38, 38, 0.1);
-            text-transform: uppercase;
-            letter-spacing: 5px;
-            transform: rotate(-15deg);
-            user-select: none;
-            pointer-events: none;
+        .boxjeans-modal-demo .modal-xl {
+            max-width: 1140px !important;
         }
 
-        .graffiti-1 { top: 20%; left: -10%; }
-        .graffiti-2 { bottom: 20%; right: -10%; }
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
 
-        /* ==================== FOOTER - PIE DE PÁGINA ==================== */
-        /* El footer contiene información de contacto, redes sociales y enlaces */
-        .footer {
-            background: #0a0a0a;
-            padding: 3rem 0 1rem;
-            border-top: 3px solid #dc2626;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-        }
-
-        .footer-section h3 {
-            color: #dc2626;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section ul li a {
-            color: #ccc;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-section ul li a:hover {
-            color: #dc2626;
-        }
-
-        /* Redes sociales */
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: #dc2626;
-            color: white;
-            text-align: center;
-            line-height: 40px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .social-links a:hover {
-            background: #b91c1c;
-            transform: translateY(-3px);
-        }
-
-        /* Copyright al final */
-        .footer-bottom {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid #333;
-            color: #666;
-        }
-
-        /* ==================== ANIMACIONES ==================== */
-        /* Definición de las animaciones CSS */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
+        @media (max-width: 576px) {
+            .boxjeans-modal-demo .modal-dialog {
+                margin: 1rem !important;
+                max-width: calc(100% - 2rem) !important;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .boxjeans-modal-demo .modal-header,
+            .boxjeans-modal-demo .modal-body,
+            .boxjeans-modal-demo .modal-footer {
+                padding: 1rem !important;
+            }
+
+            .boxjeans-modal-demo .modal-title {
+                font-size: 1.2rem !important;
+            }
+
+            .boxjeans-modal-demo .modal-footer {
+                flex-direction: column !important;
+            }
+
+            .boxjeans-modal-demo .bj-btn {
+                width: 100% !important;
+                margin-bottom: 0.5rem !important;
             }
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        /* ========================================
+           BOTONES DE DEMOSTRACIÓN
+           ======================================== */
+
+        .boxjeans-modal-demo .demo-container {
+            text-align: center !important;
+            padding: 2rem !important;
         }
 
-        /* Animación flotante para algunos elementos */
-        .floating {
-            animation: float 3s ease-in-out infinite;
+        .boxjeans-modal-demo .demo-title {
+            color: var(--bj-text-primary) !important;
+            font-size: 2rem !important;
+            font-weight: 700 !important;
+            margin-bottom: 2rem !important;
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-secondary-color)) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
         }
 
-        /* ==================== RESPONSIVE DESIGN ==================== */
-        /* Adaptación para dispositivos móviles y tablets */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .hero-subtitle { font-size: 1.2rem; }
-            .section-title { font-size: 2rem; }
-            
-            .nav-menu {
-                display: none; /* En móviles se ocultaría y se usaría un menú hamburguesa */
-            }
-            
-            .header-container {
-                padding: 0 1rem;
-            }
-            
-            .graffiti-text {
-                font-size: 4rem;
-            }
+        .boxjeans-modal-demo .demo-buttons {
+            display: flex !important;
+            gap: 1rem !important;
+            justify-content: center !important;
+            flex-wrap: wrap !important;
+        }
+
+        .boxjeans-modal-demo .demo-btn {
+            background: linear-gradient(45deg, var(--bj-dark-secondary), var(--bj-dark-tertiary)) !important;
+            color: var(--bj-text-secondary) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            padding: 1rem 2rem !important;
+            border-radius: var(--bj-border-radius) !important;
+            cursor: pointer !important;
+            transition: var(--bj-transition) !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 1px !important;
+        }
+
+        .boxjeans-modal-demo .demo-btn:hover {
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-primary-hover)) !important;
+            color: var(--bj-text-primary) !important;
+            transform: translateY(-3px) !important;
+            box-shadow: var(--bj-shadow-primary) !important;
         }
     </style>
 </head>
-
-<body>
-    <!-- ==================== HEADER - INICIO ==================== -->
-    <!-- Esta sección contiene la navegación principal que se mantiene fija en la parte superior -->
-    <header class="header">
-        <div class="header-container">
-            <!-- Logo de la tienda -->
-            <div class="logo">Box Jeans Urban</div>
-            
-            <!-- Menú de navegación principal -->
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="#home">Inicio</a></li>
-                    <li><a href="#products">Productos</a></li>
-                    <li><a href="#categories">Categorías</a></li>
-                    <li><a href="#contact">Contacto</a></li>
-                </ul>
-            </nav>
-            
-            <!-- Sección del carrito de compras -->
-            <div class="cart-section">
-                <span class="cart-icon">🛒</span>
-                <span class="cart-count">0</span>
-            </div>
-        </div>
-    </header>
-    <!-- ==================== HEADER - FIN ==================== -->
-
-    <!-- ==================== BODY - CONTENIDO PRINCIPAL - INICIO ==================== -->
-    <main class="main-content">
+<div class="boxjeans-modal-demo">
+    <div class="demo-container">
+        <h1 class="demo-title">Box Jeans - Modales Personalizados</h1>
         
-        <!-- ==================== SECCIÓN HERO - INICIO ==================== -->
-        <!-- Esta es la sección principal que los usuarios ven primero -->
-        <section class="hero-section" id="home">
-            <div class="hero-content">
-                <h1 class="hero-title floating">Box Jeans Urban</h1>
-                <p class="hero-subtitle">Estilo urbano auténtico. Jeans y sudaderas que definen tu actitud.</p>
-                <a href="#products" class="cta-button">Explorar Colección</a>
-            </div>
+        <div class="demo-buttons">
+            <button type="button" class="demo-btn" data-bs-toggle="modal" data-bs-target="#infoModal">
+                <i class="fas fa-info-circle"></i> Modal Info
+            </button>
             
-            <!-- Elementos decorativos de grafiti -->
-            <div class="graffiti-text graffiti-1">URBAN</div>
-            <div class="graffiti-text graffiti-2">STYLE</div>
-        </section>
-        <!-- ==================== SECCIÓN HERO - FIN ==================== -->
-
-        <!-- ==================== SECCIÓN PRODUCTOS DESTACADOS - INICIO ==================== -->
-        <section class="featured-section" id="products">
-            <div class="container">
-                <h2 class="section-title">Productos Destacados</h2>
-                
-                <!-- Grid de productos - aquí se muestran los productos más populares -->
-                <div class="products-grid">
-                    
-                    <!-- Producto 1: Jean Urbano -->
-                    <div class="product-card">
-                        <div class="product-image">
-                            👖
-                            <span class="product-badge">Nuevo</span>
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Jean Urban Classic</h3>
-                            <p class="product-price">$89.99</p>
-                            <button class="add-to-cart" onclick="addToCart('Jean Urban Classic', 89.99)">
-                                Agregar al Carrito
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Producto 2: Sudadera -->
-                    <div class="product-card">
-                        <div class="product-image">
-                            🧥
-                            <span class="product-badge">Oferta</span>
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Sudadera Street Style</h3>
-                            <p class="product-price">$59.99</p>
-                            <button class="add-to-cart" onclick="addToCart('Sudadera Street Style', 59.99)">
-                                Agregar al Carrito
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Producto 3: Jean Premium -->
-                    <div class="product-card">
-                        <div class="product-image">
-                            👖
-                            <span class="product-badge">Premium</span>
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Jean Premium Ripped</h3>
-                            <p class="product-price">$119.99</p>
-                            <button class="add-to-cart" onclick="addToCart('Jean Premium Ripped', 119.99)">
-                                Agregar al Carrito
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Producto 4: Sudadera con capucha -->
-                    <div class="product-card">
-                        <div class="product-image">
-                            👘
-                        </div>
-                        <div class="product-info">
-                            <h3 class="product-name">Hoodie Urban Graffiti</h3>
-                            <p class="product-price">$79.99</p>
-                            <button class="add-to-cart" onclick="addToCart('Hoodie Urban Graffiti', 79.99)">
-                                Agregar al Carrito
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-        <!-- ==================== SECCIÓN PRODUCTOS DESTACADOS - FIN ==================== -->
-
-        <!-- ==================== SECCIÓN CATEGORÍAS - INICIO ==================== -->
-        <section class="categories-section" id="categories">
-            <div class="container">
-                <h2 class="section-title">Categorías</h2>
-                
-                <!-- Grid de categorías -->
-                <div class="categories-grid">
-                    
-                    <!-- Categoría Jeans -->
-                    <div class="category-card">
-                        <div class="category-icon">👖</div>
-                        <h3 class="category-name">Jeans</h3>
-                        <p>Descubre nuestra colección de jeans urbanos con diferentes cortes y estilos.</p>
-                    </div>
-
-                    <!-- Categoría Sudaderas -->
-                    <div class="category-card">
-                        <div class="category-icon">🧥</div>
-                        <h3 class="category-name">Sudaderas</h3>
-                        <p>Sudaderas cómodas y con estilo para completar tu look urbano.</p>
-                    </div>
-
-                    <!-- Categoría Hoodies -->
-                    <div class="category-card">
-                        <div class="category-icon">👘</div>
-                        <h3 class="category-name">Hoodies</h3>
-                        <p>Hoodies con diseños únicos inspirados en el arte urbano.</p>
-                    </div>
-
-                    <!-- Categoría Accesorios -->
-                    <div class="category-card">
-                        <div class="category-icon">🎒</div>
-                        <h3 class="category-name">Accesorios</h3>
-                        <p>Complementa tu estilo con nuestros accesorios urbanos.</p>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-        <!-- ==================== SECCIÓN CATEGORÍAS - FIN ==================== -->
-
-        <!-- ==================== SECCIÓN GRAFITI DECORATIVA - INICIO ==================== -->
-        <section class="graffiti-section">
-            <div class="container">
-                <h2 class="section-title">Únete al Movimiento Urbano</h2>
-                <p style="text-align: center; font-size: 1.2rem; color: #ccc; max-width: 600px; margin: 0 auto;">
-                    Box Jeans Urban no es solo ropa, es una actitud. Expresamos la cultura urbana a través de cada prenda.
-                </p>
-            </div>
-        </section>
-        <!-- ==================== SECCIÓN GRAFITI DECORATIVA - FIN ==================== -->
-
-    </main>
-    <!-- ==================== BODY - CONTENIDO PRINCIPAL - FIN ==================== -->
-
-    <!-- ==================== FOOTER - PIE DE PÁGINA - INICIO ==================== -->
-    <!-- El footer contiene información adicional, enlaces y redes sociales -->
-    <footer class="footer" id="contact">
-        <div class="footer-content">
+            <button type="button" class="demo-btn" data-bs-toggle="modal" data-bs-target="#formModal">
+                <i class="fas fa-edit"></i> Modal Formulario
+            </button>
             
-            <!-- Sección de información de la empresa -->
-            <div class="footer-section">
-                <h3>Box Jeans Urban</h3>
-                <p>Tu tienda de confianza para ropa urbana de calidad. Expresamos tu personalidad a través del estilo.</p>
-                <div class="social-links">
-                    <a href="#" title="Facebook">📘</a>
-                    <a href="#" title="Instagram">📷</a>
-                    <a href="#" title="Twitter">🐦</a>
-                    <a href="#" title="TikTok">🎵</a>
+            <button type="button" class="demo-btn" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                <i class="fas fa-exclamation-triangle"></i> Modal Confirmación
+            </button>
+            
+            <button type="button" class="demo-btn" data-bs-toggle="modal" data-bs-target="#largeModal">
+                <i class="fas fa-expand"></i> Modal Grande
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Información -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">
+                        <i class="fas fa-info-circle"></i>
+                        Información del Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert">
+                        <i class="fas fa-tshirt"></i>
+                        <strong>¡Nuevo producto disponible!</strong>
+                    </div>
+                    <p>Te presentamos nuestra nueva colección de jeans premium con tecnología anti-desgaste y diseño ergonómico para mayor comodidad.</p>
+                    <p><strong>Características:</strong></p>
+                    <ul>
+                        <li>Material 100% algodón orgánico</li>
+                        <li>Diseño slim fit moderno</li>
+                        <li>Disponible en 5 colores</li>
+                        <li>Tallas de XS a XXL</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="bj-btn bj-btn-primary">Ver Producto</button>
                 </div>
             </div>
-
-            <!-- Enlaces rápidos -->
-            <div class="footer-section">
-                <h3>Enlaces Rápidos</h3>
-                <ul>
-                    <li><a href="#home">Inicio</a></li>
-                    <li><a href="#products">Productos</a></li>
-                    <li><a href="#categories">Categorías</a></li>
-                    <li><a href="#">Ofertas</a></li>
-                    <li><a href="#">Nueva Colección</a></li>
-                </ul>
-            </div>
-
-            <!-- Información de contacto -->
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <ul>
-                    <li>📧 info@boxjeansurban.com</li>
-                    <li>📞 +57 300 123 4567</li>
-                    <li>📍 Bogotá, Colombia</li>
-                    <li>🕒 Lun - Sáb: 9AM - 8PM</li>
-                </ul>
-            </div>
-
-            <!-- Información legal -->
-            <div class="footer-section">
-                <h3>Información</h3>
-                <ul>
-                    <li><a href="#">Política de Privacidad</a></li>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="#">Envíos y Devoluciones</a></li>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
-                    <li><a href="#">Tallas</a></li>
-                </ul>
-            </div>
-
         </div>
+    </div>
 
-        <!-- Copyright -->
-        <div class="footer-bottom">
-            <p>&copy; 2025 Box Jeans Urban. Todos los derechos reservados. Diseño urbano auténtico.</p>
+    <!-- Modal de Formulario -->
+    <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="formModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formModalLabel">
+                        <i class="fas fa-edit"></i>
+                        Agregar Nuevo Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="productName" class="form-label">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="productName" placeholder="Ej: Jeans Slim Fit">
+                        </div>
+                        <div class="form-group">
+                            <label for="productCategory" class="form-label">Categoría</label>
+                            <select class="form-control" id="productCategory">
+                                <option value="">Seleccionar categoría</option>
+                                <option value="jeans">Jeans</option>
+                                <option value="camisas">Camisas</option>
+                                <option value="chaquetas">Chaquetas</option>
+                                <option value="accesorios">Accesorios</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice" class="form-label">Precio</label>
+                            <input type="number" class="form-control" id="productPrice" placeholder="0.00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="productDescription" rows="3" placeholder="Describe las características del producto..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="bj-btn bj-btn-primary">Guardar Producto</button>
+                </div>
+            </div>
         </div>
-    </footer>
-    <!-- ==================== FOOTER - PIE DE PÁGINA - FIN ==================== -->
+    </div>
 
-    <!-- ==================== JAVASCRIPT - FUNCIONALIDAD INTERACTIVA - INICIO ==================== -->
+    <!-- Modal de Confirmación -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Confirmar Acción
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Estás seguro de que deseas eliminar este producto del inventario?</p>
+                    <div class="alert">
+                        <strong>¡Atención!</strong> Esta acción no se puede deshacer.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="bj-btn bj-btn-danger">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Grande -->
+    <div class="modal fade" id="largeModal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="largeModalLabel">
+                        <i class="fas fa-chart-bar"></i>
+                        Reporte Detallado de Ventas
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bj-primary-color); margin-bottom: 1rem;">Ventas del Mes</h6>
+                            <p>Total de ventas: <strong>$15,420.50</strong></p>
+                            <p>Productos vendidos: <strong>89 unidades</strong></p>
+                            <p>Clientes atendidos: <strong>45 clientes</strong></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 style="color: var(--bj-primary-color); margin-bottom: 1rem;">Top Productos</h6>
+                            <ol style="color: var(--bj-text-secondary);">
+                                <li>Jeans Slim Fit - 23 unidades</li>
+                                <li>Camisa Oxford - 18 unidades</li>
+                                <li>Chaqueta Denim - 15 unidades</li>
+                                <li>Polo Classic - 12 unidades</li>
+                                <li>Shorts Cargo - 10 unidades</li>
+                            </ol>
+                        </div>
+                    </div>
+                    <hr style="border-color: var(--bj-border-color);">
+                    <p>Este reporte incluye todas las ventas realizadas durante el mes actual, con desglose por productos, categorías y rendimiento general.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="bj-btn bj-btn-primary">
+                        <i class="fas fa-download"></i> Descargar PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // ==================== VARIABLES GLOBALES ====================
-        // Contador del carrito de compras
-        let cartCount = 0;
-        // Array para almacenar los productos del carrito
-        let cartItems = [];
-
-        // ==================== FUNCIÓN PARA AGREGAR PRODUCTOS AL CARRITO ====================
-        function addToCart(productName, price) {
-            // Incrementa el contador del carrito
-            cartCount++;
-            
-            // Agrega el producto al array del carrito
-            cartItems.push({
-                name: productName,
-                price: price,
-                id: Date.now() // ID único basado en timestamp
-            });
-            
-            // Actualiza el número mostrado en el carrito
-            document.querySelector('.cart-count').textContent = cartCount;
-            
-            // Muestra una notificación al usuario
-            showNotification(`${productName} agregado al carrito`);
-            
-            // Opcional: Guarda el carrito en el almacenamiento local del navegador
-            // localStorage.setItem('cart', JSON.stringify(cartItems));
-        }
-
-        // ==================== FUNCIÓN PARA MOSTRAR NOTIFICACIONES ====================
-        function showNotification(message) {
-            // Crea el elemento de notificación
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            
-            // Estilos de la notificación
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: #dc2626;
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                z-index: 10000;
-                font-weight: bold;
-                transform: translateX(400px);
-                transition: transform 0.3s ease;
-            `;
-            
-            // Agrega la notificación al documento
-            document.body.appendChild(notification);
-            
-            // Anima la entrada de la notificación
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remueve la notificación después de 3 segundos
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-
-        // ==================== EFECTOS DE SCROLL ====================
-        // Función que se ejecuta cuando el usuario hace scroll
-        window.addEventListener('scroll', function() {
-            const header = document.querySelector('.header');
-            
-            // Cambia la opacidad del header basado en el scroll
-            if (window.scrollY > 50) {
-                header.style.background = 'rgba(26, 26, 26, 0.98)';
-                header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.3)';
-            } else {
-                header.style.background = 'rgba(26, 26, 26, 0.95)';
-                header.style.boxShadow = 'none';
-            }
-        });
-
-        // ==================== NAVEGACIÓN SUAVE ====================
-        // Función para navegación suave entre secciones
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // ==================== ANIMACIONES AL CARGAR LA PÁGINA ====================
-        // Función que se ejecuta cuando la página termina de cargar
+        // JavaScript adicional para mejorar la experiencia del usuario
         document.addEventListener('DOMContentLoaded', function() {
-            // Anima las tarjetas de productos cuando aparecen en pantalla
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        // Agrega clase de animación cuando el elemento es visible
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
+            // Agregar efectos de sonido sutiles (opcional)
+            const modals = document.querySelectorAll('.modal');
+            
+            modals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function() {
+                    console.log('Abriendo modal:', this.id);
+                    // Aquí podrías agregar un efecto de sonido sutil
                 });
-            }, observerOptions);
-
-            // Aplica el observer a todas las tarjetas de productos
-            const productCards = document.querySelectorAll('.product-card');
-            const categoryCards = document.querySelectorAll('.category-card');
-            
-            // Establece estado inicial de animación
-            [...productCards, ...categoryCards].forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'all 0.6s ease-out';
-                observer.observe(card);
+                
+                modal.addEventListener('hidden.bs.modal', function() {
+                    console.log('Cerrando modal:', this.id);
+                });
             });
-
-            // Efecto de escritura para el título principal
-            const heroTitle = document.querySelector('.hero-title');
-            const titleText = heroTitle.textContent;
-            heroTitle.textContent = '';
             
-            let i = 0;
-            const typeWriter = setInterval(() => {
-                if (i < titleText.length) {
-                    heroTitle.textContent += titleText.charAt(i);
-                    i++;
-                } else {
-                    clearInterval(typeWriter);
+            // Agregar funcionalidad a los botones de acción
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('bj-btn-primary')) {
+                    // Simular acción exitosa
+                    console.log('Acción primaria ejecutada');
                 }
-            }, 100);
-        });
-
-        // ==================== EFECTOS ADICIONALES ====================
-        // Efecto de partículas en movimiento (opcional)
-        function createFloatingElements() {
-            const container = document.querySelector('.hero-section');
-            
-            for (let i = 0; i < 5; i++) {
-                const element = document.createElement('div');
-                element.style.cssText = `
-                    position: absolute;
-                    width: 4px;
-                    height: 4px;
-                    background: #dc2626;
-                    border-radius: 50%;
-                    left: ${Math.random() * 100}%;
-                    top: ${Math.random() * 100}%;
-                    animation: float ${3 + Math.random() * 4}s ease-in-out infinite;
-                    animation-delay: ${Math.random() * 2}s;
-                    opacity: 0.6;
-                `;
-                container.appendChild(element);
-            }
-        }
-
-        // Llama a la función de elementos flotantes
-        createFloatingElements();
-
-        // ==================== FUNCIÓN DEL CARRITO ====================
-        // Función para mostrar/ocultar el contenido del carrito
-        document.querySelector('.cart-section').addEventListener('click', function() {
-            if (cartItems.length === 0) {
-                showNotification('El carrito está vacío');
-                return;
-            }
-            
-            // Calcula el total
-            const total = cartItems.reduce((sum, item) => sum + item.price, 0);
-            
-            // Crea la lista de productos
-            const itemsList = cartItems.map(item => 
-                `• ${item.name} - ${item.price.toFixed(2)}`
-            ).join('\n');
-            
-            // Muestra el contenido del carrito
-            alert(`Carrito de Compras:\n\n${itemsList}\n\nTotal: ${total.toFixed(2)}`);
-        });
-
-        // ==================== EFECTOS HOVER MEJORADOS ====================
-        // Agrega efectos adicionales a las tarjetas de productos
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-10px) scale(1.02)';
+                
+                if (e.target.classList.contains('bj-btn-danger')) {
+                    // Simular acción de eliminación
+                    console.log('Acción de eliminación ejecutada');
+                    // Cerrar modal después de la acción
+                    const modal = e.target.closest('.modal');
+                    if (modal) {
+                        const bsModal = bootstrap.Modal.getInstance(modal);
+                        if (bsModal) {
+                            bsModal.hide();
+                        }
+                    }
+                }
             });
             
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0) scale(1)';
+            // Mejorar accesibilidad
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const openModal = document.querySelector('.modal.show');
+                    if (openModal) {
+                        const bsModal = bootstrap.Modal.getInstance(openModal);
+                        if (bsModal) {
+                            bsModal.hide();
+                        }
+                    }
+                }
             });
+            
+            console.log('✅ Modales Box Jeans inicializados correctamente');
         });
-
-        console.log('Box Jeans Urban - Sitio web cargado correctamente ✅');
     </script>
-    <!-- ==================== JAVASCRIPT - FUNCIONALIDAD INTERACTIVA - FIN ==================== -->
-
-</body>
+</div>
 </html>

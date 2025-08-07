@@ -1,18 +1,9 @@
 {% extends "home.html" %}
+{% load static %}
 {% block body %}
 
 <body class="bju-body">
-    <!-- ========================================
-         ELEMENTOS FLOTANTES DECORATIVOS
-         ======================================== -->
-    <div class="bju-floating-elements">
-        <div class="bju-floating-element">👕</div>
-        <div class="bju-floating-element">👖</div>
-        <div class="bju-floating-element">🧥</div>
-        <div class="bju-floating-element">👟</div>
-    </div>
-
-    {% include "header.html" %}
+    {% include "pagina_principal/header.html" %}
 
     <main>
         <!-- Hero Section - Sección principal -->
@@ -166,7 +157,7 @@
         </section>
     </main>
 
-    {% include "footer.html" %}
+    {% include "pagina_principal/footer.html" %}
     {% block formulario %}{% endblock %}
 
 </body>
