@@ -52,7 +52,7 @@
     font-weight: bold !important;
     margin-bottom: 0.5rem !important;
     color: #ffffff !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 .bju-product-price {
@@ -60,7 +60,7 @@
     color: #dc3545 !important;
     font-weight: bold !important;
     margin-bottom: 1rem !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 .bju-add-to-cart {
@@ -103,7 +103,7 @@
     letter-spacing: 2px !important;
     animation: bju-offerBlink 2s infinite !important;
     color: #ffffff !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 @keyframes bju-offerBlink {
@@ -115,7 +115,7 @@
     font-size: 1.2rem !important;
     margin-bottom: 2rem !important;
     color: #ffffff !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 /* ========================================
@@ -212,7 +212,7 @@
     background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     animation: bju-titlePulse 2s ease-in-out infinite alternate !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 @keyframes bju-titlePulse {
@@ -225,7 +225,7 @@
     margin-bottom: 2rem !important;
     color: #cccccc !important;
     animation: bju-subtitleFade 2s ease-in-out infinite alternate !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 @keyframes bju-subtitleFade {
@@ -275,7 +275,7 @@
     letter-spacing: 2px !important;
     position: relative !important;
     color: #ffffff !important;
-    font-family: 'Fira Code', 'Consolas', monospace !important;
+    font-family: "Poppins", sans-serif;
 }
 
 .bju-section-title::after {

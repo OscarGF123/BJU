@@ -1,6 +1,5 @@
 /* ========================================
-    BOX JEANS URBAN - HEADER STYLES (SIN CONFLICTOS)
-    Prefijo: .bju- (Box Jeans Urban)
+    BOX JEANS URBAN - HEADER STYLES
     ======================================== */
 
 /* Reset específico solo para nuestros componentes */
@@ -11,7 +10,7 @@
 }
 
 .bju-body {
-    font-family: 'Arial', sans-serif;
+    font-family: "Poppins", sans-serif;
     background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
     color: #ffffff !important;
     overflow-x: hidden !important;

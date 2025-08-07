@@ -179,7 +179,7 @@ BJU.showNotification = function(message, type = 'success') {
         box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         transform: translateX(400px);
         transition: all 0.3s ease;
-        font-family: 'Fira Code', 'Consolas', monospace;
+        font-family: "Poppins", sans-serif;;
     `;
     notification.textContent = message;
     
