@@ -88,6 +88,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -126,14 +127,33 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-co'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
+# Habilitar internacionalización
 USE_I18N = True
 
+# Habilitar localización (formatos de fecha, número, etc.)
+USE_L10N = True
+
+# Usar zona horaria (recomendado mantener en True)
 USE_TZ = True
 
+# Formato de la fecha
+DATE_FORMAT = 'd/m/Y'
+DATETIME_FORMAT = 'd/m/Y H:i:s'
+SHORT_DATE_FORMAT = 'd/m/Y'
+
+"""
+aplicacion en las plantillas
+<!-- En tus templates -->
+{{ fecha|date:"d/m/Y" }}
+{{ fecha_hora|date:"d/m/Y H:i:s" }}
+
+<!-- O usando la configuración por defecto -->
+{{ fecha|date }}
+"""
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -143,6 +163,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Configuración adicional de whitenoise
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
