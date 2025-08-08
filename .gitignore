@@ -2,7 +2,6 @@
 __pycache__/
 migrations/
 staticfiles/
-apl/
 
 # ignora entornos virtuales
 env/
