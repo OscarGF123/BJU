@@ -17,7 +17,7 @@ class AtributoProductoForm(ModelForm):
             ),
             "estado": Select(
                 attrs={
-                    "class": "bj-form-control",
+                    "class": "bj-form-select",
                     "placeholder": "Estado"
                 }
             )

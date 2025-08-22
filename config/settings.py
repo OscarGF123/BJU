@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     # app de pruebas
     'apl',
 
+    # tags personalizados y vistas base
+    'common',
+
     # apps del proyecto
     'carrito_compras',
     'clientes',

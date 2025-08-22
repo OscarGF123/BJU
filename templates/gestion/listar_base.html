@@ -1,22 +1,45 @@
 {% extends 'barra_lateral/sidebar.html' %}
+{% load static %}
+{% load custom_tags %}
 
 {% block contenido %}
-    <h1>{% block seccion %}{% endblock %}</h1>
             <div class="bj-table-container">
                 <h2 class="bj-table-title">
                     <i class="fa-solid fa-table"></i>
-                    Gestión de Datos
+                    {{seccion_plural}}
                 </h2>
-                
+
                 <table id="datatable" class="display responsive nowrap" style="width:100%">
                     <thead>
                         <tr>
                             {% block columnas %}
+
+                                {% for campo in campos%}
+                                    <th>{{campo}}</th>
+                                {% endfor %}
+                                
+                                <th>opciones</th>
                             {% endblock %}
                         </tr>
                     </thead>
                     <tbody>
                         {% block filas %}
+                            {% for modelo in object_list %}
+                                <tr id="{{modelo.id}}">
+                                {% obtener_campos modelo as campos %}
+                                {% for campo in campos %}
+                                    <td>{% obtener_atributo modelo campo %}</td>
+                                {% endfor %}
+                                    <td>
+                                        <button class='bj-btn bj-btn-info bj-btn-sm' id="btn-editar" value="{{url_editar}}" data-bs-toggle="modal" data-bs-target="#formModal" title="Editar">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class='bj-btn bj-btn-danger bj-btn-sm' id="btn-eliminar" value="{{url_eliminar}}" data-value="{{modelo.id}}" title="Eliminar">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
                         {% endblock %}
                     </tbody>
                 </table>
@@ -39,11 +62,17 @@
                             <form method="POST" id="formulario">
                                 {% csrf_token %}
                                 <div class="bj-form-group">
-                                    {{formulario}}
+                                    {% for field in formulario.visible_fields %}
+
+                                        <label for="email">{{field.label}}{% block boton_crear %}{% endblock %}</label>
+
+                                        {{field}}
+
+                                    {% endfor %}
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal" id="bjBtnCerrar">Cancelar</button>
-                                    <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm">Guardar {{seccion}}</button>
+                                    <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" value="{{url_crear}}">Guardar {{seccion}}</button>
                                 </div>
                             </form>
                         </div>
@@ -52,311 +81,6 @@
             </div>
 {% endblock %}
 {% block javascript %}
-<script>
-    // modal formulario
-    const formulario = document.getElementById("formulario");
-    // datatable
-    let tableInstance;
-    // variable para verificar si se esta haciendo una edicion o no
-    let modoEdicion = false;
-    let id_edicion;
-    let fila_edicion;
-
-    // ========================================
-    // FUNCIÓN PARA CERRAR MODAL CORRECTAMENTE
-    // ========================================
-    function cerrarModalCorrectamente(modalId) {
-        // Quitar foco del elemento activo ANTES de cerrar
-        const elementoConFoco = document.querySelector(`#${modalId} :focus`);
-        if (elementoConFoco) {
-            elementoConFoco.blur();
-        }
-        
-        // Obtener instancia del modal
-        const modalElement = document.getElementById(modalId);
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        
-        if (modal) {
-            // Cerrar el modal
-            modal.hide();
-            
-            // Mover el foco al body o a un elemento específico
-            setTimeout(() => {
-                document.body.focus();
-                // O si prefieres enfocar la tabla:
-                // document.getElementById('datatable')?.focus();
-            }, 150);
-        }
-    }
-
-    // ========================================
-    // INICIALIZACIÓN
-    // ========================================
-    $(document).ready(function() {
-        // Esperar un poco más para asegurar que DataTable esté completamente inicializado
-        setTimeout(function() {
-            if ($.fn.DataTable.isDataTable('#datatable')) {
-                tableInstance = $('#datatable').dataTable().api();
-            }
-        }, 100);
-
-        // Fix global para prevenir el error de aria-hidden
-        const modalElement = document.getElementById('formModal');
-        if (modalElement) {
-            // Cuando el modal se está ocultando
-            modalElement.addEventListener('hide.bs.modal', function() {
-                // Quitar foco de cualquier elemento dentro del modal
-                const focusedElement = this.querySelector(':focus');
-                if (focusedElement) {
-                    focusedElement.blur();
-                }
-            });
-
-            // Cuando el modal se ha ocultado completamente
-            modalElement.addEventListener('hidden.bs.modal', function() {
-                // Resetear el formulario
-                formulario.reset();
-                
-                // Resetear estado de edición
-                modoEdicion = false;
-                id_edicion = null;
-                fila_edicion = null;
-                
-                // Resetear título y botón
-                document.getElementById("formModalLabel").innerHTML = `
-                    <i class="fas fa-plus"></i>
-                    Agregar {{seccion}}
-                `;
-                $("#btnGuardarForm").text(`Guardar {{seccion}}`);
-                
-                // Enfocar el botón que abre el modal (si existe)
-                const botonAbrir = document.querySelector('[data-bs-target="#formModal"]');
-                if (botonAbrir && !botonAbrir.closest('tr')) {
-                    botonAbrir.focus();
-                }
-            });
-        }
-    });
-
-    // ========================================
-    // SUBMIT DEL FORMULARIO
-    // ========================================
-    formulario.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        // Deshabilitar el botón de guardar para prevenir doble envío
-        const btnGuardar = document.getElementById('btnGuardarForm');
-        btnGuardar.disabled = true;
-        
-        // Verifica si se esta editando o se esta agregando
-        if (modoEdicion) {
-            editar();
-        } else {
-            agregar();
-        }
-    });
-
-    // ========================================
-    // ELIMINAR
-    // ========================================
-    $(document).on('click', '#btn-eliminar', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Obtener la fila actual
-        let fila = $(this).closest('tr');
-        let id = fila.find('td:first').text().trim();
-        
-        
-        fetch(`{{url_eliminar}}${id}`, {
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            method: "DELETE"
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                tableInstance.row(fila).remove().draw(false);
-                
-                // Mensaje de éxito opcional
-                console.log('Registro eliminado correctamente');
-            } else if (data.status === "error") {
-                console.error(data.message);
-                alert('Error al eliminar: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al eliminar el registro');
-        });
-    });
-
-    // ========================================
-    // EDITAR - PREPARAR MODAL
-    // ========================================
-    $(document).on('click', '#btn-editar', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Obtener la fila actual
-        fila_edicion = $(this).closest('tr');
-        id_edicion = fila_edicion.find('td:first').text().trim();
-        modoEdicion = true;
-
-        // Cambiar el titulo del modal
-        document.getElementById("formModalLabel").innerHTML = `
-            <i class="fas fa-edit"></i>
-            Editar {{seccion}}
-        `;
-        document.getElementById("btnGuardarForm").textContent = `editar {{seccion}}`;
-        
-        // Aquí podrías cargar los datos actuales en el formulario
-        // cargarDatosEnFormulario(fila_edicion);
-    });
-
-    // ========================================
-    // FUNCIÓN AGREGAR
-    // ========================================
-    function agregar() {
-        fetch("{{url_crear}}", {
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            method: "POST",
-            body: new FormData(formulario)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                let fila = [];
-
-                // Tomamos todos los datos agregados
-                for (const clave in data) {
-                    if (clave !== "status") {
-                        fila.unshift(data[clave]);
-                    }
-                }
-
-                // Agregar botones de acción
-                fila.unshift(`
-                    <div class="d-flex gap-2">
-                        <button class='bj-btn bj-btn-info bj-btn-sm' id="btn-editar" 
-                                data-bs-toggle="modal" data-bs-target="#formModal" 
-                                title="Editar">
-                            <i class='fas fa-edit'></i>
-                        </button>
-                        <button class='bj-btn bj-btn-danger bj-btn-sm' id="btn-eliminar" 
-                                title="Eliminar">
-                            <i class='fa-solid fa-trash'></i>
-                        </button>
-                    </div>
-                `);
-
-                // Organizamos los elementos
-                fila.reverse();
-
-                // Agregar fila a la tabla
-                tableInstance.row.add(fila).draw(false);
-                
-                // Cerrar modal correctamente
-                cerrarModalCorrectamente('formModal');
-                
-                // Mensaje de éxito opcional
-                console.log('Registro agregado correctamente');
-            } else {
-                console.error('Error:', data.message);
-                alert('Error al agregar: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al agregar el registro');
-        })
-        .finally(() => {
-            // Re-habilitar el botón de guardar
-            document.getElementById('btnGuardarForm').disabled = false;
-        });
-    }
-
-    // ========================================
-    // FUNCIÓN EDITAR
-    // ========================================
-    function editar() {
-        fetch(`{{url_editar}}${id_edicion}`, {
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
-                'X-Requested-With': 'XMLHttpRequest',
-            },
-            body: new FormData(formulario),
-            method: "POST"
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                let fila = [];
-
-                // Tomamos todos los datos editados
-                for (const clave in data) {
-                    if (clave !== "status") {
-                        fila.unshift(data[clave]);
-                    }
-                }
-
-                // Agregar botones de acción
-                fila.unshift(`
-                    <div class="d-flex gap-2">
-                        <button class='bj-btn bj-btn-info bj-btn-sm' id="btn-editar" 
-                                data-bs-toggle="modal" data-bs-target="#formModal" 
-                                title="Editar">
-                            <i class='fas fa-edit'></i>
-                        </button>
-                        <button class='bj-btn bj-btn-danger bj-btn-sm' id="btn-eliminar" 
-                                title="Eliminar">
-                            <i class='fa-solid fa-trash'></i>
-                        </button>
-                    </div>
-                `);
-                
-                fila.reverse();
-                
-                // Actualizar la fila en la tabla
-                tableInstance.row(fila_edicion).data(fila).draw(false);
-                
-                // Cerrar modal correctamente
-                cerrarModalCorrectamente('formModal');
-                
-                // Mensaje de éxito opcional
-                console.log('Registro actualizado correctamente');
-            } else {
-                console.error('Error:', data.message);
-                alert('Error al actualizar: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error al actualizar el registro');
-        })
-        .finally(() => {
-            // Re-habilitar el botón de guardar
-            document.getElementById('btnGuardarForm').disabled = false;
-        });
-    }
-
-    // ========================================
-    // FIX ADICIONAL PARA PREVENIR ERRORES
-    // ========================================
-    document.addEventListener('DOMContentLoaded', function() {
-        // Prevenir que el foco quede atrapado en elementos ocultos
-        document.addEventListener('focusin', function(e) {
-            const modal = e.target.closest('.modal');
-            if (modal && modal.getAttribute('aria-hidden') === 'true') {
-                e.preventDefault();
-                document.body.focus();
-            }
-        });
-    });
+<script src="{% static 'scripts/gestion.js' %}" id="scriptTabla" data-eliminar="{{url_eliminar}}" data-editar="{{url_editar}}" data-seccion="{{seccion}}">
 </script>
 {% endblock %}

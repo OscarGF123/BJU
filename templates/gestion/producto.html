@@ -1,0 +1,15 @@
+{% extends "gestion/listar_base.html" %}
+
+{% block boton_crear %}
+
+    {% if field.label == "Categoría" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.categoria}}" title="Agregar nueva categoría"><i class="fas fa-plus"></i></button>
+    {% elif field.label == "Talla" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.talla}}" ><i class="fas fa-plus" title="Agregar nueva talla"></i></button>
+    {% elif field.label == "Marca" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.marca}}"><i class="fas fa-plus" title="Agregar nueva marca"></i></button>
+    {% elif field.label == "Color" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.color}}"><i class="fas fa-plus" title="Agregar nuevo color"></i></button>
+    {% endif %}
+
+{% endblock %}
