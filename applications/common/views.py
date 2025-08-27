@@ -77,10 +77,13 @@ class VistaBaseEditar(UpdateView):
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo
-        if hasattr(formulario, 'fecha_actualizacion'):
-            tiempo_local = timezone.localtime(formulario.fecha_actualizacion)
+        if hasattr(formulario, 'fecha_actualizacion') and hasattr(formulario, 'fecha_creacion'):
+            tiempo_local_actualizacion = timezone.localtime(formulario.fecha_actualizacion)
+            tiempo_local_creacion = timezone.localtime(formulario.fecha_creacion)
 
-            data["fecha_actualizacion"] = tiempo_local.strftime("%d/%m/%Y %H:%M:%S")
+            data["fecha_actualizacion"] = tiempo_local_actualizacion.strftime("%d/%m/%Y %H:%M:%S")
+
+            data["fecha_creacion"] = tiempo_local_creacion.strftime("%d/%m/%Y %H:%M:%S")
 
         response = {
             'status': 'success',
