@@ -12,3 +12,6 @@ whitenoise
 
 # servidor WSGI para aplicaciones de python (levantamiento de produccion)
 gunicorn
+
+# Libreira para las imagenes de productos
+Pillow

@@ -2,10 +2,11 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView
 
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
+from applications.common.mixins import AdminRequiredMixin, ClienteRequiredMixin
 from applications.productos.models import Marca
 from applications.productos.forms import MarcaForm
 
-class ListarMarca(ListView):
+class ListarMarca(AdminRequiredMixin, ListView):
 
     model = Marca
     template_name = "gestion/listar_base.html"

@@ -41,6 +41,7 @@ CSRF_TRUSTED_ORIGINS = ["https://bju-production.up.railway.app"]
 # Agregar la carpeta applications al Python path
 sys.path.insert(0, os.path.join(BASE_DIR, 'applications'))
 
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,13 +60,19 @@ INSTALLED_APPS = [
 
     # apps del proyecto
     'carrito_compras',
-    'clientes',
+    'usuarios',
     'envios',
     'pagos',
-    'productos'
+    'productos',
+    'login',
+
 ]
 
-
+AUTH_USER_MODEL = 'usuarios.Usuario'
+# Urls de autenticacion
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/admin/listar_productos/'
+LOGOUT_REDIRECT_URL = '/login'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -177,3 +184,21 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Configuración de email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_TLS = True if os.getenv('EMAIL_USE_TLS') == 'True' else False
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+# # Para desarrollo
+# if DEBUG:
+#     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Configuración general
+SITE_NAME = 'BOX JEANS URBAN'

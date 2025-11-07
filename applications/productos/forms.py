@@ -1,6 +1,6 @@
 from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm
 
-from applications.productos.models import Producto, Categoria, Talla, Marca, Color
+from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagenes
 
 # la clase AtributoProductoForm es para que las clases Categoria, Talla, Marca y Color hereden esta clase
 # por que me da pereza escribir el mismo codigo varias veces
@@ -91,6 +91,11 @@ class ProductoForm(ModelForm):
             'marca': 'Marca',
             'color': 'Color'
         }
+
+class ImagenForm(ModelForm):
+    class Meta:
+        model = Imagenes
+        fields = '__all__'
 
 class CategoriaForm(AtributoProductoForm):
 

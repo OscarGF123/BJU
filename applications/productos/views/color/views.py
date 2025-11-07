@@ -1,11 +1,12 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
+from applications.common.mixins import AdminRequiredMixin
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
 from applications.productos.models import Color
 from applications.productos.forms import ColorForm
 
-class ListarColor(ListView):
+class ListarColor(AdminRequiredMixin, ListView):
 
     model = Color
     template_name = "gestion/listar_base.html"

@@ -5,7 +5,7 @@
 <body class="boxjeans-dashboard">
     </div>
 
-    <main class="config-sidebar">
+    <main class="config-sidebar" >
         <div class="body-sidebar">
             <!-- Header -->
             <header class="bj-header-sidebar">
@@ -32,7 +32,7 @@
                     <a class="bj-icons-header" href="#" title="Ayuda">
                         <i class="fa-solid fa-question-circle"></i>
                     </a>
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario">
+                    <a href="/logout"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario"></a>
                 </div>
             </header>
 
@@ -46,16 +46,57 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="#">
+                        <li class="menu-item has-submenu" data-page="productos">
+                            <a href="#" class="submenu-toggle">
                                 <i class="fa-solid fa-tshirt"></i>
                                 <span>Productos</span>
+                                <span class="arrow">▼</span>
                             </a>
+                            <ul class="submenu">
+                                <li data-subpage="productos">
+                                    <a href="{% url 'productos:listar_producto' %}">
+                                        <i class="fa-solid fa-shirt"></i>
+                                        <span>Listar Productos</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="marcas">
+                                    <a href="{% url 'productos:listar_marca' %}">
+                                        <i class="fa-solid fa-copyright"></i>
+                                        <span>Marcas</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="color">
+                                    <a href="{% url 'productos:listar_color' %}">
+                                        <i class="fa-solid fa-palette"></i>
+                                        <span>Colores</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="talla">
+                                    <a href="{% url 'productos:listar_talla' %}">
+                                        <i class="fa-solid fa-ruler"></i>
+                                        <span>Talla</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="categoria">
+                                    <a href="{% url 'productos:listar_categoria' %}">
+                                        <i class="fa-solid fa-layer-group"></i>
+                                        <span>Categoria</span>
+                                    </a>
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <a href="#">
-                                <i class="fa-solid fa-shopping-cart"></i>
-                                <span>Ventas</span>
+                            <a href="{% url 'usuarios:listar_usuario' %}">
+                                <i class="fa-solid fa-user"></i>
+                                <span>Usuarios</span>
                             </a>
                         </li>
                         <li>

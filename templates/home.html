@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="{% static 'DataTable/jquery.dataTables.min.css'%}">
     <link rel="stylesheet" href="{% static 'DataTable/responsive.dataTables.min.css' %}">
     <link rel="stylesheet" href="{% static 'DataTable/buttons.dataTables.min.css' %}">
+
+    <!-- SweetAlert 2 CSS -->
+    <link rel="stylesheet" href="{% static 'SweetAlert2/sweetalert2.min.css' %}">
     
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{% static 'bootstrap-5.3.7-dist/css/bootstrap.min.css' %}">
@@ -32,6 +35,9 @@
 
     <!-- Estilo del menu lateral -->
     <link rel="stylesheet" href="{% static 'styles/barra_lateral/style.css' %}">
+
+    <!-- Estilos del login -->
+     <link rel="stylesheet" href="{% static 'styles/login/login.css' %}">
     
     <!-- JQuery-->
     <script src="{% static 'JQuery/jquery-3.7.1.min.js' %}"></script>
@@ -42,9 +48,14 @@
     <script src="{% static 'DataTable/dataTables.buttons.min.js' %}"></script>
     <script src="{% static 'bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js' %}"></script>
 
+    <!-- Scripts SweetAlert 2 -->
+    <script src="{% static 'SweetAlert2/sweetalert2.all.min.js' %}"></script>
+
+    <!--Script de funciones globales -->
+    <script src="{% static 'scripts/pagina_principal/funciones_globales.js' %}"></script>
+
 </head>
 
 {% block body %}{% endblock %}
-{% block javascript_home %}{% endblock %}
 
 </html>
