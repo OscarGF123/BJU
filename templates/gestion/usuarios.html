@@ -1,0 +1,42 @@
+{% extends "gestion/listar_base.html" %}
+{% load custom_tags %}
+
+{% block filas %}
+    {% for modelo in object_list %}
+        <tr id="{{modelo.id}}">
+            <td>{{modelo.id}}</td>
+            <td>{{modelo.username}}</td>
+            <td>{{modelo.email}}</td>
+            <td>{{modelo.first_name}}</td>
+            <td>{{modelo.last_name}}</td>
+            <td>{{modelo.tipo_identificacion}}</td>
+            <td>{{modelo.numero_identificacion}}</td>
+            <td>{{modelo.direccion}}</td>
+            <td>{% obtener_atributo modelo "fecha_nacimiento" %}</td>
+            <td>{{modelo.rol}}</td>
+            <td>{% obtener_atributo modelo "fecha_registro" %}</td>
+            <td>{{modelo.activo}}</td>
+            <td>{{modelo.historial_compras}}</td>
+            <td>{{modelo.nivel_admin}}</td>
+            <td>{{modelo.modulos_acceso}}</td>
+            <td>
+                <button class='bj-btn bj-btn-info bj-btn-sm' id="btn-editar" value="{{url_editar}}" data-bs-toggle="modal" data-bs-target="#formModal" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class='bj-btn bj-btn-danger bj-btn-sm' id="btn-eliminar" value="{{url_eliminar}}" data-value="{{modelo.id}}" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block boton_crear %}
+
+    {% if field.label == "Tipo de Identificación" %}
+
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.tipo_identificacion}}" data-name="tipo_identificacion" title="Agregar nueva categoría"><i class="fas fa-plus"></i></button>
+
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends "home.html" %}
+{% load static %}
+{% block body %}
+    <body class="body-login">
+        <!-- ========================================
+            HEADER
+            ======================================== -->
+        <header class="header-login">
+            <nav class="nav-container">
+                <a href="#" class="logo">Box Jeans Urban</a>
+                <a href="#" class="back-btn">← Tienda</a>
+            </nav>
+        </header>
+
+        <!-- ========================================
+            MAIN CONTENT - LAYOUT RESPONSIVO
+            ======================================== -->
+        <main class="main-content">
+            <!-- ========================================
+                SECCIÓN LOGIN
+                ======================================== -->
+            {% block login_main %}            
+            <section class="login-section">
+                <div class="login-container">
+                    <h1 class="login-title">Iniciar Sesión</h1>
+                    <p class="login-subtitle">Accede a tu cuenta urbana</p>
+                    
+                    <form id="loginForm" method="POST">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            {% for field in form.visible_fields %}
+                                {{field}}
+                                <br></br>
+                            {% endfor %}
+                        </div>
+                        <div class="form-options">
+                            <label class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                Recordarme
+                            </label>
+                            <a href="{% url 'login:password_reset_request' %}" class="forgot-password">¿Olvidaste tu contraseña?</a>
+                        </div>
+
+                        <button type="submit" class="login-btn" id="loginBtn">
+                            Iniciar Sesión
+                        </button>
+                    </form>
+
+                    <div class="social-login">
+                        <p class="social-title">O inicia sesión con</p>
+                        <div class="social-buttons">
+                            <button class="social-btn" onclick="socialLogin('google')">
+                                📧 Google
+                            </button>
+                            <button class="social-btn" onclick="socialLogin('facebook')">
+                                📘 Facebook
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="register-link">
+                        ¿No tienes cuenta?<br>
+                        <a href="{% url 'login:registro' %}">Regístrate aquí</a>
+                    </p>
+                </div>
+            </section>
+
+            <!-- ========================================
+                SECCIÓN CARRUSEL DE IMÁGENES
+                ======================================== -->
+            <section class="images-section" id="carousel-section">
+                <div class="image-carousel">
+                    <!-- Slide 1: Jeans -->
+                    <div class="carousel-slide active">
+                        <div class="slide-image">👖</div>
+                        <h3 class="slide-title">Jeans Urbanos</h3>
+                        <p class="slide-description">
+                            Descubre nuestra colección de jeans premium con cortes modernos y estilo único.
+                        </p>
+                    </div>
+
+                    <!-- Slide 2: Sudaderas -->
+                    <div class="carousel-slide">
+                        <div class="slide-image">🧥</div>
+                        <h3 class="slide-title">Sudaderas Street</h3>
+                        <p class="slide-description">
+                            Comodidad y estilo se fusionan en nuestras sudaderas diseñadas para la vida urbana.
+                        </p>
+                    </div>
+
+                    <!-- Slide 3: Ofertas -->
+                    <div class="carousel-slide">
+                        <div class="slide-image">🏷️</div>
+                        <h3 class="slide-title">Ofertas Especiales</h3>
+                        <p class="slide-description">
+                            No te pierdas nuestras promociones exclusivas con descuentos de hasta 50%.
+                        </p>
+                    </div>
+
+                    <!-- Slide 4: Estilo -->
+                    <div class="carousel-slide">
+                        <div class="slide-image">✨</div>
+                        <h3 class="slide-title">Estilo Único</h3>
+                        <p class="slide-description">
+                            Box Jeans Urban: donde la moda urbana cobra vida con piezas exclusivas.
+                        </p>
+                    </div>
+
+                    <!-- Indicadores del carrusel -->
+                    <div class="carousel-indicators">
+                        <div class="indicator active" onclick="goToSlide(0)" aria-label="Slide 1"></div>
+                        <div class="indicator" onclick="goToSlide(1)" aria-label="Slide 2"></div>
+                        <div class="indicator" onclick="goToSlide(2)" aria-label="Slide 3"></div>
+                        <div class="indicator" onclick="goToSlide(3)" aria-label="Slide 4"></div>
+                    </div>
+                </div>
+            </section>
+            {% endblock %}
+        </main>
+
+        <!-- ========================================
+            FOOTER
+            ======================================== -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 Box Jeans Urban. Todos los derechos reservados.</p>
+            </div>
+        </footer>
+
+        {% block script_login %}
+            <script
+                id="scriptLogin" 
+                src="{% static 'scripts/login/login.js' %}"
+                data-urlLogin="{{url_login}}"
+            ></script>
+        {% endblock %}
+    </body>
+{% endblock %}

@@ -163,9 +163,10 @@ function agregar(url, agregarFila) {
     })
     .then(response => response.json())
     .then(data => {
+        console.log(data);
         if (data.status === "success" && agregarFila) {
             let fila = [];
-            // Tomamos todos los datos registrados exitosamente
+            // Tomamos todos los datos registrados Éxitosamente
             for (const clave in data) {
                 if (clave !== "status") {
                     fila.unshift(data[clave]);
@@ -191,21 +192,24 @@ function agregar(url, agregarFila) {
             // Cerrar modal correctamente
             cerrarModalCorrectamente('formModal');
             
-            // Mensaje de éxito opcional
-            console.log('Registro agregado correctamente');
-        } else if (data.status==="success" && !agregarFila){
+            // Alerta
+            Swal.fire({
+                title: `Éxito!`,
+                text: `${seccion} Agregad@ Éxitosamente`,
+                icon: 'success'
+            });
+        } else if (data.status==="success" && !agregarFila){ 
 
-            // Obtener el nombre del modelo desde el titulo
-            let modelo = document.querySelector(".modal-title").textContent
-            .trim() // quitar espacios y saltos de linea del titulo
-            .replace("Agregar", '') // quitar "Agregar" del titulo
-            .trim() // quitar espacios restantes
-            .toLowerCase(); // pasar el resultado a minusculas
+            // en este else if lo que hace es agregar un nuevo registro sin agregarlo a la tabla
+
+            // Obtener el nombre del modelo
+            modelo = document.querySelector("#btnGuardarForm").dataset.modelo
+            console.log(modelo);
 
             // regresar al formulario original
             formulario.innerHTML = formularioOriginal;
 
-            const select = document.querySelector(`#id_${modelo}`);
+            const select = document.querySelector(`#${modelo}`);
             let opciones = [];
 
             // tomamos toda la informacion registrada que se obtuvo
@@ -235,15 +239,45 @@ function agregar(url, agregarFila) {
             <i class="fas fa-plus"></i>
             Agregar ${seccion}
             `
+            Swal.fire({
+                title: `Éxito!`,
+                text: `${seccion} Agregad@ Éxitosamente`,
+                icon: 'success'
+            });
+        } else if(data.status == 'error' && data.type == 'form_invalid'){ // Error en el formulario
+            document.getElementById('btnGuardarForm').disabled = false
+            // Construir el html con los errores
+            let errorMessage = '<ul>';
+            for (const [field, messages] of Object.entries(data.errors)) {
+                errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
+            }
+            errorMessage += '</ul>';
+            Swal.fire({
+                title: 'Error',
+                html: `Error en los siguientes campos:<br>${errorMessage}`,
+                icon: 'error'
+            })
+            console.error('Error:', data.errros);
         } else {
-            console.error('Error:', data.message);
-            alert('Error al agregar: ' + data.message);
+            // evitar errores con el aria-hidden
+
+            let focusedElement = document.querySelector(':focus');
+            if (focusedElement) {
+                focusedElement.blur();
+            }
+            handlePermissionError(data);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error al agregar el registro');
-    })
+        document.getElementById('btnGuardarForm').disabled = false;
+
+        Swal.fire({
+            title: 'Error',
+            text: `Ha ocurrido un error inesperado ${error}`,
+            icon: 'error'
+        })
+    });
 
 }
 
@@ -292,14 +326,38 @@ function editar() {
             
             // Mensaje de éxito opcional
             console.log('Registro actualizado correctamente');
+            Swal.fire({
+                title: '¡Éxito!',
+                text: 'Se ha editado correctamente',
+                icon: 'success',
+            });
+        } else if (data.status === 'error' && data.type == 'form_invalid'){
+            document.getElementById('btnGuardarForm').disabled = false;
+
+            // Estructurar los errores
+            let errorMessage = '<ul>';
+
+            for (const [field, messages] of Object.entries(data.errors)) {
+                errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
+            }
+            errorMessage += '</ul>';
+
+            Swal.fire({
+                title: '¡Error!',
+                icon: 'error',
+                text: `Ha ocurrido un error al editar el registro\n${errorMessage}`
+            });
         } else {
-            console.error('Error:', data.message);
-            alert('Error al actualizar: ' + data.message);
+            console.log('Ocurrio un error en el backend');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Error al actualizar el registro');
+        document.getElementById('btnGuardarForm').disabled = false
+        Swal.fire({
+            title: '¡Error!',
+            icon: 'error',
+            text: `Ha ocurrido un error inesperado\n${error}`
+        });
     })
 
 }
@@ -328,17 +386,27 @@ $(document).on('click', '#btn-eliminar', function(e) {
     .then(data => {
         if (data.status === "success") {
             tableInstance.rows(`#${data.id}`).remove().draw(false);
-            
-            // Mensaje de éxito opcional
-            console.log('Registro eliminado correctamente');
-        } else if (data.status === "error") {
-            console.error(data.message);
-            alert('Error al eliminar: ' + data.message);
+            Swal.fire({
+                title: '!Éxito!',
+                icon: 'success',
+                text: 'El registro se ha eliminado correctamente',
+            });
+        } else if (data.status === "error" && data.tyoe === 'form_invalid') {
+            Swal.fire({
+                title: '¡Error!',
+                icon: 'error',
+                text: `No se ha podido eliminar el registro\n${data.error}`
+            });
+        } else {
+            console.log('Error en el backend');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Error al eliminar el registro');
+        Swal.fire({
+            title: '¡Error!',
+            icon: 'error',
+            text: `Ha ocurrido un error inesperado\n${error}`
+        });
     });
 });
 
@@ -432,7 +500,7 @@ $(document).on('click', '#btn-editar', function(e) {
     id_edicion = datosCompletos[0];
     
     // Obtener todos los campos del formulario
-    const campos = $('#formulario').find('input, textarea, select').not('[type="hidden"]');
+    const campos = $('#formulario').find('input, textarea, select').not('[type="hidden"]').not('[type="password"]');
     
     // Mapear datos a campos (empezando desde índice 1 porque 0 es el ID)
     let indiceDato = 1;
@@ -524,6 +592,19 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.focus();
         }
     });
+    const submenuToggles = document.querySelectorAll('.submenu-toggle');
+    
+    submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const parent = this.closest('.menu-item');
+            const isOpen = parent.classList.contains('open');
+            
+            console.log('Toggle submenu:', isOpen ? 'Cerrar' : 'Abrir');
+            
+            parent.classList.toggle('open');
+        });
+    });
 });
 
 //=================================
@@ -549,7 +630,7 @@ $(document).on('click', "#formAdicional", function(e){
     formulario.innerHTML = `${objeto.formulario}
     <div class="modal-footer">
         <button type="button" class="bj-btn bj-btn-secondary" id="regresarFormulario">Regresar</button>
-        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
+        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" data-modelo="${objeto.id_select}" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
     </div>
     `
     // Cambiar titulo

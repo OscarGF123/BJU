@@ -4,6 +4,8 @@ from django.forms.models import model_to_dict
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.generic import CreateView, UpdateView, DeleteView
 
+from applications.common.mixins import AdminRequiredMixin
+
 def get_display_data(instance):
     """
     Convierte un modelo a dict con FKs como texto legible
@@ -47,18 +49,21 @@ class VistaBaseCrear(CreateView):
         }
         
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            print(f"enviado {response}")
             return JsonResponse(response, encoder=DjangoJSONEncoder, status=200)
     
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        print("ta mal XD")
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             errors = {}
             for field, error_list in form.errors.items():
                 errors[field] = [str(error) for error in error_list]
             return JsonResponse({
                 'status': 'error',
-                'errors': errors
+                'type': 'form_invalid',
+                'message': errors
             }, status=400)
         return super().form_invalid(form)
 
@@ -77,10 +82,13 @@ class VistaBaseEditar(UpdateView):
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo
-        if hasattr(formulario, 'fecha_actualizacion'):
-            tiempo_local = timezone.localtime(formulario.fecha_actualizacion)
+        if hasattr(formulario, 'fecha_actualizacion') and hasattr(formulario, 'fecha_creacion'):
+            tiempo_local_actualizacion = timezone.localtime(formulario.fecha_actualizacion)
+            tiempo_local_creacion = timezone.localtime(formulario.fecha_creacion)
 
-            data["fecha_actualizacion"] = tiempo_local.strftime("%d/%m/%Y %H:%M:%S")
+            data["fecha_actualizacion"] = tiempo_local_actualizacion.strftime("%d/%m/%Y %H:%M:%S")
+
+            data["fecha_creacion"] = tiempo_local_creacion.strftime("%d/%m/%Y %H:%M:%S")
 
         response = {
             'status': 'success',
@@ -99,7 +107,8 @@ class VistaBaseEditar(UpdateView):
                 errors[field] = [str(error) for error in error_list]
             return JsonResponse({
                 'status': 'error',
-                'errors': errors
+                'type': 'form_invalid',
+                'message': errors
             }, status=400)
         return super().form_invalid(form)
 
@@ -117,5 +126,7 @@ class VistaBaseEliminar(DeleteView):
             return JsonResponse({"status": "success", "id": id})
         except Exception as e:
 
-            return JsonResponse({"status": "error", "message": f"error al eliminar categoria:\n{e}"}, 400)
+            return JsonResponse({"status": "error", 'type': 'form_invalid', "error": e}, 400)
+
+
     

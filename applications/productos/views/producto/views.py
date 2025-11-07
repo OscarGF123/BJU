@@ -5,10 +5,11 @@ from django.views.generic import ListView
 
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
 from applications.productos.forms import ColorForm, TallaForm, MarcaForm, CategoriaForm
+from applications.common.mixins import AdminRequiredMixin
 from applications.productos.models import Producto
 from applications.productos.forms import ProductoForm
 
-class ListarProducto(ListView):
+class ListarProducto(AdminRequiredMixin, ListView):
 
     model = Producto
     template_name = "gestion/producto.html"
@@ -50,16 +51,16 @@ class ListarProducto(ListView):
         context["url_editar"] = reverse_lazy("productos:editar_producto", kwargs={'pk': 0})
         return context
 
-class CrearProducto(VistaBaseCrear):
+class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
 
     model = Producto
     form_class = ProductoForm
 
-class EditarProducto(VistaBaseEditar):
+class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
 
     model = Producto
     form_class = ProductoForm
 
-class EliminarProducto(VistaBaseEliminar):
+class EliminarProducto(AdminRequiredMixin, VistaBaseEliminar):
 
     model = Producto

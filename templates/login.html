@@ -17,5 +17,13 @@
         <p>Bienvenido {{ user.username }}</p>
         <a href="{% url 'account_logout' %}">Cerrar sesión</a>
     {% endif %}
+
+    <script>
+        Swal.fire({
+            title: 'Hola Eminem',
+            text: 'ora si',
+            icon: 'success'
+        });
+    </script>
 </body>
 </html>

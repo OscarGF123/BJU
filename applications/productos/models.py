@@ -83,8 +83,8 @@ class PromocionProducto(models.Model):
     producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT)
     promocion = models.ForeignKey(Promocione, on_delete=models.PROTECT)
 
-class Imagene(models.Model):
+class Imagenes(models.Model):
     producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT)
-    link_imagen = models.CharField(max_length=200, verbose_name="Imagen")
+    link_imagen = models.ImageField(upload_to='productos/')
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")

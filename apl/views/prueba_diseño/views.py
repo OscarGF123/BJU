@@ -23,3 +23,15 @@ class PruebaDiseno4View(View):
     def get(self, request):
 
         return render(request, "BJU(Prueba)/prueba4.html")
+    
+class PruebaDisenoLoginView(View):
+    
+    def get(self, request):
+
+        return render(request, 'BJU(Prueba)/login.html')
+    
+class SweetAlertView(View):
+
+    def get(self, request):
+        return render(request, 'BJU(prueba)/alertas.html')
+

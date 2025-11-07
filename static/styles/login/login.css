@@ -1,0 +1,730 @@
+
+/* ========================================
+    ESTILOS GLOBALES Y RESET
+    ======================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.body-login {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+    HEADER - MOBILE FIRST
+    ======================================== */
+.header-login {
+    background: rgba(26, 26, 26, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 0;
+    border-bottom: 2px solid #dc3545;
+    position: relative;
+    z-index: 100;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+    max-width: 100%;
+}
+
+.logo {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #dc3545;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px rgba(220, 53, 69, 0.8);
+}
+
+.back-btn {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    border: none;
+    padding: 0.6rem 1rem;
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.8rem;
+    touch-action: manipulation;
+}
+
+.back-btn:hover,
+.back-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.5);
+}
+
+/* ========================================
+    MAIN CONTENT - MOBILE FIRST
+    ======================================== */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 120px);
+}
+
+/* ========================================
+    SECCIÓN LOGIN - MOBILE FIRST
+    ======================================== */
+.login-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95), rgba(45, 45, 45, 0.95));
+    backdrop-filter: blur(10px);
+    order: 1;
+}
+
+.login-container {
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    width: 100%;
+    max-width: 380px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #dc3545, #ffffff, #dc3545);
+    animation: loginGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes loginGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.login-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, #ffffff, #dc3545);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.login-subtitle {
+    text-align: center;
+    color: #cccccc;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+}
+
+/* ========================================
+    SECCIÓN IMÁGENES - MOBILE FIRST
+    ======================================== */
+.images-section {
+    width: 100%;
+    min-height: 300px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(0, 0, 0, 0.3));
+    order: 2;
+}
+
+.image-carousel {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.carousel-slide {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transform: scale(0.8) translateX(50px);
+    transition: all 1s ease-in-out;
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    padding: 1rem;
+    text-align: center;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+}
+
+.slide-image {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(45deg, #333, #555);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.slide-image::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+.slide-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #dc3545;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+}
+
+.slide-description {
+    color: #cccccc;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    max-width: 280px;
+}
+
+/* Indicadores del carrusel - Solo puntos limpios */
+.carousel-indicators {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.8rem;
+    z-index: 15;
+}
+
+.indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    position: relative;
+}
+
+/* Área táctil invisible más grande */
+.indicator::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: -12px;
+    right: -12px;
+    bottom: -12px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.indicator.active {
+    background: #dc3545;
+    transform: scale(1.4);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.8);
+}
+
+.indicator:hover {
+    background: rgba(220, 53, 69, 0.7);
+    transform: scale(1.2);
+}
+
+/* ========================================
+    ESTILOS DEL FORMULARIO - MOBILE OPTIMIZED
+    ======================================== */
+.form-group {
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ffffff;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 1rem;
+    background: rgba(45, 45, 45, 0.8);
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    touch-action: manipulation;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #dc3545;
+    box-shadow: 0 0 15px rgba(220, 53, 69, 0.3);
+    transform: translateY(-2px);
+}
+
+.form-input::placeholder {
+    color: #999;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover,
+.password-toggle:active {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cccccc;
+    font-size: 0.85rem;
+    touch-action: manipulation;
+}
+
+.remember-me input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #dc3545;
+    touch-action: manipulation;
+}
+
+.forgot-password {
+    color: #dc3545;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+}
+
+.forgot-password:hover,
+.forgot-password:active {
+    text-shadow: 0 0 10px rgba(220, 53, 69, 0.8);
+    transform: translateY(-1px);
+}
+
+.login-btn {
+    width: 100%;
+    background: linear-gradient(45deg, #dc3545, #000000);
+    color: white;
+    padding: 1.2rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+    margin-bottom: 1.2rem;
+    touch-action: manipulation;
+    min-height: 48px;
+}
+
+.login-btn:hover,
+.login-btn:active {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(220, 53, 69, 0.6);
+}
+
+.social-login {
+    text-align: center;
+    margin-bottom: 1.2rem;
+}
+
+.social-title {
+    color: #cccccc;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.social-title::before,
+.social-title::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #dc3545, transparent);
+}
+
+.social-title::before {
+    left: 0;
+}
+
+.social-title::after {
+    right: 0;
+}
+
+.social-buttons {
+    display: flex;
+    gap: 0.8rem;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.social-btn {
+    padding: 1rem;
+    border: 2px solid rgba(220, 53, 69, 0.3);
+    background: rgba(45, 45, 45, 0.8);
+    color: #ffffff;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    touch-action: manipulation;
+    min-height: 48px;
+}
+
+.social-btn:hover,
+.social-btn:active {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+    transform: translateY(-2px);
+}
+
+.register-link {
+    text-align: center;
+    color: #cccccc;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.register-link a {
+    color: #dc3545;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+}
+
+.register-link a:hover,
+.register-link a:active {
+    text-shadow: 0 0 10px rgba(220, 53, 69, 0.8);
+}
+
+/* ========================================
+    FOOTER - MOBILE OPTIMIZED
+    ======================================== */
+.footer {
+    background: linear-gradient(135deg, #000000, #1a1a1a);
+    padding: 1rem;
+    border-top: 2px solid #dc3545;
+    text-align: center;
+}
+
+.footer-content {
+    color: #999;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+/* ========================================
+    ANIMACIONES OPTIMIZADAS PARA MÓVIL
+    ======================================== */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-container {
+    animation: fadeInUp 0.6s ease;
+}
+
+/* Efecto de carga en el botón */
+.login-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.login-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid transparent;
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ========================================
+    TABLET RESPONSIVE (768px+)
+    ======================================== */
+@media (min-width: 768px) {
+    .header {
+        padding: 1rem 0;
+    }
+
+    .nav-container {
+        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .logo {
+        font-size: 1.5rem;
+        letter-spacing: 2px;
+    }
+
+    .back-btn {
+        padding: 0.8rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        flex-direction: row;
+    }
+
+    .login-section {
+        width: 50%;
+        padding: 2rem;
+        border-right: 3px solid rgba(220, 53, 69, 0.3);
+        order: 1;
+    }
+
+    .images-section {
+        width: 50%;
+        min-height: calc(100vh - 140px);
+        order: 2;
+    }
+
+    .login-container {
+        padding: 2rem;
+        max-width: 420px;
+    }
+
+    .login-title {
+        font-size: 2rem;
+    }
+
+    .image-carousel {
+        min-height: calc(100vh - 140px);
+    }
+
+    .carousel-slide {
+        width: 85%;
+        height: 85%;
+        padding: 2rem;
+    }
+
+    .slide-image {
+        width: 150px;
+        height: 150px;
+        font-size: 3.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .slide-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .slide-description {
+        font-size: 1rem;
+        max-width: 320px;
+    }
+
+    .social-buttons {
+        flex-direction: row;
+    }
+
+    .form-options {
+        flex-wrap: nowrap;
+    }
+}
+
+/* ========================================
+    DESKTOP RESPONSIVE (1024px+)
+    ======================================== */
+@media (min-width: 1024px) {
+    .login-section {
+        width: 45%;
+        padding: 3rem;
+    }
+
+    .images-section {
+        width: 55%;
+    }
+
+    .login-container {
+        padding: 2.5rem;
+        max-width: 450px;
+    }
+
+    .login-title {
+        font-size: 2.2rem;
+    }
+
+    .login-subtitle {
+        font-size: 1rem;
+    }
+
+    .carousel-slide {
+        width: 80%;
+        height: 80%;
+    }
+
+    .slide-image {
+        width: 180px;
+        height: 180px;
+        font-size: 4rem;
+        margin-bottom: 2rem;
+    }
+
+    .slide-title {
+        font-size: 1.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .slide-description {
+        font-size: 1.1rem;
+        max-width: 350px;
+    }
+}
+
+/* ========================================
+    GESTOS TÁCTILES PARA CARRUSEL
+    ======================================== */
+.images-section {
+    touch-action: pan-y;
+}
+
+/* Mejorar rendimiento en móviles */
+.carousel-slide,
+.login-container,
+.form-input,
+.login-btn {
+    will-change: transform;
+}
+
+/* Evitar zoom en inputs en iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .form-input {
+        font-size: 16px;
+    }
+}
