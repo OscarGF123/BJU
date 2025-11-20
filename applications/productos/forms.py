@@ -1,6 +1,7 @@
-from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm
+from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput
+from django.utils.safestring import mark_safe
 
-from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagenes
+from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen
 
 # la clase AtributoProductoForm es para que las clases Categoria, Talla, Marca y Color hereden esta clase
 # por que me da pereza escribir el mismo codigo varias veces
@@ -92,10 +93,37 @@ class ProductoForm(ModelForm):
             'color': 'Color'
         }
 
+from django.forms import ModelForm, Select, FileInput
+from .models import Imagen
+
 class ImagenForm(ModelForm):
     class Meta:
-        model = Imagenes
+        model = Imagen
         fields = '__all__'
+        widgets = {
+            'producto_id': Select(
+                attrs={'class': 'bj-form-control'}
+            ),
+            'link_imagen': FileInput(
+                attrs={
+                    'class': 'bj-form-control',
+                    'accept': 'image/*'
+                }
+            )
+        }
+        labels = {  # ojo: es 'labels', no 'label'
+            'link_imagen': 'Imagen del Producto'
+        }
+
+    def __init__(self, *args, excluir_campos=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        # excluir_campos puede ser una lista de nombres de campos
+        if excluir_campos:
+            for campo in excluir_campos:
+                if campo in self.fields:
+                    del self.fields[campo]
+
 
 class CategoriaForm(AtributoProductoForm):
 
