@@ -2,12 +2,24 @@ import json
 
 from django.urls import reverse_lazy
 from django.views.generic import ListView
+from django.forms import inlineformset_factory
 
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
 from applications.productos.forms import ColorForm, TallaForm, MarcaForm, CategoriaForm
 from applications.common.mixins import AdminRequiredMixin
-from applications.productos.models import Producto
-from applications.productos.forms import ProductoForm
+from applications.productos.models import Producto, Imagen
+from applications.productos.forms import ProductoForm, ImagenForm
+
+ImagenFormSet = inlineformset_factory(
+    Producto,
+    Imagen,
+    form=ImagenForm,
+    min_num=1,
+    extra=0,
+    can_delete=False,
+    validate_min=True,
+    validate_max=False
+)
 
 class ListarProducto(AdminRequiredMixin, ListView):
 
@@ -16,6 +28,16 @@ class ListarProducto(AdminRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # Si es GET, creamos formset vacío
+        if self.request.POST:
+            context['imagen_formset'] = ImagenFormSet(
+                self.request.POST, 
+                self.request.FILES,
+                instance=self.object
+            )
+        else:
+            context['imagen_formset'] = ImagenFormSet(instance=self.object)
+
         context['seccion_plural'] = "Productos"
         context['seccion'] = "Producto"
         context['formulario'] = ProductoForm()
@@ -55,6 +77,26 @@ class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
 
     model = Producto
     form_class = ProductoForm
+
+    def form_valid(self, form):
+        imagen_formset = ImagenFormSet(self.request.POST, self.request.FILES)
+        
+        # Validar el formset también
+        if imagen_formset.is_valid():
+            # Guardar el producto primero
+            self.object = form.save()
+            
+            # Vincular el formset al producto recién creado
+            imagen_formset.instance = self.object
+            
+            # Guardar todas las imágenes
+            imagen_formset.save()
+            
+            # Retornar respuesta exitosa
+            return super().form_valid(form)
+        else:
+            # Si el formset es inválido, mostrar errores
+            return self.form_invalid(form)
 
 class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
 
