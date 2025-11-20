@@ -11,4 +11,5 @@ env/
 
 # ignora el archivo de pruebas basicas
 prueba.py
+prueba.js
 
