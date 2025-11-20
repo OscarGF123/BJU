@@ -166,10 +166,25 @@ function agregar(url, agregarFila) {
         console.log(data);
         if (data.status === "success" && agregarFila) {
             let fila = [];
+            
+            let re = /(?:\.([^.]+))?$/;
+
+            let extensionesValidas = ['jpg', 'png']
             // Tomamos todos los datos registrados Éxitosamente
             for (const clave in data) {
                 if (clave !== "status") {
-                    fila.unshift(data[clave]);
+                    if (extensionesValidas.some(extension => extension === re.exec(data[clave])[1])){
+                        console.log('Hola');
+                        fila.unshift(`
+                                <td>
+                                    <span data-bs-toggle="modal" data-bs-target="#infoModal" onclick="mostrarImagen('/media/${data[clave]}')">
+                                        <a href="#">${data[clave]}</a>
+                                    </span>
+                                </td>
+                            `);
+                    } else {
+                        fila.unshift(data[clave]);
+                    }
                 }
             }
 
@@ -299,10 +314,26 @@ function editar() {
         if (data.status === "success") {
             let fila = [];
 
+            let re = /(?:\.([^.]+))?$/;
+
+            let extensionesValidas = ['jpg', 'png']
+
             // Tomamos todos los datos editados
             for (const clave in data) {
                 if (clave !== "status") {
-                    fila.unshift(data[clave]);
+                    if (extensionesValidas.some(extension => extension === re.exec(data[clave])[1])){
+                        console.log('Hola');
+                        fila.unshift(`
+                                <td>
+                                    <span data-bs-toggle="modal" data-bs-target="#infoModal" onclick="mostrarImagen('/media/${data[clave]}')">
+                                        <a href="#">${data[clave]}</a>
+                                    </span>
+                                </td>
+                            `);
+                    } else {
+                        fila.unshift(data[clave]);
+                    }
+
                 }
             }
 
@@ -537,7 +568,7 @@ $(document).on('click', '#btn-editar', function(e) {
             } else if (this.type === 'number') {
                 // Limpiar caracteres no numéricos
                 this.value = valor.replace(/[^0-9.-]/g, '');
-            } else {
+            } else if (this.type === 'text' || this.type === 'textarea'){
                 this.value = valor;
             }
             
@@ -676,4 +707,9 @@ function guardarFormularioConValores() {
     });
     
     return formulario.outerHTML;
+}
+
+function mostrarImagen(linkImagen) {
+    document.getElementById('modalImagen').src=linkImagen;
+
 }
