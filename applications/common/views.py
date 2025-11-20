@@ -55,7 +55,6 @@ class VistaBaseCrear(CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("ta mal XD")
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             errors = {}
             for field, error_list in form.errors.items():
@@ -63,7 +62,7 @@ class VistaBaseCrear(CreateView):
             return JsonResponse({
                 'status': 'error',
                 'type': 'form_invalid',
-                'message': errors
+                'errors': errors
             }, status=400)
         return super().form_invalid(form)
 
@@ -108,7 +107,7 @@ class VistaBaseEditar(UpdateView):
             return JsonResponse({
                 'status': 'error',
                 'type': 'form_invalid',
-                'message': errors
+                'errors': errors
             }, status=400)
         return super().form_invalid(form)
 
