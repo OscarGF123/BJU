@@ -2,7 +2,7 @@
 __pycache__/
 migrations/
 staticfiles/
-
+media/
 # ignora entornos virtuales
 env/
 
