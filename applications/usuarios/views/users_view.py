@@ -31,10 +31,6 @@ class ListarUsuarios(ListView):
                 "url": str(reverse_lazy("usuarios:crear_tipo_identificacion"))
             })
         }
-
-        # excluir campos
-        campos_excluidos = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'preferencias', 'conf_contrasena']
-
         # campos de la tabla
         context['campos'] =  [
             'id', 'Usuario', 'email', 'Nombre', 'Apellido', 'Tipo Identificación', 'Numero Identificación',
