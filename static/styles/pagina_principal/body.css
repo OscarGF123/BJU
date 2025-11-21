@@ -1,0 +1,308 @@
+/* ========================================
+    BOX JEANS URBAN - BODY/MAIN CONTENT (SIN CONFLICTOS)
+    Prefijo: .bju- (Box Jeans Urban)
+    ======================================== */
+
+/* Hero Section */
+.bju-hero {
+    height: 100vh !important;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(220, 53, 69, 0.3)), 
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><pattern id="urbanPattern" patternUnits="userSpaceOnUse" width="60" height="60"><rect width="60" height="60" fill="%23000"/><rect width="30" height="30" fill="%23333" x="0" y="0"/><rect width="30" height="30" fill="%23333" x="30" y="30"/></pattern></defs><rect width="100%" height="100%" fill="url(%23urbanPattern)"/></svg>') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    position: relative !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+}
+
+.bju-product-card:hover {
+    transform: translateY(-10px) scale(1.02) !important;
+    box-shadow: 0 20px 40px rgba(220, 53, 69, 0.3) !important;
+    border-color: rgba(220, 53, 69, 0.6) !important;
+}
+
+.bju-product-image {
+    width: 100% !important;
+    height: 250px !important;
+    background: linear-gradient(45deg, #333, #555) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.bju-product-image::before {
+    content: '👕' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    font-size: 4rem !important;
+    opacity: 0.7 !important;
+}
+
+.bju-product-info {
+    padding: 1.5rem !important;
+}
+
+.bju-product-name {
+    font-size: 1.3rem !important;
+    font-weight: bold !important;
+    margin-bottom: 0.5rem !important;
+    color: #ffffff !important;
+    font-family: "Poppins", sans-serif;
+}
+
+.bju-product-price {
+    font-size: 1.5rem !important;
+    color: #dc3545 !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+    font-family: "Poppins", sans-serif;
+}
+
+.bju-add-to-cart {
+    width: 100% !important;
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    color: white !important;
+    border: none !important;
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    font-family: inherit !important;
+    text-decoration: none !important;
+    display: block !important;
+    text-align: center !important;
+}
+
+.bju-add-to-cart:hover,
+.bju-add-to-cart:focus {
+    background: linear-gradient(45deg, #c82333, #dc3545) !important;
+    transform: translateY(-2px) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Special Offers Section */
+.bju-offers-section {
+    background: linear-gradient(135deg, #dc3545, #000000) !important;
+    padding: 4rem 2rem !important;
+    text-align: center !important;
+    margin: 3rem 0 !important;
+}
+
+.bju-offer-title {
+    font-size: 2.5rem !important;
+    margin-bottom: 1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    animation: bju-offerBlink 2s infinite !important;
+    color: #ffffff !important;
+    font-family: "Poppins", sans-serif;
+}
+
+@keyframes bju-offerBlink {
+    0%, 50% { opacity: 1; }
+    25%, 75% { opacity: 0.7; }
+}
+
+.bju-offer-subtitle {
+    font-size: 1.2rem !important;
+    margin-bottom: 2rem !important;
+    color: #ffffff !important;
+    font-family: "Poppins", sans-serif;
+}
+
+/* ========================================
+    RESPONSIVE DESIGN
+    ======================================== */
+@media (max-width: 768px) {
+    .bju-hero-title {
+        font-size: 2.5rem !important;
+    }
+
+    .bju-hero-subtitle {
+        font-size: 1.2rem !important;
+    }
+
+    .bju-products-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .bju-products-section {
+        padding: 3rem 1rem !important;
+    }
+
+    .bju-section-title {
+        font-size: 2rem !important;
+    }
+
+    .bju-offer-title {
+        font-size: 2rem !important;
+    }
+
+    .bju-cta-button {
+        font-size: 1rem !important;
+        padding: 0.8rem 2rem !important;
+    }
+}
+
+/* Prevenir conflictos con Bootstrap y otras librerías */
+.bju-hero .container,
+.bju-hero .row,
+.bju-hero .col,
+.bju-products-section .container,
+.bju-products-section .row,
+.bju-products-section .col {
+    all: unset !important;
+    display: block !important;
+}
+
+.bju-hero .btn,
+.bju-products-section .btn,
+.bju-offers-section .btn {
+    all: unset !important;
+}
+
+.bju-hero .card,
+.bju-products-section .card,
+.bju-offers-section .card {
+    all: unset !important;
+}
+
+/* ========================================
+    BODY/MAIN CONTENT - FIN
+    ======================================== */
+
+.bju-hero::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: linear-gradient(45deg, transparent, rgba(220, 53, 69, 0.1), transparent) !important;
+    animation: bju-heroGlow 3s ease-in-out infinite alternate !important;
+}
+
+@keyframes bju-heroGlow {
+    0% { opacity: 0.3; }
+    100% { opacity: 0.7; }
+}
+
+.bju-hero-content {
+    z-index: 2 !important;
+    max-width: 800px !important;
+    padding: 2rem !important;
+}
+
+.bju-hero-title {
+    font-size: 4rem !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 3px !important;
+    background: linear-gradient(45deg, #ffffff, #dc3545) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    animation: bju-titlePulse 2s ease-in-out infinite alternate !important;
+    font-family: "Poppins", sans-serif;
+}
+
+@keyframes bju-titlePulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.02); }
+}
+
+.bju-hero-subtitle {
+    font-size: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    color: #cccccc !important;
+    animation: bju-subtitleFade 2s ease-in-out infinite alternate !important;
+    font-family: "Poppins", sans-serif;
+}
+
+@keyframes bju-subtitleFade {
+    0% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+.bju-cta-button {
+    background: linear-gradient(45deg, #dc3545, #000000) !important;
+    color: white !important;
+    padding: 1rem 2.5rem !important;
+    border: none !important;
+    border-radius: 30px !important;
+    font-size: 1.2rem !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 30px rgba(220, 53, 69, 0.4) !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    font-family: inherit !important;
+}
+
+.bju-cta-button:hover,
+.bju-cta-button:focus {
+    transform: translateY(-5px) scale(1.05) !important;
+    box-shadow: 0 15px 40px rgba(220, 53, 69, 0.6) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Products Section */
+.bju-products-section {
+    padding: 5rem 2rem !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    background: transparent !important;
+}
+
+.bju-section-title {
+    text-align: center !important;
+    font-size: 3rem !important;
+    margin-bottom: 3rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 2px !important;
+    position: relative !important;
+    color: #ffffff !important;
+    font-family: "Poppins", sans-serif;
+}
+
+.bju-section-title::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: -10px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 100px !important;
+    height: 4px !important;
+    background: linear-gradient(90deg, #dc3545, #ffffff) !important;
+    border-radius: 2px !important;
+}
+
+.bju-products-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 2rem !important;
+    margin-top: 3rem !important;
+}
+
+.bju-product-card {
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a) !important;
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid rgba(220, 53, 69, 0.2) !important;
+    position: relative !important;
+    margin: 0;
+}

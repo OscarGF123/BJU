@@ -1,0 +1,54 @@
+<!-- templates/auth/registro_exitoso.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Exitoso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card mt-5">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="text-center mb-0">Cuenta Creada</h3>
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="mb-4">
+                            <i class="fas fa-envelope fa-3x text-success mb-3"></i>
+                            <h4>¡Registro exitoso!</h4>
+                            <p class="text-muted">
+                                Hemos enviado un enlace de verificación a tu correo electrónico.
+                            </p>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <strong>Pasos a seguir:</strong>
+                            <ol class="text-start mt-2 mb-0">
+                                <li>Revisa tu bandeja de entrada</li>
+                                <li>Busca el email de verificación</li>
+                                <li>Haz clic en el enlace para activar tu cuenta</li>
+                                <li>Inicia sesión con tus credenciales</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <p class="small text-muted">
+                                ¿No recibiste el email? 
+                                <a href="{% url 'login:reenviar_verificacion' %}" class="text-decoration-none">
+                                    Solicitar nuevo enlace
+                                </a>
+                            </p>
+                            <a href="{{ login_url }}" class="btn btn-primary">
+                                Ir al Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

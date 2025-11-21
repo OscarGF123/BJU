@@ -1,0 +1,125 @@
+{% extends 'barra_lateral/sidebar.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block contenido %}
+    <div class="bj-table-container">
+        <h2 class="bj-table-title">
+            <i class="fa-solid fa-table"></i>
+            {{seccion_plural}}
+        </h2>
+
+        <table id="datatable" class="display responsive nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    {% block columnas %}
+
+                        {% for campo in campos%}
+                            <th>{{campo}}</th>
+                        {% endfor %}
+                        
+                        <th>opciones</th>
+                    {% endblock %}
+                </tr>
+            </thead>
+            <tbody>
+                {% block filas %}
+                    {% for modelo in object_list %}
+                        <tr id="{{modelo.id}}">
+                        {% obtener_campos modelo as campos %}
+                        {% for campo in campos %}
+                            {% if campo == 'link_imagen' %}
+                                <td>
+                                    <span data-bs-toggle="modal" data-bs-target="#infoModal" onclick="mostrarImagen('{{MEDIA_URL}}{% obtener_atributo modelo campo %}')">
+                                        <a href="#">{% obtener_atributo modelo campo %}</a>
+                                    </span>
+                                </td>
+                            {% else %}
+
+                                <td>{% obtener_atributo modelo campo %}</td>
+
+                            {% endif %}
+                        {% endfor %}
+                            <td>
+                                <button class='bj-btn bj-btn-info bj-btn-sm' id="btn-editar" value="{{url_editar}}" data-bs-toggle="modal" data-bs-target="#formModal" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class='bj-btn bj-btn-danger bj-btn-sm' id="btn-eliminar" value="{{url_eliminar}}" data-value="{{modelo.id}}" title="Eliminar">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% endblock %}
+            </tbody>
+        </table>
+        <button type="button" class="bj-btn bj-btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">
+            <i class="fas fa-plus"></i> Agregar {{seccion}}
+        </button>
+    </div>
+    <!-- Modal de Formulario -->
+    <div class="modal fade bj-modal" id="formModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="formModalLabel">
+                        <i class="fas fa-plus"></i>
+                        Agregar {{seccion}}
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="formulario">
+                        {% csrf_token %}
+                        <div class="bj-form-group">
+                            {% for field in formulario.visible_fields %}
+
+                                <label for="email">{{field.label}}{% block boton_crear %}{% endblock %}</label>
+
+                                {{field}}
+
+
+                            {% endfor %}
+                                <!-- formset exclusivo del modulo de Producto -->
+                                {{ imagen_formset.management_form }}
+                                
+                                <div id="imagen-forms">
+                                    {% for imagen_form in imagen_formset %}
+                                        <div class="imagen-form-item">
+                                            {{ imagen_form.as_p }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal" id="bjBtnCerrar">Cancelar</button>
+                            <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" value="{{url_crear}}">Guardar {{seccion}}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="infoModalLabel">
+                        Visulaización del Producto
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="" id="modalImagen" style="max-width: 100%; height: auto;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="bj-btn bj-btn-primary" data-bs-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+<script src="{% static 'scripts/gestion.js' %}" id="scriptTabla" data-eliminar="{{url_eliminar}}" data-editar="{{url_editar}}" data-seccion="{{seccion}}">
+</script>
+{% endblock %}

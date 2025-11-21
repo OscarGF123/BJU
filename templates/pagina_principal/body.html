@@ -1,0 +1,165 @@
+{% extends "home.html" %}
+{% load static %}
+{% block body %}
+
+<body class="bju-body">
+    {% include "pagina_principal/header.html" %}
+
+    <main>
+        <!-- Hero Section - Sección principal -->
+        <section class="bju-hero" id="home">
+            <div class="bju-hero-content">
+                <h1 class="bju-hero-title">Box Jeans Urban</h1>
+                <p class="bju-hero-subtitle">Estilo urbano que define tu personalidad</p>
+                <button class="bju-cta-button" onclick="scrollToProducts()">Descubre Colección</button>
+            </div>
+        </section>
+
+        <!-- Sección de Productos -->
+        <section class="bju-products-section" id="productos">
+            <h2 class="bju-section-title bju-fade-in">Productos Destacados</h2>
+            
+            <div class="bju-products-grid">
+                <!-- Producto 1: Jean Urban Classic -->
+                <div class="bju-product-card bju-fade-in bju-delay-1">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Jean Urban Classic</h3>
+                        <p class="bju-product-price">$89.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Jean Urban Classic', 89900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 2: Sudadera Street Style -->
+                <div class="bju-product-card bju-fade-in bju-delay-2">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Sudadera Street Style</h3>
+                        <p class="bju-product-price">$65.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Sudadera Street Style', 65900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 3: Jean Ripped Dark -->
+                <div class="bju-product-card bju-fade-in bju-delay-3">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Jean Ripped Dark</h3>
+                        <p class="bju-product-price">$95.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Jean Ripped Dark', 95900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 4: Sudadera Oversized -->
+                <div class="bju-product-card bju-fade-in bju-delay-4">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Sudadera Oversized</h3>
+                        <p class="bju-product-price">$72.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Sudadera Oversized', 72900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 5: Jean Skinny Black -->
+                <div class="bju-product-card bju-fade-in bju-delay-5">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Jean Skinny Black</h3>
+                        <p class="bju-product-price">$82.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Jean Skinny Black', 82900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Producto 6: Sudadera Hoodie Red -->
+                <div class="bju-product-card bju-fade-in bju-delay-6">
+                    <div class="bju-product-image"></div>
+                    <div class="bju-product-info">
+                        <h3 class="bju-product-name">Sudadera Hoodie Red</h3>
+                        <p class="bju-product-price">$69.900</p>
+                        <button class="bju-add-to-cart" onclick="addToCart('Sudadera Hoodie Red', 69900)">
+                            Agregar al Carrito
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección de Ofertas Especiales -->
+        <section class="bju-offers-section" id="ofertas">
+            <h2 class="bju-offer-title">¡Ofertas Especiales!</h2>
+            <p class="bju-offer-subtitle">Descuentos de hasta 50% en productos seleccionados</p>
+            <button class="bju-cta-button">Ver Todas las Ofertas</button>
+        </section>
+
+        <!-- Ejemplo de DataTable (si lo necesitas) -->
+        <section class="bju-products-section" id="admin-section" style="display: none;">
+            <h2 class="bju-section-title">Panel de Administración</h2>
+            
+            <!-- Tabla con clases BJU para evitar conflictos -->
+            <div class="bju-datatable-container">
+                <table class="display bju-datatable" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Jean Urban Classic</td>
+                            <td>$89.900</td>
+                            <td>25</td>
+                            <td><span class="bju-dt-status-badge bju-dt-status-active">Activo</span></td>
+                            <td>
+                                <button class="bju-dt-action-btn bju-dt-btn-edit">Editar</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-view">Ver</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Sudadera Street Style</td>
+                            <td>$65.900</td>
+                            <td>15</td>
+                            <td><span class="bju-dt-status-badge bju-dt-status-active">Activo</span></td>
+                            <td>
+                                <button class="bju-dt-action-btn bju-dt-btn-edit">Editar</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-view">Ver</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Jean Ripped Dark</td>
+                            <td>$95.900</td>
+                            <td>8</td>
+                            <td><span class="bju-dt-status-badge bju-dt-status-pending">Pendiente</span></td>
+                            <td>
+                                <button class="bju-dt-action-btn bju-dt-btn-edit">Editar</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-view">Ver</button>
+                                <button class="bju-dt-action-btn bju-dt-btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    {% include "pagina_principal/footer.html" %}
+    {% block formulario %}{% endblock %}
+
+</body>
+
+{% endblock %}

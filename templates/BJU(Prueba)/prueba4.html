@@ -1,242 +1,1234 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Box Jeans Urban</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
-  <style>
-    /* ========================== GENERALES ========================== */
-    body {
-      margin: 0;
-      font-family: 'Orbitron', sans-serif;
-      background-color: #111;
-      color: #fff;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Box Jeans - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+    
+    <!-- jQuery y DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 
-    a {
-      color: white;
-      text-decoration: none;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    /* ========================== HEADER ========================== */
-    header {
-      background-color: #000;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid red;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      color: red;
-      text-shadow: 2px 2px 5px #444;
-    }
-
-    nav a:hover {
-      color: red;
-      transition: color 0.3s ease;
-    }
-
-    /* ========================== HERO ========================== */
-    .hero {
-      background: url('fondo-graffiti.jpg') no-repeat center center/cover;
-      padding: 6rem 2rem;
-      text-align: center;
-      animation: fadeIn 2s ease-in;
-    }
-
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      color: white;
-    }
-
-    .hero p {
-      font-size: 1.2rem;
-      color: #ccc;
-      margin-bottom: 2rem;
-    }
-
-    .btn {
-      background-color: red;
-      padding: 0.8rem 2rem;
-      border-radius: 30px;
-      font-weight: bold;
-      color: white;
-      transition: background-color 0.3s ease, transform 0.2s;
-    }
-
-    .btn:hover {
-      background-color: #c00;
-      transform: scale(1.05);
-    }
-
-    /* ========================== CATEGORÍAS ========================== */
-    .categoria {
-      padding: 3rem 2rem;
-      background-color: #1a1a1a;
-      border-top: 4px dashed #333;
-    }
-
-    .categoria h2 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      color: red;
-      text-align: center;
-    }
-
-    .productos {
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .producto {
-      background-color: #222;
-      padding: 1rem;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      transition: transform 0.3s ease;
-      max-width: 200px;
-      text-align: center;
-    }
-
-    .producto img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-    }
-
-    .producto:hover {
-      transform: translateY(-5px);
-    }
-
-    /* ========================== FOOTER ========================== */
-    footer {
-      background-color: #000;
-      color: white;
-      text-align: center;
-      padding: 2rem;
-      border-top: 2px solid red;
-    }
-
-    footer .redes img {
-      width: 30px;
-      margin: 0 0.5rem;
-      transition: transform 0.2s;
-    }
-
-    footer .redes img:hover {
-      transform: scale(1.2);
-    }
-
-    /* ========================== ANIMACIONES ========================== */
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
-</head>
-<body>
-  <!-- ========================== HEADER ========================== -->
-  <!-- Contiene el logotipo, navegación y búsqueda -->
-  <header>
-    <div class="logo">Box Jeans Urban</div>
-    <nav>
-      <ul>
-        <li><a href="#home">Inicio</a></li>
-        <li><a href="#jeans">Jeans</a></li>
-        <li><a href="#sudaderas">Sudaderas</a></li>
-        <li><a href="#contacto">Contacto</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <!-- ========================== BODY ========================== -->
-  <!-- Contiene secciones del contenido principal -->
-  <main>
-    <!-- Sección Principal (Hero) -->
-    <section id="home" class="hero">
-      <h1>Estilo Urbano, Auténtico y Rebelde</h1>
-      <p>Descubre la nueva colección de jeans y sudaderas</p>
-      <a href="#jeans" class="btn">Explorar ahora</a>
-    </section>
-
-    <!-- Sección de Jeans -->
-    <section id="jeans" class="categoria">
-      <h2>Jeans</h2>
-      <div class="productos">
-        <div class="producto">
-          <img src="jean1.jpg" alt="Jean 1">
-          <p>Jean Urbano Tiro Alto</p>
-        </div>
-        <div class="producto">
-          <img src="jean2.jpg" alt="Jean 2">
-          <p>Jean Skinny Destroyed</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de Sudaderas -->
-    <section id="sudaderas" class="categoria">
-      <h2>Sudaderas</h2>
-      <div class="productos">
-        <div class="producto">
-          <img src="sudadera1.jpg" alt="Sudadera 1">
-          <p>Sudadera Oversize Roja</p>
-        </div>
-        <div class="producto">
-          <img src="sudadera2.jpg" alt="Sudadera 2">
-          <p>Sudadera con Capucha Negra</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ========================== FOOTER ========================== -->
-  <!-- Contiene información de contacto y redes sociales -->
-  <footer>
-    <p>© 2025 Box Jeans Urban | Todos los derechos reservados</p>
-    <div class="redes">
-      <a href="#"><img src="icono-fb.png" alt="Facebook"></a>
-      <a href="#"><img src="icono-ig.png" alt="Instagram"></a>
-      <a href="#"><img src="icono-tt.png" alt="TikTok"></a>
-    </div>
-  </footer>
-
-  <!-- ========================== JAVASCRIPT ========================== -->
-  <!-- Agrega animación de scroll suave al hacer clic -->
-  <script>
-    document.querySelectorAll('a[href^="#"]').forEach(enlace => {
-      enlace.addEventListener('click', function(e) {
-        e.preventDefault();
-        const destino = document.querySelector(this.getAttribute('href'));
-        if (destino) {
-          destino.scrollIntoView({ behavior: 'smooth' });
+    <style>
+        /* ========================================
+           NAMESPACE ESPECÍFICO PARA EVITAR CONFLICTOS
+           ======================================== */
+        
+        .boxjeans-dashboard {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+            color: #ffffff !important;
+            overflow-x: hidden !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
         }
-      });
-    });
-  </script>
+
+        .boxjeans-dashboard *,
+        .boxjeans-dashboard *::before,
+        .boxjeans-dashboard *::after {
+            box-sizing: border-box !important;
+        }
+
+        /* Variables CSS */
+        .boxjeans-dashboard {
+            --bj-primary-color: #dc3545;
+            --bj-primary-hover: #c82333;
+            --bj-secondary-color: #ffffff;
+            --bj-dark-bg: #1a1a1a;
+            --bj-dark-secondary: #2d2d2d;
+            --bj-dark-tertiary: #333333;
+            --bj-text-primary: #ffffff;
+            --bj-text-secondary: #cccccc;
+            --bj-text-muted: #999999;
+            --bj-border-color: rgba(220, 53, 69, 0.2);
+            --bj-hover-bg: rgba(220, 53, 69, 0.1);
+            --bj-shadow-primary: 0 8px 25px rgba(220, 53, 69, 0.3);
+            --bj-shadow-secondary: 0 4px 15px rgba(0, 0, 0, 0.3);
+            --bj-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bj-border-radius: 15px;
+            --bj-sidebar-width: 4rem;
+            --bj-sidebar-expanded: 18.75rem;
+            --bj-header-height: 4rem;
+        }
+
+        /* ========================================
+           HEADER CON ESPECIFICIDAD ALTA
+           ======================================== */
+        .boxjeans-dashboard .bj-header-sidebar {
+            z-index: 200 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            padding: 0.75rem 2rem !important;
+            background: rgba(26, 26, 26, 0.95) !important;
+            backdrop-filter: blur(20px) !important;
+            border-bottom: 2px solid var(--bj-border-color) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            height: var(--bj-header-height) !important;
+            transition: var(--bj-transition) !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-header-sidebar::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.05), transparent) !important;
+            pointer-events: none !important;
+        }
+
+        /* Sección izquierda del header */
+        .boxjeans-dashboard .bj-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1.5rem !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-menu-container {
+            display: flex !important;
+            align-items: center !important;
+            cursor: pointer !important;
+            padding: 0.5rem !important;
+            border-radius: var(--bj-border-radius) !important;
+            transition: var(--bj-transition) !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-menu-container:hover {
+            background: var(--bj-hover-bg) !important;
+            transform: scale(1.05) !important;
+        }
+
+        /* Menú hamburguesa específico */
+        .boxjeans-dashboard .bj-menu {
+            width: 1.5rem !important;
+            height: 1.2rem !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
+            position: relative !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-menu div {
+            width: 100% !important;
+            height: 3px !important;
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-secondary-color)) !important;
+            border-radius: 2px !important;
+            transition: var(--bj-transition) !important;
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3) !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-menu.bj-menu-toggle div:first-child {
+            transform: rotate(45deg) translate(5px, 5px) !important;
+        }
+
+        .boxjeans-dashboard .bj-menu.bj-menu-toggle div:nth-child(2) {
+            opacity: 0 !important;
+            transform: translateX(20px) !important;
+        }
+
+        .boxjeans-dashboard .bj-menu.bj-menu-toggle div:last-child {
+            transform: rotate(-45deg) translate(7px, -6px) !important;
+        }
+
+        /* Brand específico */
+        .boxjeans-dashboard .bj-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.8rem !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: var(--bj-border-radius) !important;
+            background: linear-gradient(45deg, rgba(220, 53, 69, 0.1), transparent) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            transition: var(--bj-transition) !important;
+            text-decoration: none !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-brand:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: var(--bj-shadow-primary) !important;
+        }
+
+        .boxjeans-dashboard .bj-brand .bj-logo {
+            width: 2rem !important;
+            height: 2rem !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3) !important;
+            border: none !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-brand .bj-name {
+            font-size: 1.4rem !important;
+            font-weight: 700 !important;
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-secondary-color)) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            letter-spacing: 1px !important;
+            margin: 0 !important;
+            line-height: 1 !important;
+        }
+
+        /* Sección derecha del header */
+        .boxjeans-dashboard .bj-right {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-icons-header {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            border-radius: 50% !important;
+            background: linear-gradient(45deg, var(--bj-dark-secondary), var(--bj-dark-tertiary)) !important;
+            color: var(--bj-text-secondary) !important;
+            text-decoration: none !important;
+            transition: var(--bj-transition) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            position: relative !important;
+            overflow: hidden !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-icons-header::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(220, 53, 69, 0.3), transparent) !important;
+            transition: left 0.5s !important;
+        }
+
+        .boxjeans-dashboard .bj-icons-header:hover::before {
+            left: 100% !important;
+        }
+
+        .boxjeans-dashboard .bj-icons-header:hover {
+            transform: translateY(-3px) scale(1.1) !important;
+            color: var(--bj-primary-color) !important;
+            box-shadow: var(--bj-shadow-primary) !important;
+        }
+
+        .boxjeans-dashboard .bj-user {
+            width: 2.5rem !important;
+            height: 2.5rem !important;
+            border-radius: 50% !important;
+            border: 2px solid var(--bj-primary-color) !important;
+            transition: var(--bj-transition) !important;
+            cursor: pointer !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-user:hover {
+            transform: scale(1.1) !important;
+            box-shadow: 0 0 20px rgba(220, 53, 69, 0.6) !important;
+        }
+
+        /* ========================================
+           SIDEBAR CON ESPECIFICIDAD ALTA
+           ======================================== */
+        .boxjeans-dashboard .bj-sidebar {
+            margin-top: var(--bj-header-height) !important;
+            width: var(--bj-sidebar-width) !important;
+            height: calc(100vh - var(--bj-header-height)) !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 100 !important;
+            padding: 1.5rem 0 !important;
+            background: linear-gradient(180deg, rgba(26, 26, 26, 0.98), rgba(45, 45, 45, 0.98)) !important;
+            backdrop-filter: blur(20px) !important;
+            border-right: 2px solid var(--bj-border-color) !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            box-shadow: var(--bj-shadow-secondary) !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            right: 0 !important;
+            width: 2px !important;
+            height: 100% !important;
+            background: linear-gradient(180deg, var(--bj-primary-color), transparent, var(--bj-primary-color)) !important;
+            opacity: 0.5 !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar.bj-menu-toggle {
+            width: var(--bj-sidebar-expanded) !important;
+        }
+
+        /* Enlaces del sidebar */
+        .boxjeans-dashboard .bj-sidebar nav {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar nav ul {
+            list-style: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar nav ul li {
+            margin: 0.5rem 0 !important;
+            padding: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a {
+            display: flex !important;
+            align-items: center !important;
+            gap: 1.2rem !important;
+            padding: 1rem 0.8rem !important;
+            text-decoration: none !important;
+            color: var(--bj-text-secondary) !important;
+            border-radius: var(--bj-border-radius) !important;
+            margin: 0 0.5rem !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            transition: var(--bj-transition) !important;
+            position: relative !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a::before {
+            content: '' !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 0 !important;
+            height: 100% !important;
+            background: linear-gradient(45deg, var(--bj-primary-color), rgba(220, 53, 69, 0.3)) !important;
+            transition: width 0.3s ease !important;
+            border-radius: var(--bj-border-radius) !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a:hover::before {
+            width: 100% !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a:hover {
+            color: var(--bj-text-primary) !important;
+            transform: translateX(5px) !important;
+            box-shadow: var(--bj-shadow-primary) !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a i {
+            width: 1.5rem !important;
+            text-align: center !important;
+            font-size: 1.2rem !important;
+            z-index: 1 !important;
+            position: relative !important;
+            margin: 0 !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar a span {
+            font-weight: 500 !important;
+            z-index: 1 !important;
+            position: relative !important;
+            margin: 0 !important;
+        }
+
+        /* Scrollbar personalizado */
+        .boxjeans-dashboard .bj-sidebar::-webkit-scrollbar {
+            width: 4px !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar::-webkit-scrollbar-track {
+            background: var(--bj-dark-secondary) !important;
+        }
+
+        .boxjeans-dashboard .bj-sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--bj-primary-color), var(--bj-primary-hover)) !important;
+            border-radius: 2px !important;
+        }
+
+        /* ========================================
+           CONTENIDO PRINCIPAL
+           ======================================== */
+        .boxjeans-dashboard .bj-main-sidebar {
+            margin-top: var(--bj-header-height) !important;
+            margin-left: var(--bj-sidebar-width) !important;
+            padding: 2rem !important;
+            min-height: calc(100vh - var(--bj-header-height)) !important;
+            transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.5), rgba(45, 45, 45, 0.3)) !important;
+            position: relative !important;
+        }
+
+        .boxjeans-dashboard .bj-main-sidebar::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(220,53,69,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>') !important;
+            pointer-events: none !important;
+            opacity: 0.3 !important;
+        }
+
+        .boxjeans-dashboard .bj-main-sidebar.bj-menu-toggle {
+            margin-left: var(--bj-sidebar-expanded) !important;
+        }
+
+        /* ========================================
+           ELEMENTOS FLOTANTES
+           ======================================== */
+        .boxjeans-dashboard .bj-floating-elements {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            pointer-events: none !important;
+            z-index: 1 !important;
+            overflow: hidden !important;
+        }
+
+        .boxjeans-dashboard .bj-floating-element {
+            position: absolute !important;
+            color: rgba(220, 53, 69, 0.1) !important;
+            font-size: 2rem !important;
+            animation: bjFloat 8s ease-in-out infinite !important;
+        }
+
+        .boxjeans-dashboard .bj-floating-element:nth-child(1) { 
+            top: 10% !important; 
+            left: 85% !important; 
+            animation-delay: 0s !important; 
+            font-size: 1.5rem !important;
+        }
+        .boxjeans-dashboard .bj-floating-element:nth-child(2) { 
+            top: 30% !important; 
+            right: 10% !important; 
+            animation-delay: 2s !important; 
+            font-size: 2.5rem !important;
+        }
+        .boxjeans-dashboard .bj-floating-element:nth-child(3) { 
+            bottom: 40% !important; 
+            left: 10% !important; 
+            animation-delay: 4s !important; 
+            font-size: 1.8rem !important;
+        }
+        .boxjeans-dashboard .bj-floating-element:nth-child(4) { 
+            bottom: 20% !important; 
+            right: 15% !important; 
+            animation-delay: 6s !important; 
+            font-size: 2.2rem !important;
+        }
+
+        @keyframes bjFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg) !important; 
+                opacity: 0.1 !important; 
+            }
+            50% { 
+                transform: translateY(-30px) rotate(10deg) !important; 
+                opacity: 0.2 !important; 
+            }
+        }
+
+        /* ========================================
+           ANIMACIONES ESPECÍFICAS
+           ======================================== */
+        @keyframes bjFadeInUp {
+            from {
+                opacity: 0 !important;
+                transform: translateY(30px) !important;
+            }
+            to {
+                opacity: 1 !important;
+                transform: translateY(0) !important;
+            }
+        }
+
+        .boxjeans-dashboard .bj-main-sidebar > * {
+            animation: bjFadeInUp 0.6s ease-out !important;
+        }
+
+        /* ========================================
+           ESTILOS PERSONALIZADOS PARA DATATABLE
+           ======================================== */
+        
+        /* Contenedor de la tabla */
+        .boxjeans-dashboard .bj-table-container {
+            background: linear-gradient(145deg, rgba(45, 45, 45, 0.9), rgba(26, 26, 26, 0.9)) !important;
+            padding: 1.5rem !important;
+            border-radius: var(--bj-border-radius) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            box-shadow: var(--bj-shadow-secondary) !important;
+            overflow: hidden !important;
+            margin-top: 1rem !important;
+        }
+
+        /* Título de la sección */
+        .boxjeans-dashboard .bj-table-title {
+            font-size: 1.8rem !important;
+            font-weight: 700 !important;
+            background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-secondary-color)) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            margin-bottom: 1.5rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 1rem !important;
+        }
+
+        /* Wrapper del DataTable */
+        .boxjeans-dashboard .dataTables_wrapper {
+            color: var(--bj-text-primary) !important;
+        }
+
+        /* Controles superiores */
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_length,
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_filter {
+            color: var(--bj-text-secondary) !important;
+            margin-bottom: 1rem !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_length select,
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_filter input {
+            background: var(--bj-dark-tertiary) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            color: var(--bj-text-primary) !important;
+            padding: 0.5rem !important;
+            border-radius: 8px !important;
+            transition: var(--bj-transition) !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_filter input {
+            padding: 0.5rem 1rem !important;
+            width: 250px !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: var(--bj-primary-color) !important;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important;
+            outline: none !important;
+        }
+
+        /* Tabla principal */
+        .boxjeans-dashboard table.dataTable {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+        }
+
+        /* Header de la tabla */
+        .boxjeans-dashboard table.dataTable thead {
+            background: linear-gradient(45deg, var(--bj-dark-secondary), var(--bj-dark-tertiary)) !important;
+        }
+
+        .boxjeans-dashboard table.dataTable thead th {
+            background: transparent !important;
+            color: var(--bj-primary-color) !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
+            font-size: 0.85rem !important;
+            letter-spacing: 1px !important;
+            padding: 1rem !important;
+            border-bottom: 2px solid var(--bj-border-color) !important;
+            position: relative !important;  /* ⚠️ ASEGÚRATE QUE ESTA LÍNEA ESTÉ */
+        }
+
+        /* Filas de la tabla */
+        .boxjeans-dashboard table.dataTable tbody tr {
+            background: var(--bj-dark-bg) !important;
+            transition: var(--bj-transition) !important;
+        }
+
+        .boxjeans-dashboard table.dataTable tbody tr:hover {
+            background: linear-gradient(45deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05)) !important;
+            transform: scale(1.01) !important;
+        }
+
+        .boxjeans-dashboard table.dataTable tbody td {
+            padding: 1rem !important;
+            color: var(--bj-text-secondary) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+            font-size: 0.95rem !important;
+        }
+
+        /* Filas pares para mejor legibilidad */
+        .boxjeans-dashboard table.dataTable tbody tr:nth-child(even) {
+            background: rgba(45, 45, 45, 0.3) !important;
+        }
+
+        /* Indicador de ordenamiento */
+        .boxjeans-dashboard table.dataTable thead .sorting,
+        .boxjeans-dashboard table.dataTable thead .sorting_asc,
+        .boxjeans-dashboard table.dataTable thead .sorting_desc {
+            cursor: pointer !important;
+            position: relative !important;
+        }
+
+        .boxjeans-dashboard table.dataTable thead .sorting:after,
+        .boxjeans-dashboard table.dataTable thead .sorting_asc:after,
+        .boxjeans-dashboard table.dataTable thead .sorting_desc:after {
+            content: "" !important;
+            position: absolute !important;
+            right: 10px !important;
+            top: 50% !important;  /* ⚠️ ASEGÚRATE QUE ESTA LÍNEA ESTÉ */
+            transform: translateY(-50%) !important;  /* ⚠️ Y ESTA TAMBIÉN */
+            color: var(--bj-primary-color) !important;
+            opacity: 0.5 !important;
+        }
+
+        .boxjeans-dashboard table.dataTable thead .sorting_desc:after {
+            content: "↓" !important;
+            opacity: 1 !important;
+        }
+
+        /* Paginación */
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate {
+            margin-top: 1.5rem !important;
+            text-align: center !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate .paginate_button {
+            background: var(--bj-dark-tertiary) !important;
+            color: var(--bj-text-secondary) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            padding: 0.5rem 1rem !important;
+            margin: 0 0.25rem !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            transition: var(--bj-transition) !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--bj-primary-color) !important;
+            color: var(--bj-text-primary) !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3) !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: var(--bj-primary-color) !important;
+            color: var(--bj-text-primary) !important;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4) !important;
+        }
+
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate .paginate_button.disabled {
+            opacity: 0.3 !important;
+            cursor: not-allowed !important;
+        }
+
+        /* Info de la tabla */
+        .boxjeans-dashboard .dataTables_wrapper .dataTables_info {
+            color: var(--bj-text-muted) !important;
+            margin-top: 1rem !important;
+            font-size: 0.9rem !important;
+        }
+
+        /* Mensaje cuando no hay datos */
+        .boxjeans-dashboard table.dataTable tbody td.dataTables_empty {
+            text-align: center !important;
+            color: var(--bj-text-muted) !important;
+            padding: 3rem !important;
+            font-style: italic !important;
+        }
+
+        /* ========================================
+           RESPONSIVE DATATABLE
+           ======================================== */
+        
+        /* Indicador de fila expandible en móvil */
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control,
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control {
+            position: relative !important;
+            padding-left: 30px !important;
+            cursor: pointer !important;
+        }
+
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before,
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control:before {
+            content: '+' !important;
+            position: absolute !important;
+            left: 8px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            width: 20px !important;
+            height: 20px !important;
+            background: var(--bj-primary-color) !important;
+            color: white !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: bold !important;
+            font-size: 1rem !important;
+            box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3) !important;
+        }
+
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control:before,
+        .boxjeans-dashboard table.dataTable.dtr-inline.collapsed > tbody > tr.parent > th.dtr-control:before {
+            content: '−' !important;
+            background: var(--bj-primary-hover) !important;
+        }
+
+        /* Detalles expandidos en móvil */
+        .boxjeans-dashboard table.dataTable > tbody > tr.child {
+            background: rgba(220, 53, 69, 0.05) !important;
+        }
+
+        .boxjeans-dashboard table.dataTable > tbody > tr.child ul.dtr-details {
+            display: block !important;
+            list-style: none !important;
+            margin: 0 !important;
+            padding: 0.5rem !important;
+        }
+
+        .boxjeans-dashboard table.dataTable > tbody > tr.child ul.dtr-details > li {
+            padding: 0.5rem 1rem !important;
+            margin: 0.25rem 0 !important;
+            background: var(--bj-dark-tertiary) !important;
+            border-radius: 8px !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .boxjeans-dashboard table.dataTable > tbody > tr.child span.dtr-title {
+            font-weight: 600 !important;
+            color: var(--bj-primary-color) !important;
+            margin-right: 1rem !important;
+        }
+
+        .boxjeans-dashboard table.dataTable > tbody > tr.child span.dtr-data {
+            color: var(--bj-text-secondary) !important;
+            text-align: right !important;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+        
+        @media (max-width: 768px) {
+            .boxjeans-dashboard .bj-icons-header {
+                display: none !important;
+            }
+
+            .boxjeans-dashboard .bj-sidebar {
+                width: 0 !important;
+                padding: 0 !important;
+            }
+
+            .boxjeans-dashboard .bj-sidebar.bj-menu-toggle {
+                width: 100% !important;
+                max-width: 280px !important;
+            }
+
+            .boxjeans-dashboard .bj-main-sidebar {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+            }
+
+            .boxjeans-dashboard .bj-main-sidebar.bj-menu-toggle {
+                margin-left: 0 !important;
+            }
+
+            .boxjeans-dashboard .bj-table-container {
+                padding: 1rem !important;
+                border-radius: 10px !important;
+            }
+
+            .boxjeans-dashboard .bj-table-title {
+                font-size: 1.4rem !important;
+            }
+
+            .boxjeans-dashboard .dataTables_wrapper .dataTables_filter input {
+                width: 150px !important;
+            }
+
+            .boxjeans-dashboard .dataTables_wrapper .dataTables_length,
+            .boxjeans-dashboard .dataTables_wrapper .dataTables_filter {
+                float: none !important;
+                text-align: center !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate {
+                float: none !important;
+                text-align: center !important;
+            }
+
+            .boxjeans-dashboard table.dataTable thead th,
+            .boxjeans-dashboard table.dataTable tbody td {
+                padding: 0.75rem 0.5rem !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .boxjeans-dashboard .bj-main-sidebar {
+                padding: 0.5rem !important;
+            }
+
+            .boxjeans-dashboard .bj-table-container {
+                padding: 0.75rem !important;
+                margin-top: 0.5rem !important;
+            }
+
+            .boxjeans-dashboard .bj-table-title {
+                font-size: 1.2rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .boxjeans-dashboard table.dataTable thead th {
+                font-size: 0.75rem !important;
+                padding: 0.5rem !important;
+            }
+
+            .boxjeans-dashboard table.dataTable tbody td {
+                font-size: 0.8rem !important;
+                padding: 0.5rem !important;
+            }
+
+            .boxjeans-dashboard .dataTables_wrapper .dataTables_paginate .paginate_button {
+                padding: 0.3rem 0.6rem !important;
+                font-size: 0.85rem !important;
+            }
+        }
+
+        /* Loading overlay */
+        .boxjeans-dashboard .dataTables_processing {
+            background: linear-gradient(45deg, var(--bj-dark-secondary), var(--bj-dark-tertiary)) !important;
+            color: var(--bj-primary-color) !important;
+            border: 1px solid var(--bj-border-color) !important;
+            border-radius: var(--bj-border-radius) !important;
+            padding: 1rem 2rem !important;
+            font-weight: 600 !important;
+            box-shadow: var(--bj-shadow-primary) !important;
+        }
+    </style>
+</head>
+<body class="boxjeans-dashboard">
+    <!-- Elementos flotantes decorativos -->
+    <div class="bj-floating-elements">
+        <div class="bj-floating-element">👕</div>
+        <div class="bj-floating-element">👖</div>
+        <div class="bj-floating-element">🧥</div>
+        <div class="bj-floating-element">👟</div>
+    </div>
+
+    <main class="config-sidebar">
+        <div class="body-sidebar">
+            <!-- Header -->
+            <header class="bj-header-sidebar">
+                <div class="bj-left">
+                    <div class="bj-menu-container">
+                        <div class="bj-menu" id="bjMenu">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
+                    </div>
+                    <div class="bj-brand">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iOCIgZmlsbD0idXJsKCNncmFkaWVudDApIi8+CjxwYXRoIGQ9Ik0xMCAxMkgyNlYxNkgxMFYxMloiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMCAyMEgzMFYyNEgxMFYyMFoiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0xMCAyOEgyNlYzMkgxMFYyOFoiIGZpbGw9IndoaXRlIi8+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50MCIgeDE9IjAiIHkxPSIwIiB4Mj0iNDAiIHkyPSI0MCIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPgo8c3RvcCBzdG9wLWNvbG9yPSIjREMzNTQ1Ii8+CjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0M4MjMzMyIvPgo8L2xpbmVhckdyYWRpZW50Pgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Box Jeans Logo" class="bj-logo">
+                        <span class="bj-name">Box Jeans</span>
+                    </div>
+                </div>
+                <div class="bj-right">
+                    <a class="bj-icons-header" href="#" title="Notificaciones">
+                        <i class="fa-solid fa-bell"></i>
+                    </a>
+                    <a class="bj-icons-header" href="#" title="Configuración">
+                        <i class="fa-solid fa-cog"></i>
+                    </a>
+                    <a class="bj-icons-header" href="#" title="Ayuda">
+                        <i class="fa-solid fa-question-circle"></i>
+                    </a>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario">
+                </div>
+            </header>
+
+            <!-- Sidebar -->
+            <div class="bj-sidebar" id="bjSidebar">
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-home"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-tshirt"></i>
+                                <span>Productos</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-shopping-cart"></i>
+                                <span>Ventas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Clientes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-chart-bar"></i>
+                                <span>Reportes</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa-solid fa-warehouse"></i>
+                                <span>Inventario</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Contenido principal con DataTable -->
+        <div class="bj-main-sidebar" id="bjMain">
+            <div class="bj-table-container">
+                <h2 class="bj-table-title">
+                    <i class="fa-solid fa-table"></i>
+                    Gestión de Datos
+                </h2>
+                
+                <table id="datatable" class="display responsive nowrap" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Categoría</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Datos de ejemplo -->
+                        <tr>
+                            <td>001</td>
+                            <td>Jeans Slim Fit</td>
+                            <td>Pantalones</td>
+                            <td>$89.99</td>
+                            <td>45</td>
+                            <td><span style="color: #28a745;">Disponible</span></td>
+                            <td>2025-01-15</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Camisa Oxford</td>
+                            <td>Camisas</td>
+                            <td>$65.50</td>
+                            <td>23</td>
+                            <td><span style="color: #ffc107;">Bajo Stock</span></td>
+                            <td>2025-01-14</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Chaqueta Denim</td>
+                            <td>Chaquetas</td>
+                            <td>$120.00</td>
+                            <td>0</td>
+                            <td><span style="color: #dc3545;">Agotado</span></td>
+                            <td>2025-01-13</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>004</td>
+                            <td>Polo Classic</td>
+                            <td>Polos</td>
+                            <td>$45.00</td>
+                            <td>67</td>
+                            <td><span style="color: #28a745;">Disponible</span></td>
+                            <td>2025-01-12</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>005</td>
+                            <td>Shorts Cargo</td>
+                            <td>Shorts</td>
+                            <td>$55.99</td>
+                            <td>34</td>
+                            <td><span style="color: #28a745;">Disponible</span></td>
+                            <td>2025-01-11</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>006</td>
+                            <td>Sudadera Hoodie</td>
+                            <td>Sudaderas</td>
+                            <td>$75.00</td>
+                            <td>12</td>
+                            <td><span style="color: #ffc107;">Bajo Stock</span></td>
+                            <td>2025-01-10</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>007</td>
+                            <td>Blazer Formal</td>
+                            <td>Blazers</td>
+                            <td>$180.00</td>
+                            <td>8</td>
+                            <td><span style="color: #ffc107;">Bajo Stock</span></td>
+                            <td>2025-01-09</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>008</td>
+                            <td>Camiseta V-Neck</td>
+                            <td>Camisetas</td>
+                            <td>$35.00</td>
+                            <td>89</td>
+                            <td><span style="color: #28a745;">Disponible</span></td>
+                            <td>2025-01-08</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>009</td>
+                            <td>Pantalón Chino</td>
+                            <td>Pantalones</td>
+                            <td>$95.00</td>
+                            <td>56</td>
+                            <td><span style="color: #28a745;">Disponible</span></td>
+                            <td>2025-01-07</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>010</td>
+                            <td>Chaleco Acolchado</td>
+                            <td>Chalecos</td>
+                            <td>$110.00</td>
+                            <td>15</td>
+                            <td><span style="color: #ffc107;">Bajo Stock</span></td>
+                            <td>2025-01-06</td>
+                            <td>
+                                <button style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Inicialización del DataTable con configuración responsive mejorada
+        $(document).ready(function() {
+            var datatable = $('#datatable').DataTable({
+                responsive: {
+                    details: {
+                        type: 'inline',
+                        target: 0
+                    }
+                },
+                // Sin columnDefs
+                order: [[0, 'asc']], 
+                pageLength: 10,
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Todos"]],
+                language: {
+                    lengthMenu: "Mostrar _MENU_ registros",
+                    zeroRecords: "No se encontraron registros",
+                    info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    infoEmpty: "No hay registros disponibles",
+                    infoFiltered: "(filtrado de _MAX_ registros totales)",
+                    search: "Buscar:",
+                    paginate: {
+                        first: "Primero",
+                        last: "Último",
+                        next: "Siguiente",
+                        previous: "Anterior"
+                    },
+                    processing: "Procesando...",
+                    emptyTable: "No hay datos disponibles en la tabla"
+                },
+                // Configuración adicional para mejor rendimiento en móviles
+                deferRender: true,
+                scrollCollapse: true,
+                scroller: false,
+                // Configuración de búsqueda
+                searchDelay: 500,
+                // Mantener el estado de la tabla
+                stateSave: false,
+                // Opciones de procesamiento
+                processing: true,
+                // Configuración responsive adicional
+                autoWidth: false,
+                // Callbacks para personalización
+                drawCallback: function() {
+                    // Aplicar animaciones suaves después de cada dibujado
+                    $('.dataTables_wrapper').find('tbody tr').each(function(i) {
+                        var $this = $(this);
+                        setTimeout(function() {
+                            $this.css('opacity', '0').animate({opacity: 1}, 300);
+                        }, i * 50);
+                    });
+                },
+                initComplete: function() {
+                    // Personalización adicional después de la inicialización
+                    console.log('✅ DataTable inicializado correctamente');
+                    
+                    // Agregar clases personalizadas para mejor estilo
+                    $('.dataTables_filter input').attr('placeholder', 'Buscar productos...');
+                    
+                    // Mejorar la accesibilidad
+                    $('.dataTables_filter input').attr('aria-label', 'Buscar en la tabla');
+                    $('.dataTables_length select').attr('aria-label', 'Número de registros por página');
+                }
+            });
+
+            // Redimensionar DataTable cuando se cambia el tamaño de la ventana
+            $(window).on('resize', function() {
+                datatable.responsive.recalc();
+            });
+        });
+
+        // ========================================
+        // FUNCIONALIDAD DEL SIDEBAR
+        // ========================================
+        
+        function initBoxJeansDashboard() {
+            const bjMenuButton = document.getElementById('bjMenu');
+            const bjSidebarElement = document.getElementById('bjSidebar');
+            const bjMainContent = document.getElementById('bjMain');
+            const menuContainer = document.querySelector('.bj-menu-container');
+            
+            if (!bjMenuButton || !bjSidebarElement || !bjMainContent) {
+                console.error('❌ Error: No se encontraron los elementos del dashboard');
+                return;
+            }
+            
+            // Toggle sidebar
+            function toggleSidebar() {
+                bjSidebarElement.classList.toggle('bj-menu-toggle');
+                bjMenuButton.classList.toggle('bj-menu-toggle');
+                bjMainContent.classList.toggle('bj-menu-toggle');
+                
+                // Recalcular responsive del DataTable después del toggle
+                setTimeout(function() {
+                    if ($.fn.DataTable.isDataTable('#datatable')) {
+                        $('#datatable').DataTable().responsive.recalc();
+                    }
+                }, 400);
+            }
+            
+            // Event listeners
+            bjMenuButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleSidebar();
+            });
+            
+            if (menuContainer) {
+                menuContainer.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSidebar();
+                });
+            }
+            
+            // Cerrar sidebar en móvil al hacer clic fuera
+            document.addEventListener('click', function(event) {
+                if (window.innerWidth <= 768) {
+                    const isClickInsideSidebar = bjSidebarElement.contains(event.target);
+                    const isClickOnMenu = bjMenuButton.contains(event.target) || 
+                                         (menuContainer && menuContainer.contains(event.target));
+                    
+                    if (!isClickInsideSidebar && !isClickOnMenu && 
+                        bjSidebarElement.classList.contains('bj-menu-toggle')) {
+                        toggleSidebar();
+                    }
+                }
+            });
+            
+            console.log('🎉 Box Jeans Dashboard inicializado!');
+        }
+        
+        // Inicializar cuando el DOM esté listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initBoxJeansDashboard);
+        } else {
+            initBoxJeansDashboard();
+        }
+    </script>
 </body>
 </html>

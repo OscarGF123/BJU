@@ -2,8 +2,7 @@
 __pycache__/
 migrations/
 staticfiles/
-apl/
-
+media/
 # ignora entornos virtuales
 env/
 
@@ -12,4 +11,5 @@ env/
 
 # ignora el archivo de pruebas basicas
 prueba.py
+prueba.js
 

@@ -1,0 +1,75 @@
+{% extends 'login/login.html' %}
+{% load static %}
+{% block login_main %}
+    <style>
+        .main-container{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 120px);
+            justify-content: center;
+            align-items: center;
+        }
+        .login-section{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem;
+        }
+        /* estilos para ubicar los campos uno al lado del otro */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <main class="main-container">
+        <section class="login-section">
+            <div class="login-container">
+                    <h1 class="login-title">Registrarse</h1>
+                    <p class="login-subtitle">Crea tu cuenta urbana</p>
+                <form action="" id="formularioRegistro">
+                    {% for field in form.visible_fields %}
+                        <!-- Se ubican los campos de 2 en 2 -->
+                        {% if forloop.counter0|divisibleby:2 %}
+                            <div class="form-row">
+                        {% endif %}
+                        
+                        <div class="form-group">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                        
+                        {% if forloop.counter|divisibleby:2 or forloop.last %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                        <button type="submit" class="bj-btn bj-btn-primary" id="registroBtn">
+                            Registrarse
+                        </button>
+                </form>
+            </div>
+        </section>
+    </main>
+{% endblock %}
+
+{% block script_login %}
+    <script 
+    src="{% static 'scripts/login/registro.js' %}"
+    data-urlregistro="{{url_registro}}"
+    id="registroScript">
+
+    </script>
+{% endblock %}

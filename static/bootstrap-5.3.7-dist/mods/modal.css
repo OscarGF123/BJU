@@ -1,0 +1,626 @@
+/* ========================================
+   VARIABLES GLOBALES BOX JEANS
+   ======================================== */
+
+:root {
+    --bj-primary-color: #dc3545;
+    --bj-primary-hover: #c82333;
+    --bj-secondary-color: #ffffff;
+    --bj-dark-bg: #1a1a1a;
+    --bj-dark-secondary: #2d2d2d;
+    --bj-dark-tertiary: #333333;
+    --bj-text-primary: #ffffff;
+    --bj-text-secondary: #cccccc;
+    --bj-text-muted: #999999;
+    --bj-border-color: rgba(220, 53, 69, 0.2);
+    --bj-hover-bg: rgba(220, 53, 69, 0.1);
+    --bj-shadow-primary: 0 8px 25px rgba(220, 53, 69, 0.3);
+    --bj-shadow-secondary: 0 4px 15px rgba(0, 0, 0, 0.3);
+    --bj-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --bj-border-radius: 15px;
+}
+
+/* ========================================
+   ESTILOS DE MODALES BOX JEANS
+   ======================================== */
+
+/* Backdrop del modal */
+.bj-modal-backdrop,
+.modal-backdrop.bj-backdrop {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(3px) !important;
+}
+
+.bj-modal-backdrop.show,
+.modal-backdrop.bj-backdrop.show {
+    opacity: 0.8 !important;
+}
+
+/* Contenedor del modal */
+.bj-modal {
+    z-index: 1055 !important;
+}
+
+.bj-modal .modal-dialog,
+.modal-dialog.bj-dialog {
+    margin: 1.75rem auto !important;
+    max-width: 500px !important;
+    pointer-events: auto !important;
+    z-index: 1060 !important;
+    position: relative !important;
+}
+
+/* Contenido del modal */
+.bj-modal .modal-content,
+.modal-content.bj-content {
+    background: linear-gradient(145deg, var(--bj-dark-secondary), var(--bj-dark-bg)) !important;
+    border: 2px solid var(--bj-border-color) !important;
+    border-radius: var(--bj-border-radius) !important;
+    box-shadow: 
+        0 10px 30px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(220, 53, 69, 0.2) !important;
+    backdrop-filter: blur(20px) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    z-index: 1061 !important;
+}
+
+.bj-modal .modal-content::before,
+.modal-content.bj-content::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background: linear-gradient(90deg, var(--bj-primary-color), var(--bj-secondary-color), var(--bj-primary-color)) !important;
+    opacity: 0.8 !important;
+}
+
+/* Header del modal */
+.bj-modal .modal-header,
+.modal-header.bj-header {
+    background: linear-gradient(45deg, rgba(220, 53, 69, 0.1), transparent) !important;
+    border-bottom: 1px solid var(--bj-border-color) !important;
+    padding: 1.5rem !important;
+    position: relative !important;
+}
+
+.bj-modal .modal-title,
+.modal-title.bj-title {
+    color: var(--bj-text-primary) !important;
+    font-weight: 700 !important;
+    font-size: 1.4rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    margin: 0 !important;
+}
+
+.bj-modal .modal-title i,
+.modal-title.bj-title i {
+    color: var(--bj-primary-color) !important;
+    font-size: 1.2rem !important;
+}
+
+/* Botón de cerrar personalizado */
+.bj-modal .btn-close,
+.btn-close.bj-close {
+    background: transparent !important;
+    border: none !important;
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: var(--bj-transition) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+}
+
+.bj-modal .btn-close::before,
+.btn-close.bj-close::before {
+    content: '×' !important;
+    color: var(--bj-text-secondary) !important;
+    font-size: 1.8rem !important;
+    font-weight: 300 !important;
+    line-height: 1 !important;
+}
+
+.bj-modal .btn-close:hover,
+.btn-close.bj-close:hover {
+    background: var(--bj-hover-bg) !important;
+    transform: scale(1.1) !important;
+}
+
+.bj-modal .btn-close:hover::before,
+.btn-close.bj-close:hover::before {
+    color: var(--bj-primary-color) !important;
+}
+
+/* Body del modal */
+.bj-modal .modal-body,
+.modal-body.bj-body {
+    padding: 2rem 1.5rem !important;
+    color: var(--bj-text-secondary) !important;
+    line-height: 1.6 !important;
+}
+
+.bj-modal .modal-body p,
+.modal-body.bj-body p {
+    margin-bottom: 1rem !important;
+}
+
+.bj-modal .modal-body .alert,
+.modal-body.bj-body .alert {
+    background: rgba(220, 53, 69, 0.1) !important;
+    border: 1px solid var(--bj-border-color) !important;
+    color: var(--bj-text-primary) !important;
+    border-radius: 10px !important;
+    padding: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Footer del modal */
+.bj-modal .modal-footer,
+.modal-footer.bj-footer {
+    background: linear-gradient(45deg, transparent, rgba(220, 53, 69, 0.05)) !important;
+    border-top: 1px solid var(--bj-border-color) !important;
+    padding: 1.5rem !important;
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+}
+
+/* ========================================
+   BOTONES BOX JEANS
+   ======================================== */
+
+/* Botón base */
+.bj-btn {
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    transition: var(--bj-transition) !important;
+    border: none !important;
+    cursor: pointer !important;
+    position: relative !important;
+    overflow: hidden !important;
+    font-size: 0.9rem !important;
+    display: inline-block !important;
+    text-decoration: none !important;
+}
+
+.bj-btn::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent) !important;
+    transition: left 0.5s !important;
+}
+
+.bj-btn:hover::before {
+    left: 100% !important;
+}
+
+/* Botón primario */
+.bj-btn-primary {
+    background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-primary-hover)) !important;
+    color: var(--bj-secondary-color) !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+}
+
+.bj-btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: var(--bj-shadow-primary) !important;
+    color: var(--bj-secondary-color) !important;
+}
+
+/* Botón secundario */
+.bj-btn-secondary {
+    background: var(--bj-dark-tertiary) !important;
+    color: var(--bj-text-secondary) !important;
+    border: 1px solid var(--bj-border-color) !important;
+}
+
+.bj-btn-secondary:hover {
+    background: var(--bj-hover-bg) !important;
+    color: var(--bj-text-primary) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Botón de peligro */
+.bj-btn-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3) !important;
+}
+
+.bj-btn-danger:hover {
+    background: linear-gradient(45deg, #c82333, #a71e2a) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+    color: white !important;
+}
+
+/* Botón de éxito */
+.bj-btn-success {
+    background: linear-gradient(45deg, #28a745, #218838) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3) !important;
+}
+
+.bj-btn-success:hover {
+    background: linear-gradient(45deg, #218838, #1e7e34) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4) !important;
+    color: white !important;
+}
+
+/* Botón de información */
+.bj-btn-info {
+    background: linear-gradient(45deg, #17a2b8, #138496) !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(23, 162, 184, 0.3) !important;
+}
+
+.bj-btn-info:hover {
+    background: linear-gradient(45deg, #138496, #117a8b) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(23, 162, 184, 0.4) !important;
+    color: white !important;
+}
+
+/* Botón outline */
+.bj-btn-outline {
+    background: transparent !important;
+    color: var(--bj-primary-color) !important;
+    border: 2px solid var(--bj-primary-color) !important;
+}
+
+.bj-btn-outline:hover {
+    background: var(--bj-primary-color) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4) !important;
+}
+
+/* Tamaños de botones */
+.bj-btn-sm {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.85rem !important;
+}
+
+.bj-btn-lg {
+    padding: 1rem 2rem !important;
+    font-size: 1.1rem !important;
+}
+
+/* Botón de ancho completo */
+.bj-btn-block {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* ========================================
+   ANIMACIONES DE ENTRADA Y SALIDA
+   ======================================== */
+
+.bj-modal.fade .modal-dialog,
+.modal.fade .modal-dialog.bj-dialog {
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out !important;
+    transform: translate(0, -30px) scale(0.95) !important;
+    opacity: 0 !important;
+}
+
+.bj-modal.show .modal-dialog,
+.modal.show .modal-dialog.bj-dialog {
+    transform: translate(0, 0) scale(1) !important;
+    opacity: 1 !important;
+}
+
+/* Asegurar que el modal sea visible */
+.bj-modal.show {
+    display: block !important;
+}
+
+/* ========================================
+   FORMULARIOS EN MODALES BOX JEANS
+   ======================================== */
+
+.bj-form-group {
+    margin-bottom: 1.5rem !important;
+}
+
+.bj-form-label {
+    color: var(--bj-text-primary) !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+    font-size: 0.95rem !important;
+}
+
+.bj-form-control {
+    background: var(--bj-dark-tertiary) !important;
+    border: 1px solid var(--bj-border-color) !important;
+    color: var(--bj-text-primary) !important;
+    padding: 0.75rem 1rem !important;
+    border-radius: 8px !important;
+    transition: var(--bj-transition) !important;
+    width: 100% !important;
+    font-size: 0.95rem !important;
+}
+
+.bj-form-control:focus {
+    border-color: var(--bj-primary-color) !important;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.2) !important;
+    outline: none !important;
+    background: var(--bj-dark-bg) !important;
+}
+
+.bj-form-control::placeholder {
+    color: var(--bj-text-muted) !important;
+}
+
+/* ========================================
+   SELECT BOX JEANS MEJORADO
+   ======================================== */
+
+/* Select personalizado */
+.bj-form-select {
+    background: linear-gradient(145deg, #2a2a2a, #1f1f1f) !important;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23dc3545' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 1.2em !important;
+    border: 2px solid rgba(220, 53, 69, 0.2) !important;
+    color: #ffffff !important;
+    padding: 0.75rem 3rem 0.75rem 1rem !important;
+    border-radius: 10px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    cursor: pointer !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    box-shadow: 
+        inset 2px 2px 5px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.05) !important;
+    position: relative !important;
+}
+
+/* Hover effect */
+.bj-form-select:hover {
+    border-color: #dc3545 !important;
+    box-shadow: 
+        0 0 15px rgba(220, 53, 69, 0.2),
+        inset 2px 2px 5px rgba(0, 0, 0, 0.3),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.05) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Focus effect */
+.bj-form-select:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 
+        0 0 0 3px rgba(220, 53, 69, 0.2),
+        0 0 20px rgba(220, 53, 69, 0.3) !important;
+    outline: none !important;
+    background: linear-gradient(145deg, #1a1a1a, #2d2d2d) !important;
+}
+
+/* Opciones del select */
+.bj-form-select option {
+    background: #1a1a1a !important;
+    color: #ffffff !important;
+    padding: 0.5rem !important;
+}
+
+.bj-form-select option:hover,
+.bj-form-select option:focus,
+.bj-form-select option:checked {
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    color: #ffffff !important;
+}
+
+/* Select deshabilitado */
+.bj-form-select:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    background: #2d2d2d !important;
+}
+
+/* Select con error */
+.bj-form-select.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Select con éxito */
+.bj-form-select.is-valid {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25) !important;
+}
+
+/* Tamaños del select */
+.bj-form-select-sm {
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem !important;
+    font-size: 0.875rem !important;
+}
+
+.bj-form-select-lg {
+    padding: 1rem 3.5rem 1rem 1.25rem !important;
+    font-size: 1.1rem !important;
+}
+
+/* Checkbox y Radio personalizados */
+.bj-form-check {
+    margin-bottom: 1rem !important;
+}
+
+.bj-form-check-input {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    background-color: var(--bj-dark-tertiary) !important;
+    border: 2px solid var(--bj-border-color) !important;
+    cursor: pointer !important;
+}
+
+.bj-form-check-input:checked {
+    background-color: var(--bj-primary-color) !important;
+    border-color: var(--bj-primary-color) !important;
+}
+
+.bj-form-check-label {
+    color: var(--bj-text-secondary) !important;
+    margin-left: 0.5rem !important;
+    cursor: pointer !important;
+}
+
+/* ========================================
+   TAMAÑOS DE MODALES
+   ======================================== */
+
+.bj-modal-sm .modal-dialog,
+.modal-dialog.bj-dialog-sm {
+    max-width: 300px !important;
+}
+
+.bj-modal-lg .modal-dialog,
+.modal-dialog.bj-dialog-lg {
+    max-width: 800px !important;
+}
+
+.bj-modal-xl .modal-dialog,
+.modal-dialog.bj-dialog-xl {
+    max-width: 1140px !important;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 576px) {
+    .bj-modal .modal-dialog,
+    .modal-dialog.bj-dialog {
+        margin: 1rem !important;
+        max-width: calc(100% - 2rem) !important;
+    }
+
+    .bj-modal .modal-header,
+    .modal-header.bj-header,
+    .bj-modal .modal-body,
+    .modal-body.bj-body,
+    .bj-modal .modal-footer,
+    .modal-footer.bj-footer {
+        padding: 1rem !important;
+    }
+
+    .bj-modal .modal-title,
+    .modal-title.bj-title {
+        font-size: 1.2rem !important;
+    }
+
+    .bj-modal .modal-footer,
+    .modal-footer.bj-footer {
+        flex-direction: column !important;
+    }
+
+    .bj-btn {
+        width: 100% !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .bj-btn:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+
+/* ========================================
+   UTILIDADES ADICIONALES
+   ======================================== */
+
+/* Cards en modales */
+.bj-card {
+    background: linear-gradient(145deg, var(--bj-dark-secondary), var(--bj-dark-bg)) !important;
+    border: 1px solid var(--bj-border-color) !important;
+    border-radius: var(--bj-border-radius) !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1rem !important;
+}
+
+/* Alertas personalizadas */
+.bj-alert {
+    padding: 1rem !important;
+    border-radius: 10px !important;
+    margin-bottom: 1rem !important;
+}
+
+.bj-alert-danger {
+    background: rgba(220, 53, 69, 0.1) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    color: #ff6b7a !important;
+}
+
+.bj-alert-success {
+    background: rgba(40, 167, 69, 0.1) !important;
+    border: 1px solid rgba(40, 167, 69, 0.3) !important;
+    color: #5dd879 !important;
+}
+
+.bj-alert-info {
+    background: rgba(23, 162, 184, 0.1) !important;
+    border: 1px solid rgba(23, 162, 184, 0.3) !important;
+    color: #5bc0de !important;
+}
+
+.bj-alert-warning {
+    background: rgba(255, 193, 7, 0.1) !important;
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    color: #ffc107 !important;
+}
+
+/* Badge personalizado */
+.bj-badge {
+    padding: 0.35rem 0.65rem !important;
+    border-radius: 20px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    display: inline-block !important;
+}
+
+.bj-badge-primary {
+    background: linear-gradient(45deg, var(--bj-primary-color), var(--bj-primary-hover)) !important;
+    color: white !important;
+}
+
+.bj-badge-success {
+    background: linear-gradient(45deg, #28a745, #218838) !important;
+    color: white !important;
+}
+
+.bj-badge-danger {
+    background: linear-gradient(45deg, #dc3545, #c82333) !important;
+    color: white !important;
+}
+
+.bj-badge-info {
+    background: linear-gradient(45deg, #17a2b8, #138496) !important;
+    color: white !important;
+}
+
+.bj-badge-warning {
+    background: linear-gradient(45deg, #ffc107, #e0a800) !important;
+    color: #212529 !important;
+}

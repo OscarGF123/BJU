@@ -12,3 +12,10 @@ whitenoise
 
 # servidor WSGI para aplicaciones de python (levantamiento de produccion)
 gunicorn
+
+# Libreira para las imagenes de productos
+Pillow
+
+# Libreria para ejecutar tareas en segundom plano
+celery
+redis

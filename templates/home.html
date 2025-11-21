@@ -7,28 +7,55 @@
     <title>Box Jeans Urban - Tienda de Jeans y Sudaderas</title>
 
     <!-- DataTables CSS -->
-    <link href="{% static 'DataTables/datatables.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'DataTable/jquery.dataTables.min.css'%}">
+    <link rel="stylesheet" href="{% static 'DataTable/responsive.dataTables.min.css' %}">
+    <link rel="stylesheet" href="{% static 'DataTable/buttons.dataTables.min.css' %}">
+
+    <!-- SweetAlert 2 CSS -->
+    <link rel="stylesheet" href="{% static 'SweetAlert2/sweetalert2.min.css' %}">
     
     <!-- Bootstrap -->
-    <link href="{% static 'bootstrap-5.3.7-dist/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.7-dist/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-5.3.7-dist/mods/modal.css' %}">
 
     <!-- FontAwesome -->
     <link rel="stylesheet" href="{% static 'fontawesome-free-6.7.2-web/css/all.css' %}">
 
-    <!-- NUESTROS ESTILOS (CARGAR DESPUÉS PARA SOBRESCRIBIR) -->
-    <link rel="stylesheet" href="{% static 'styles/header.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/body.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/footer.css' %}"> 
-    <link rel="stylesheet" href="{% static 'styles/animaciones.css' %}">
-    <link rel="stylesheet" href="{% static 'styles/datatables.css' %}">
+    <!-- fuente Poppins-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Estilos de la pagina principal -->
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/header.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/body.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/footer.css' %}"> 
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/animaciones.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/datatables.css' %}">
+
+    <!-- Estilo del menu lateral -->
+    <link rel="stylesheet" href="{% static 'styles/barra_lateral/style.css' %}">
+
+    <!-- Estilos del login -->
+     <link rel="stylesheet" href="{% static 'styles/login/login.css' %}">
     
-    <!-- Scripts de librerías -->
+    <!-- JQuery-->
     <script src="{% static 'JQuery/jquery-3.7.1.min.js' %}"></script>
-    <script src="{% static 'DataTables/datatables.js' %}"></script>
-    <script src="{% static 'bootstrap-5.3.7-dist\js\bootstrap.bundle.min.js' %}"></script>
-    
-    <!-- Scrtipts -->
-    <script src="{% static 'scripts/interactividad.js' %}"></script>
+
+    <!-- Scripts DataTables -->
+    <script src="{% static 'DataTable/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'DataTable/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'DataTable/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'bootstrap-5.3.7-dist/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Scripts SweetAlert 2 -->
+    <script src="{% static 'SweetAlert2/sweetalert2.all.min.js' %}"></script>
+
+    <!--Script de funciones globales -->
+    <script src="{% static 'scripts/pagina_principal/funciones_globales.js' %}"></script>
+
 </head>
+
 {% block body %}{% endblock %}
+
 </html>
