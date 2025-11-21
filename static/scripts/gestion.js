@@ -568,7 +568,7 @@ $(document).on('click', '#btn-editar', function(e) {
             } else if (this.type === 'number') {
                 // Limpiar caracteres no numéricos
                 this.value = valor.replace(/[^0-9.-]/g, '');
-            } else if (this.type === 'text' || this.type === 'textarea'){
+            } else if (this.type === 'text' || this.type === 'textarea' || this.type === 'email'){
                 this.value = valor;
             }
             

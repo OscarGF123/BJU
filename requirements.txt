@@ -15,3 +15,7 @@ gunicorn
 
 # Libreira para las imagenes de productos
 Pillow
+
+# Libreria para ejecutar tareas en segundom plano
+celery
+redis
