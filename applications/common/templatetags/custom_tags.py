@@ -7,7 +7,7 @@ register = template.Library()
 
 @register.simple_tag()
 def obtener_campos(modelo: Model, titulo=False):
-    campos_excluidos = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'preferencias', 'conf_contrasena']
+    campos_excluidos = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'is_verified','date_joined', 'preferencias', 'conf_contrasena']
     # Obtener solo los campos del modelo
     campos_modelo = [i.name for i in modelo._meta.fields if not i.name.endswith('_ptr') and i.name not in campos_excluidos]
 

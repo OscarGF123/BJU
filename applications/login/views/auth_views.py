@@ -29,12 +29,22 @@ class LoginView(FormView):
     def form_valid(self, form):
         nombre_usuario = form.cleaned_data['username']
         contrasena = form.cleaned_data['password']
-        print(f"{nombre_usuario} {contrasena}")
-        user = authenticate(self.request, username=nombre_usuario, password=contrasena)
         
+        user = authenticate(self.request, username=nombre_usuario, password=contrasena)
 
-        if user is not None and user.is_active:
-            # ✅ AGREGAR: Hacer login del usuario
+        if user is not None:
+            print(not user.is_verified)
+            # Mandar error en caso de que la cuenta aun no ha sido verificada
+            if not user.is_verified:
+                mensaje_error = "La cuenta aun no ha sido verificada"
+                if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'status': 'error',
+                        'type': 'inactive_account',
+                        'verification_link': reverse_lazy('login:reenviar_verificacion'),
+                        'errors': mensaje_error
+                    }, status=200)
+            # AGREGAR: Hacer login del usuario
             login(self.request, user)
             
             # Respuesta AJAX exitosa
@@ -52,12 +62,13 @@ class LoginView(FormView):
             
         else:
             # ✅ CORREGIR: Manejar credenciales inválidas
-            mensaje_error = "Credenciales inválidas o cuenta desactivada"
+            mensaje_error = "Usuario o contraseña incorrectos"
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
                     'status': 'error',
-                    'message': mensaje_error
-                }, status=400)
+                    'type': 'credentials_invalid',
+                    'errors': mensaje_error
+                }, status=401)
             else:
                 # ✅ AGREGAR: Para requests no AJAX, agregar error al formulario
                 form.add_error(None, mensaje_error)
@@ -72,7 +83,7 @@ class LoginView(FormView):
                 'status': 'error',
                 'type': 'form_invald',
                 'errors': errors
-            }, status=400)
+            }, status=401)
         return super().form_invalid(form)
     
     def get_success_url(self):
@@ -114,7 +125,6 @@ class RegistroView(FormView):
             rol='cliente',
             
             # Usuario inactivo hasta verificación
-            is_active=False,
             is_verified=False
         )
         
@@ -192,7 +202,6 @@ class VerificarEmailView(TemplateView):
             if usuario.is_verification_token_valid(token):
                 # Activar cuenta
                 usuario.is_verified = True
-                usuario.is_active = True
                 usuario.verification_token = None  # Invalidar token
                 usuario.verification_token_created = None
                 usuario.save()
@@ -237,7 +246,7 @@ class ReenviarVerificacionView(FormView):
         email = form.cleaned_data['email']
         
         try:
-            usuario = Usuario.objects.get(email=email, is_active=False, is_verified=False)
+            usuario = Usuario.objects.get(email=email, is_verified=False)
             
             # Generar nuevo token
             usuario.generate_verification_token()

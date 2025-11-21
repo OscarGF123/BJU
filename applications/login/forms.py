@@ -162,8 +162,6 @@ class ReenviarVerificacionForm(forms.Form):
             usuario = Usuario.objects.get(email=email)
             if usuario.is_verified:
                 raise forms.ValidationError('Esta cuenta ya está verificada.')
-            if usuario.is_active:
-                raise forms.ValidationError('Esta cuenta ya está activa.')
         except Usuario.DoesNotExist:
             # No revelar si el email existe o no por seguridad
             pass

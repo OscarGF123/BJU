@@ -14,7 +14,6 @@ class AdminRequiredMixin(LoginRequiredMixin):
         
         # Verificar rol de administrador
         if not request.user.es_administrador():
-            messages.error(request, 'No tienes permisos para acceder a esta sección')
             if is_ajax_request(request):
                 return JsonResponse({
                         'status': 'errror',
@@ -26,7 +25,7 @@ class AdminRequiredMixin(LoginRequiredMixin):
                 return redirect('login:login')
         
         # Verificar que esté activo
-        if not request.user.activo:
+        if not request.user.is_verified:
             if is_ajax_request(request):
                 return JsonResponse({
                     'status': "error",

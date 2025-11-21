@@ -33,7 +33,6 @@ class Usuario(AbstractUser):
     tipo_identificacion = models.ForeignKey(TipoIdentificacion, on_delete=models.PROTECT, verbose_name="TIpo de identificacion")
     numero_identificacion = models.CharField(max_length=20, verbose_name="Numero de identificación", unique=True)
     conf_contrasena = models.CharField(max_length=128, verbose_name="Confitmar contraseña", null=True)
-    activo = models.BooleanField(default=True, verbose_name="Activo")
     fecha_registro = models.DateTimeField(default=timezone.now, verbose_name="Fecha de registro")
     telefono = models.CharField(max_length=120, verbose_name="Teléfono", null=True, blank=True)
 
