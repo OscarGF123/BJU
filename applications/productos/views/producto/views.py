@@ -36,7 +36,7 @@ class ListarProducto(AdminRequiredMixin, ListView):
                 instance=self.object
             )
         else:
-            context['imagen_formset'] = ImagenFormSet(instance=self.object)
+            context['imagen_formset'] = ImagenFormSet()
 
         context['seccion_plural'] = "Productos"
         context['seccion'] = "Producto"
