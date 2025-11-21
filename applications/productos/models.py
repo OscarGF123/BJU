@@ -1,6 +1,10 @@
+import os
+
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.utils import timezone
 
+from config import settings
 # Create your models here.
 
 
@@ -73,6 +77,9 @@ class Producto(models.Model):
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
 
+    def __str__(self):
+        return self.nombre
+
     class Meta:
         verbose_name = "Producto"
         verbose_name_plural = "Productos"
@@ -83,8 +90,20 @@ class PromocionProducto(models.Model):
     producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT)
     promocion = models.ForeignKey(Promocione, on_delete=models.PROTECT)
 
-class Imagenes(models.Model):
+
+class OverwriteStorage(FileSystemStorage):
+    """
+    Storage personalizado que sobrescribe archivos existentes
+    en lugar de crear nuevos con sufijos
+    """
+    def get_available_name(self, name, max_length=None):
+        # Eliminar el archivo anterior si existe
+        if self.exists(name):
+            os.remove(os.path.join(settings.MEDIA_ROOT, name))
+        return name
+
+class Imagen(models.Model):
     producto_id = models.ForeignKey(Producto, on_delete=models.PROTECT)
-    link_imagen = models.ImageField(upload_to='productos/')
-    fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
+    link_imagen = models.ImageField(upload_to='productos', verbose_name='Imagen', storage=OverwriteStorage())
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")

@@ -1,4 +1,6 @@
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from apl.views.persona.views import PersonaListView, PerosnaCreate, PersonaDeleteView, PerosnaUpdate
 from apl.views.pse.views import EpaycoView
@@ -32,3 +34,6 @@ urlpatterns = [
     #Publicar proyecto rapidamente
     path('url_ngrok/', retornar_url_ngrok, name="url_ngrok"),
 ]
+
+# Agregar url para las imagenes
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

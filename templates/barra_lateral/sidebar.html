@@ -46,6 +46,7 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
+                        <!-- Submenu -->
                         <li class="menu-item has-submenu" data-page="productos">
                             <a href="#" class="submenu-toggle">
                                 <i class="fa-solid fa-tshirt"></i>
@@ -89,6 +90,14 @@
                                     <a href="{% url 'productos:listar_categoria' %}">
                                         <i class="fa-solid fa-layer-group"></i>
                                         <span>Categoria</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="categoria">
+                                    <a href="{% url 'productos:listar_imagen' %}">
+                                        <i class="fa-solid fa-image"></i>
+                                        <span>Imagenes</span>
                                     </a>
                                 </li>
                             </ul>
