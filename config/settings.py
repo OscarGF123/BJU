@@ -38,8 +38,8 @@ CSRF_TRUSTED_ORIGINS = ["https://bju-production.up.railway.app"]
 
 # Application definition
 
-# Agregar la carpeta applications al Python path
-sys.path.insert(0, os.path.join(BASE_DIR, 'applications'))
+# # Agregar la carpeta applications al Python path
+# sys.path.insert(0, os.path.join(BASE_DIR, 'applications'))
 
 
 INSTALLED_APPS = [
@@ -56,15 +56,15 @@ INSTALLED_APPS = [
     'apl',
 
     # tags personalizados y vistas base
-    'common',
+    'applications.common',
 
     # apps del proyecto
-    'carrito_compras',
-    'usuarios',
-    'envios',
-    'pagos',
-    'productos',
-    'login',
+    'applications.carrito_compras',
+    'applications.usuarios',
+    'applications.envios',
+    'applications.productos',
+    'applications.login',
+    'applications.epayco',
 
 ]
 
@@ -200,6 +200,41 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
 # # Para desarrollo
 # if DEBUG:
 #     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Configuracion para Celery
+
+# URL del broker (Redis en este caso)
+# Redis escucha en el puerto 6379 por defecto
+CELERY_BROKER_URL =  os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+
+# Dónde guardar los resultados de las tareas
+# También usamos Redis para esto
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND', 'redis://localhost:6379/0')
+
+# Formato de serialización (cómo se convierten los datos)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = os.getenv("CELERY_TASK_SERIALIZER")
+CELERY_RESULT_SERIALIZER = os.getenv("CELERY_RESULT_SERIALIZER")
+
+# Usar timezone aware (importante para tareas programadas)
+CELERY_TIMEZONE = os.getenv("CELERY_TIMEZONE")  # Tu zona horaria
+CELERY_ENABLE_UTC = True if os.getenv("CELERY_ENABLE_UTC").lower() == 'true' else False
+
+# # Configuración de tareas periódicas (opcional)
+# from celery.schedules import crontab
+
+# CELERY_BEAT_SCHEDULE = {
+#     # Tarea que se ejecuta cada día a las 9:00 AM
+#     'enviar-reporte-diario': {
+#         'task': 'inventario.tasks.generar_reporte_diario',
+#         'schedule': crontab(hour=9, minute=0),
+#     },
+#     # Tarea que se ejecuta cada 30 minutos
+#     'limpiar-cache': {
+#         'task': 'core.tasks.limpiar_cache',
+#         'schedule': 30 * 60,  # 30 minutos en segundos
+#     },
+# }
 
 # Configuración general
 SITE_NAME = 'BOX JEANS URBAN'

@@ -240,17 +240,18 @@ class ServicioTrack123():
 
         return requests.request("GET", url=url, headers=self.headers).json()
 
-    def registrar_envio(self, numero_envio):
+    def registrar_envio(self, numero_envio, transportista):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/import"
         data = [
             {
-                "trackNo": numero_envio
+                "trackNo": numero_envio,
+                "courierCode": transportista
             }
         ]
 
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
     
-    def registrar_envio(self, numero_envio, transportista):
+    def registrar_envio_embarcacion(self, numero_envio, transportista):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/refresh"
         data = {
             "trackNo": numero_envio,
@@ -261,22 +262,34 @@ class ServicioTrack123():
 
 
 
-    def rastrear_envio(self, numero_envio):
+    def rastrear_envio(self, numero_envio, transportista=None):
         url = f"{self.url_base}/gateway/open-api/tk/v2.1/track/query"
-        data = {
-            "trackNoInfos": [
-                {
-                    "trackNo": numero_envio
-                }
-            ]
-        }
+        if transportista is not None:
+            data = {
+                "trackNoInfos": [
+                    {
+                        "trackNo": numero_envio,
+                        "courierCode": transportista
+                    }
+                ]
+            }
+        else:
+            data = {
+                "trackNoInfos": [
+                    {
+                        "trackNo": numero_envio,
+                        "courierCode": transportista
+                    }
+                ]
+            }
+
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
 
 # print(requests.request("DELETE", url="http://localhost:8000/eliminar_persona/126").text)
 # print(ServicioEpayco().crear_link_cobro()
-print(ServicioTrack123().rastrear_envio("GSH1CY13N000NER"))
+print(ServicioTrack123().rastrear_envio("700175614787", "inter-rapidisimo-inter-rapidsimo"))
 
-# Listar informacion de interapidisimo en la API Track123
+# Listar informacion de interapidisimo en la API Track123|
 # with open("transportadores.txt", "w") as archivo:
 #     for i in ServicioTrack123().lista_transportistas()["data"]:
 #         # if i["courierCode"] == "inter-rapidisimo-inter-rapidsimo":
