@@ -12,9 +12,9 @@ urlpatterns = [
     path('prueba/', include('apl.urls')),
 
     # Apps
-    path('admin/', include('productos.urls')),
-    path('admin/', include('usuarios.urls')),
-    path('', include('login.urls')),
+    path('admin/', include('applications.productos.urls')),
+    path('admin/', include('applications.usuarios.urls')),
+    path('', include('applications.login.urls')),
 
     # URLs de prueba
     path('persona/', PersonaListView.as_view(), name='listar_persona'),
