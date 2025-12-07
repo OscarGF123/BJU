@@ -65,6 +65,7 @@ INSTALLED_APPS = [
     'applications.productos',
     'applications.login',
     'applications.epayco',
+    'applications.tienda',
 
 ]
 
