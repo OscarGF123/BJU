@@ -47,6 +47,13 @@ class Marca(AtributoProducto):
         verbose_name_plural = "Marcas"
         db_table = "Marcas"
 
+class Tipo(AtributoProducto):
+
+    class Meta:
+        verbose_name = "Tipo"
+        verbose_name_plural = "Tipos"
+        db_table = "Tipos"
+
 class Promocione(models.Model):
 
     TIPO_DESCUENTOS =[
@@ -71,6 +78,7 @@ class Producto(models.Model):
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
+    tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT)
     talla = models.ForeignKey(Talla, on_delete=models.PROTECT)
     marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT)
