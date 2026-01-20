@@ -97,7 +97,7 @@ class LoginView(FormView):
             return reverse_lazy('productos:listar_marca')
         else:
             # Redirigir al cliente a la pagina principal
-            return reverse_lazy('productos:listar_color')
+            return reverse_lazy('tienda:pagina_principal')
 class RegistroView(FormView):
     template_name = 'login/register.html'
     form_class = RegistroForm

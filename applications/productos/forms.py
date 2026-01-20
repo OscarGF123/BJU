@@ -1,7 +1,7 @@
 from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput
 from django.utils.safestring import mark_safe
 
-from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen
+from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo
 
 # la clase AtributoProductoForm es para que las clases Categoria, Talla, Marca y Color hereden esta clase
 # por que me da pereza escribir el mismo codigo varias veces
@@ -141,3 +141,7 @@ class MarcaForm(AtributoProductoForm):
 class ColorForm(AtributoProductoForm):
     class Meta(AtributoProductoForm.Meta):
         model = Color
+
+class TipoForm(AtributoProductoForm):
+    class Meta(AtributoProductoForm.Meta):
+        model = Tipo

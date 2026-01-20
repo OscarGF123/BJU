@@ -45,7 +45,7 @@ class ClienteRequiredMixin(LoginRequiredMixin):
         
         if not request.user.es_cliente():
             messages.error(request, 'Esta sección es solo para clientes')
-            return redirect('usuarios:dashboard_admin')
+            return redirect('tienda:pagina_principaL')
         
         # Verificar que esté activo
         if not request.user.activo:

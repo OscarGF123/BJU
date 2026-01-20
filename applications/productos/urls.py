@@ -6,6 +6,7 @@ from applications.productos.views.talla.views import ListarTalla, CrearTalla, Ed
 from applications.productos.views.color.views import ListarColor, CrearColor, EditarColor, EliminarColor
 from applications.productos.views.marca.views import ListarMarca, CrearMarca, EditarMarca, EliminarMarca
 from applications.productos.views.imagen_view import ListarImagen, CrearImagen, EditarImagen, EliminarImagen
+from applications.productos.views.tipo_view import ListarTipo, CrearTipo, EditarTipo, EliminarTipo
 
 app_name = "productos"
 
@@ -47,4 +48,9 @@ urlpatterns = [
     path("editar_imagen/<int:pk>", EditarImagen.as_view(), name="editar_imagen"),
     path("eliminar_imagen/<int:pk>", EliminarImagen.as_view(), name="eliminar_imagen"),
     
+    # Modulo Tipo
+    path("listar_tipo/", ListarTipo.as_view(), name="listar_tipo"),
+    path("crear_tipo/", CrearTipo.as_view(), name="crear_tipo"),
+    path("editar_tipo/<int:pk>", EditarTipo.as_view(), name="editar_tipo"),
+    path("eliminar_tipo/<int:pk>", EliminarTipo.as_view(), name="eliminar_tipo"),
 ]
