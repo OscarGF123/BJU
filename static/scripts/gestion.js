@@ -224,21 +224,24 @@ function agregar(url, agregarFila) {
             // regresar al formulario original
             formulario.innerHTML = formularioOriginal;
 
-            const select = document.querySelector(`#${modelo}`);
+            const select = document.querySelector(`#id_${modelo}`);
             let opciones = [];
 
             // tomamos toda la informacion registrada que se obtuvo
             for (const llave in data){
                 // excluir el estado de la respuesta
-                if (llave != "status"){
+                if (llave !== "status" && llave !== "estado"){
                     opciones.unshift(data[llave]);
                 }
             }
             opciones.reverse();
+            console.log(opciones)
             //                     nombre        id
             let [texto, valor] = [opciones[1], opciones[0]];
             
             const nuevaOpcion = new Option(texto, valor);
+
+            console.log(nuevaOpcion)
             select.add(nuevaOpcion);
             select.value = valor;
 
@@ -282,17 +285,17 @@ function agregar(url, agregarFila) {
             }
             handlePermissionError(data);
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('btnGuardarForm').disabled = false;
-
-        Swal.fire({
-            title: 'Error',
-            text: `Ha ocurrido un error inesperado ${error}`,
-            icon: 'error'
-        })
     });
+    // .catch(error => {
+    //     console.error('Error:', error);
+    //     document.getElementById('btnGuardarForm').disabled = false;
+
+    //     Swal.fire({
+    //         title: 'Error',
+    //         text: `Ha ocurrido un error inesperado ${error}`,
+    //         icon: 'error'
+    //     })
+    // });
 
 }
 
@@ -653,7 +656,8 @@ $(document).on('click', "#formAdicional", function(e){
     .replace(/,(\s*})/, '$1');  // Limpiar comas extra
 
     let objeto = JSON.parse(datosLimpios);
-    
+
+    console.log(objeto)
     //tomar el formulario existente
     formularioOriginal = guardarFormularioConValores();
 
@@ -661,7 +665,7 @@ $(document).on('click', "#formAdicional", function(e){
     formulario.innerHTML = `${objeto.formulario}
     <div class="modal-footer">
         <button type="button" class="bj-btn bj-btn-secondary" id="regresarFormulario">Regresar</button>
-        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" data-modelo="${objeto.id_select}" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
+        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" data-modelo="${objeto.nombre.toLowerCase()}" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
     </div>
     `
     // Cambiar titulo
