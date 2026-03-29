@@ -167,13 +167,15 @@ class RegistroView(FormView):
             }, status=400)
         return super().form_invalid(form)
    
-class LogoutView(LoginRequiredMixin, RedirectView):
-    url = reverse_lazy('login:login')
+class LogoutView(RedirectView):
+
+    url = reverse_lazy('tienda:pagina_principal')
 
     def dispatch(self, request, *args, **kwargs):
         logout(request)
         print("logout")
         return super().dispatch(request, *args, **kwargs)
+    
     
 class PerfilView(LoginRequiredMixin, TemplateView):
     template_name = 'usuarios/perfil.html'

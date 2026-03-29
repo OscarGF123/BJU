@@ -1,5 +1,6 @@
-from django.views.generic import TemplateView
+from django.views.generic import ListView
 
+from applications.productos.models import Producto, Imagen
 # Create your views here.
 
 """
@@ -15,11 +16,13 @@ Plan para la compra de un producto
     3.5.  
 """
 
-class PaginaPrincipal(TemplateView):
-
+class PaginaPrincipal(ListView):
+    model = Producto
     template_name = 'pagina_principal/tienda.html'
+    context_object_name = "productos"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['Productos'] = []
+        context['login'] = True if self.request.user.is_authenticated else False
+        context['imagen_producto'] = Imagen.objects.all()
         return context

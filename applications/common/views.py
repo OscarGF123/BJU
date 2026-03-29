@@ -104,6 +104,8 @@ class VistaBaseEditar(UpdateView):
             errors = {}
             for field, error_list in form.errors.items():
                 errors[field] = [str(error) for error in error_list]
+
+            print(form.errors.items())
             return JsonResponse({
                 'status': 'error',
                 'type': 'form_invalid',

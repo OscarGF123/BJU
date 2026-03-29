@@ -27,6 +27,9 @@ let url_eliminar = script.dataset.eliminar;
 // Nombre del modulo
 let seccion = script.dataset.seccion;
 
+// Nombre del modulo con formset
+let seccionFormset = "Producto";
+
 // modal formulario
 const formulario = document.getElementById("formulario");
 
@@ -224,21 +227,24 @@ function agregar(url, agregarFila) {
             // regresar al formulario original
             formulario.innerHTML = formularioOriginal;
 
-            const select = document.querySelector(`#${modelo}`);
+            const select = document.querySelector(`#id_${modelo}`);
             let opciones = [];
 
             // tomamos toda la informacion registrada que se obtuvo
             for (const llave in data){
                 // excluir el estado de la respuesta
-                if (llave != "status"){
+                if (llave !== "status" && llave !== "estado"){
                     opciones.unshift(data[llave]);
                 }
             }
             opciones.reverse();
+            console.log(opciones)
             //                     nombre        id
             let [texto, valor] = [opciones[1], opciones[0]];
             
             const nuevaOpcion = new Option(texto, valor);
+
+            console.log(nuevaOpcion)
             select.add(nuevaOpcion);
             select.value = valor;
 
@@ -272,7 +278,9 @@ function agregar(url, agregarFila) {
                 html: `Error en los siguientes campos:<br>${errorMessage}`,
                 icon: 'error'
             })
-            console.error('Error:', data.errros);
+for (let [clave, valor] of new FormData(formulario)) {
+    console.log(clave, valor)
+}
         } else {
             // evitar errores con el aria-hidden
 
@@ -282,17 +290,17 @@ function agregar(url, agregarFila) {
             }
             handlePermissionError(data);
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        document.getElementById('btnGuardarForm').disabled = false;
-
-        Swal.fire({
-            title: 'Error',
-            text: `Ha ocurrido un error inesperado ${error}`,
-            icon: 'error'
-        })
     });
+    // .catch(error => {
+    //     console.error('Error:', error);
+    //     document.getElementById('btnGuardarForm').disabled = false;
+
+    //     Swal.fire({
+    //         title: 'Error',
+    //         text: `Ha ocurrido un error inesperado ${error}`,
+    //         icon: 'error'
+    //     })
+    // });
 
 }
 
@@ -316,7 +324,7 @@ function editar() {
 
             let re = /(?:\.([^.]+))?$/;
 
-            let extensionesValidas = ['jpg', 'png']
+            let extensionesValidas = ['jpg', 'png', 'jpeg']
 
             // Tomamos todos los datos editados
             for (const clave in data) {
@@ -365,19 +373,17 @@ function editar() {
         } else if (data.status === 'error' && data.type == 'form_invalid'){
             document.getElementById('btnGuardarForm').disabled = false;
 
-            // Estructurar los errores
+            // Construir el html con los errores
             let errorMessage = '<ul>';
-
             for (const [field, messages] of Object.entries(data.errors)) {
                 errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
             }
             errorMessage += '</ul>';
-
             Swal.fire({
-                title: '¡Error!',
-                icon: 'error',
-                text: `Ha ocurrido un error al editar el registro\n${errorMessage}`
-            });
+                title: 'Error',
+                html: `Error en los siguientes campos:<br>${errorMessage}`,
+                icon: 'error'
+            })
         } else {
             console.log('Ocurrio un error en el backend');
         }
@@ -447,7 +453,14 @@ $(document).on('click', '#btn-eliminar', function(e) {
 $(document).on('click', '#btn-editar', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
+    // Cuando se este editando actualizar el link de la foto no sera necesario
+    const inputImagen = document.querySelector('input[name="link_imagen"]');
+    if (inputImagen) {
+        inputImagen.removeAttribute('required');
+        
+    }
+
     // Obtener la fila actual
     fila_edicion = $(this).attr('data-row-index');
 
@@ -653,7 +666,8 @@ $(document).on('click', "#formAdicional", function(e){
     .replace(/,(\s*})/, '$1');  // Limpiar comas extra
 
     let objeto = JSON.parse(datosLimpios);
-    
+
+    console.log(objeto)
     //tomar el formulario existente
     formularioOriginal = guardarFormularioConValores();
 
@@ -661,7 +675,7 @@ $(document).on('click', "#formAdicional", function(e){
     formulario.innerHTML = `${objeto.formulario}
     <div class="modal-footer">
         <button type="button" class="bj-btn bj-btn-secondary" id="regresarFormulario">Regresar</button>
-        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" data-modelo="${objeto.id_select}" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
+        <button type="submit" class="bj-btn bj-btn-primary" id="btnGuardarForm" data-modelo="${objeto.nombre.toLowerCase()}" value="${objeto.url}" agregarfila="false">Guardar ${objeto.nombre}</button>
     </div>
     `
     // Cambiar titulo

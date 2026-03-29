@@ -225,7 +225,10 @@ body {
     box-shadow: 0 15px 40px rgba(220, 53, 69, 0.6);
 }
 
-/* Products Section */
+/* ========================================
+    Products Section - MODIFICADO
+    Diseño mejorado con imágenes grandes
+    ======================================== */
 .products-section {
     padding: 5rem 2rem;
     max-width: 1200px;
@@ -253,82 +256,266 @@ body {
     border-radius: 2px;
 }
 
+/* ========================================
+    GRID DE PRODUCTOS
+    ======================================== */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    /* Columnas automáticas: mínimo 280px, máximo espacio disponible */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; /* Espacio entre tarjetas */
     margin-top: 3rem;
 }
 
+/* ========================================
+    TARJETA DE PRODUCTO
+    ======================================== */
 .product-card {
+    /* Fondo con degradado oscuro conservando colores originales */
     background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    
+    /* Bordes redondeados */
     border-radius: 20px;
+    
+    /* Oculta contenido que sobresale */
     overflow: hidden;
+    
+    /* Transición suave para efectos hover */
     transition: all 0.3s ease;
+    
+    /* Borde sutil con el color rojo original */
     border: 1px solid rgba(220, 53, 69, 0.2);
+    
     position: relative;
+    
+    /* CLAVE: Flexbox para organizar imagen y contenido verticalmente */
+    display: flex;
+    flex-direction: column;
+    
+    /* Altura total de la tarjeta */
+    min-height: 550px;
 }
 
+/* Efecto al pasar el mouse sobre la tarjeta */
 .product-card:hover {
+    /* Levanta la tarjeta 10px y agranda 2% */
     transform: translateY(-10px) scale(1.02);
+    
+    /* Sombra más intensa con el color rojo */
     box-shadow: 0 20px 40px rgba(220, 53, 69, 0.3);
+    
+    /* Borde más visible */
     border-color: rgba(220, 53, 69, 0.6);
 }
 
+/* ========================================
+    CONTENEDOR DE LA IMAGEN - SECCIÓN PRINCIPAL
+    Esta es la parte MÁS IMPORTANTE
+    ======================================== */
 .product-image {
+    /* Ancho completo de la tarjeta */
     width: 100%;
-    height: 250px;
-    background: linear-gradient(45deg, #333, #555);
+    
+    /* CAMBIO CLAVE: Altura aumentada de 250px a 420px */
+    /* Esto hace que la imagen ocupe ~75% de la tarjeta */
+    height: 420px;
+    
+    /* Fondo de respaldo mientras carga la imagen */
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    
     position: relative;
+    
+    /* IMPORTANTE: Oculta las partes de la imagen que sobresalen */
     overflow: hidden;
+    
+    /* Flexbox para centrar la imagen perfectamente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.product-image::before {
-    content: '👕';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 4rem;
-    opacity: 0.7;
+/* ========================================
+    LA IMAGEN REAL (etiqueta <img>)
+    ======================================== */
+.product-image img {
+    /* Ocupa todo el ancho */
+    width: 100%;
+    
+    /* Ocupa toda la altura */
+    height: 100%;
+    
+    /* PROPIEDAD CLAVE: object-fit
+       - cover: Cubre todo el espacio, puede recortar bordes (RECOMENDADO)
+       - contain: Muestra toda la imagen, puede dejar espacios blancos
+    */
+    object-fit: cover;
+    
+    /* Centra la imagen en el contenedor */
+    object-position: center;
+    
+    /* Elimina espacios blancos debajo de la imagen */
+    display: block;
+    
+    /* Transición suave para el efecto zoom */
+    transition: transform 0.3s ease;
 }
 
+/* Efecto ZOOM en la imagen al hacer hover sobre la tarjeta */
+.product-card:hover .product-image img {
+    /* Aumenta el tamaño de la imagen al 105% */
+    transform: scale(1.05);
+}
+
+/* ========================================
+    INFORMACIÓN DEL PRODUCTO
+    Ocupa el 25% restante de la tarjeta
+    ======================================== */
 .product-info {
+    /* Espaciado interno */
     padding: 1.5rem;
+    
+    /* Ocupa el espacio restante disponible */
+    flex-grow: 1;
+    
+    /* Organiza el contenido verticalmente */
+    display: flex;
+    flex-direction: column;
+    
+    /* Distribuye el espacio: nombre arriba, botón abajo */
+    justify-content: space-between;
 }
 
+/* ========================================
+    NOMBRE DEL PRODUCTO
+    ======================================== */
 .product-name {
     font-size: 1.3rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
-    color: #ffffff;
+    color: #ffffff; /* Conserva el blanco original */
+    
+    /* Limita el nombre a máximo 2 líneas */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    
+    /* Agrega "..." si el texto es muy largo */
+    text-overflow: ellipsis;
+    
+    /* Altura mínima para mantener consistencia */
+    min-height: 2.6rem;
 }
 
+/* ========================================
+    PRECIO DEL PRODUCTO
+    ======================================== */
 .product-price {
     font-size: 1.5rem;
+    
+    /* Color rojo original de la página */
     color: #dc3545;
+    
     font-weight: bold;
     margin-bottom: 1rem;
 }
 
+/* ========================================
+    BOTÓN AGREGAR AL CARRITO
+    ======================================== */
 .add-to-cart {
+    /* Ocupa todo el ancho disponible */
     width: 100%;
+    
+    /* Degradado con los colores rojos originales */
     background: linear-gradient(45deg, #dc3545, #c82333);
+    
     color: white;
     border: none;
+    
+    /* Espaciado interno del botón */
     padding: 1rem;
+    
     border-radius: 10px;
     font-weight: bold;
     text-transform: uppercase;
+    
+    /* Espaciado entre letras */
+    letter-spacing: 1px;
+    
     cursor: pointer;
+    
+    /* Transición suave para efectos */
     transition: all 0.3s ease;
+    
+    /* Asegura que el botón esté al fondo */
+    margin-top: auto;
 }
 
+/* Efecto hover del botón */
 .add-to-cart:hover {
+    /* Invierte el degradado */
     background: linear-gradient(45deg, #c82333, #dc3545);
+    
+    /* Levanta el botón 2px */
     transform: translateY(-2px);
+    
+    /* Sombra sutil */
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
 }
 
+/* ========================================
+    RESPONSIVE PARA MÓVILES Y TABLETS
+    ======================================== */
+
+/* Tablets (pantallas medianas) */
+@media (max-width: 768px) {
+    .product-image {
+        /* Reducimos altura en tablets */
+        height: 380px;
+    }
+    
+    .products-grid {
+        /* Columnas más estrechas en tablets */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .product-card {
+        min-height: 520px;
+    }
+}
+
+/* Móviles (pantallas pequeñas) */
+@media (max-width: 480px) {
+    .product-image {
+        /* Reducimos más en móviles */
+        height: 340px;
+    }
+    
+    .products-grid {
+        /* Una sola columna en móviles */
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .product-card {
+        min-height: 480px;
+    }
+    
+    .product-info {
+        padding: 1rem;
+    }
+    
+    .product-name {
+        font-size: 1.1rem;
+    }
+    
+    .product-price {
+        font-size: 1.3rem;
+    }
+}
 /* Special Offers Section */
 .offers-section {
     background: linear-gradient(135deg, #dc3545, #000000);

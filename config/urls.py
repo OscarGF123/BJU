@@ -29,6 +29,8 @@ urlpatterns = [
     path('login_prueba', PruebaDisenoLoginView.as_view(), name="login_prueba"),
     path('pse_response/', EpaycoView.as_view(), name="pse_response"),
     path('alertas/', SweetAlertView.as_view()),
+    path('carrito_prueba', CarritoComprasView.as_view(), name="carrito_prueba"),
+    path('detalle_producto', DetalleProductoView.as_view(), name="detalle_producto"),
 
     #Este endpoint es para ver si el proyecto de django es saludable
     path('healthy/', health_check, name="healthy"),
