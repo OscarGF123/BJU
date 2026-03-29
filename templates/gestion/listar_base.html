@@ -81,15 +81,19 @@
 
                             {% endfor %}
                                 <!-- formset exclusivo del modulo de Producto -->
-                                {{ imagen_formset.management_form }}
-                                
-                                <div id="imagen-forms">
-                                    {% for imagen_form in imagen_formset %}
-                                        <div class="imagen-form-item">
-                                            {{ imagen_form.as_p }}
-                                        </div>
-                                    {% endfor %}
+
+                                <div class="formsetImagen">
+                                    {{ imagen_formset.management_form }}
+                                    
+                                    <div id="imagen-forms">
+                                        {% for imagen_form in imagen_formset %}
+                                            <div class="imagen-form-item">
+                                                {{ imagen_form.as_p }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>                                    
                                 </div>
+
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="bj-btn bj-btn-secondary" data-bs-dismiss="modal" id="bjBtnCerrar">Cancelar</button>
@@ -100,6 +104,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -120,6 +125,11 @@
     </div>
 {% endblock %}
 {% block javascript %}
-<script src="{% static 'scripts/gestion.js' %}" id="scriptTabla" data-eliminar="{{url_eliminar}}" data-editar="{{url_editar}}" data-seccion="{{seccion}}">
+<script src="{% static 'scripts/gestion.js' %}" 
+        id="scriptTabla" 
+        data-eliminar="{{url_eliminar}}" 
+        data-editar="{{url_editar}}" 
+        data-seccion="{{seccion}}"
+        >
 </script>
 {% endblock %}

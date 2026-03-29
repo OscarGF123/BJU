@@ -72,8 +72,8 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'usuarios.Usuario'
 # Urls de autenticacion
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/admin/listar_productos/'
-LOGOUT_REDIRECT_URL = '/login'
+LOGIN_REDIRECT_URL = 'pagina_principal'
+LOGOUT_REDIRECT_URL = 'pagina_principal'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -175,7 +175,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Configuración adicional de whitenoise

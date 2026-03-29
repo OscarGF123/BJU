@@ -27,6 +27,9 @@ let url_eliminar = script.dataset.eliminar;
 // Nombre del modulo
 let seccion = script.dataset.seccion;
 
+// Nombre del modulo con formset
+let seccionFormset = "Producto";
+
 // modal formulario
 const formulario = document.getElementById("formulario");
 
@@ -275,7 +278,9 @@ function agregar(url, agregarFila) {
                 html: `Error en los siguientes campos:<br>${errorMessage}`,
                 icon: 'error'
             })
-            console.error('Error:', data.errros);
+for (let [clave, valor] of new FormData(formulario)) {
+    console.log(clave, valor)
+}
         } else {
             // evitar errores con el aria-hidden
 
@@ -319,7 +324,7 @@ function editar() {
 
             let re = /(?:\.([^.]+))?$/;
 
-            let extensionesValidas = ['jpg', 'png']
+            let extensionesValidas = ['jpg', 'png', 'jpeg']
 
             // Tomamos todos los datos editados
             for (const clave in data) {
@@ -368,19 +373,17 @@ function editar() {
         } else if (data.status === 'error' && data.type == 'form_invalid'){
             document.getElementById('btnGuardarForm').disabled = false;
 
-            // Estructurar los errores
+            // Construir el html con los errores
             let errorMessage = '<ul>';
-
             for (const [field, messages] of Object.entries(data.errors)) {
                 errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
             }
             errorMessage += '</ul>';
-
             Swal.fire({
-                title: '¡Error!',
-                icon: 'error',
-                text: `Ha ocurrido un error al editar el registro\n${errorMessage}`
-            });
+                title: 'Error',
+                html: `Error en los siguientes campos:<br>${errorMessage}`,
+                icon: 'error'
+            })
         } else {
             console.log('Ocurrio un error en el backend');
         }
@@ -450,7 +453,14 @@ $(document).on('click', '#btn-eliminar', function(e) {
 $(document).on('click', '#btn-editar', function(e) {
     e.preventDefault();
     e.stopPropagation();
-    
+
+    // Cuando se este editando actualizar el link de la foto no sera necesario
+    const inputImagen = document.querySelector('input[name="link_imagen"]');
+    if (inputImagen) {
+        inputImagen.removeAttribute('required');
+        
+    }
+
     // Obtener la fila actual
     fila_edicion = $(this).attr('data-row-index');
 

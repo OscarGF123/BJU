@@ -2,6 +2,8 @@ from django import template
 from django.db.models import Model
 from django.utils import timezone
 
+from applications.productos.models import Imagen
+
 
 register = template.Library()
 
@@ -23,3 +25,8 @@ def obtener_atributo(modelo, campo):
         tiempo_local = timezone.localtime(getattr(modelo, campo))
         return tiempo_local.strftime("%d/%m/%Y %H:%M:%S")
     return getattr(modelo, campo)
+
+@register.simple_tag()
+def obtener_imagen_producto(producto_id):
+
+    return Imagen.objects.get(producto_id=producto_id).link_imagen

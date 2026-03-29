@@ -34,4 +34,13 @@ class SweetAlertView(View):
 
     def get(self, request):
         return render(request, 'BJU(prueba)/alertas.html')
+    
+class CarritoComprasView(View): 
 
+    def get(self, request):
+        return render(request, 'BJU(Prueba)/carrito.html')
+
+class DetalleProductoView(View):
+
+    def get(self, request):
+        return render(request, 'BJU(Prueba)/detalle_producto.html')

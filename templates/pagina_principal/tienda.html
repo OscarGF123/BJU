@@ -1,5 +1,6 @@
 {% extends "home.html" %}
 {% load static %}
+{% load custom_tags %}
 
 {% block body %}
 
@@ -19,13 +20,17 @@
                 <li><a href="#home" class="nav-link">Inicio</a></li>
                 <li><a href="#jeans" class="nav-link">Jeans</a></li>
                 <li><a href="#sudaderas" class="nav-link">Sudaderas</a></li>
-                <li><a href="#ofertas" class="nav-link">Ofertas</a></li>
                 <li><a href="#contacto" class="nav-link">Contacto</a></li>
             </ul>
             
             <!-- Acciones del usuario -->
             <div class="nav-actions">
-                <button class="cart-btn" onclick="showCart()">🛒 Carrito (0)</button>
+                <button class="cart-btn" onclick="showCart()">🛒 Carrito</button>
+                {% if login %}
+                    <a href="/logout"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario"></a>
+                {% else %}  
+                    <a href="/login">Iniciar Sesión</a>
+                {% endif %}
                 <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
             </div>
         </nav>
@@ -52,76 +57,18 @@
             
             <div class="products-grid">
                 <!-- Producto 1: Jean Urban Classic -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Jean Urban Classic</h3>
-                        <p class="product-price">$89.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Jean Urban Classic', 89900)">
-                            Agregar al Carrito
-                        </button>
+                {% for producto in productos %}
+                    <div class="product-card fade-in">
+                        <div class="product-image"><img src="media/{% obtener_imagen_producto producto.id %}" alt=""></div>
+                        <div class="product-info">
+                            <h3 class="product-name">{{producto.nombre}}</h3>
+                            <p class="product-price">{{producto.precio_unitario}}</p>
+                            <button class="add-to-cart">
+                                Agregar al Carrito
+                            </button>
+                        </div>
                     </div>
-                </div>
-
-                <!-- Producto 2: Sudadera Street Style -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Sudadera Street Style</h3>
-                        <p class="product-price">$65.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Sudadera Street Style', 65900)">
-                            Agregar al Carrito
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Producto 3: Jean Ripped Dark -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Jean Ripped Dark</h3>
-                        <p class="product-price">$95.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Jean Ripped Dark', 95900)">
-                            Agregar al Carrito
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Producto 4: Sudadera Oversized -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Sudadera Oversized</h3>
-                        <p class="product-price">$72.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Sudadera Oversized', 72900)">
-                            Agregar al Carrito
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Producto 5: Jean Skinny Black -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Jean Skinny Black</h3>
-                        <p class="product-price">$82.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Jean Skinny Black', 82900)">
-                            Agregar al Carrito
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Producto 6: Sudadera Hoodie Red -->
-                <div class="product-card fade-in">
-                    <div class="product-image"></div>
-                    <div class="product-info">
-                        <h3 class="product-name">Sudadera Hoodie Red</h3>
-                        <p class="product-price">$69.900</p>
-                        <button class="add-to-cart" onclick="addToCart('Sudadera Hoodie Red', 69900)">
-                            Agregar al Carrito
-                        </button>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -196,9 +143,6 @@
          Funcionalidades e interactividad
          ======================================== -->
     <script>
-        // Variables globales para el carrito
-        let cart = [];
-        let cartCount = 0;
 
         // ========================================
         // FUNCIONES DEL HEADER
@@ -231,94 +175,47 @@
             });
         }
 
-        // ========================================
-        // FUNCIONES DEL CARRITO DE COMPRAS
-        // ========================================
-        
-        // Agregar producto al carrito
-        function addToCart(productName, price) {
-            cart.push({
-                name: productName,
-                price: price
-            });
-            cartCount++;
-            updateCartButton();
-            
-            // Animación de confirmación
-            showNotification(`${productName} agregado al carrito!`);
-        }
-
-        // Actualizar el botón del carrito
-        function updateCartButton() {
-            const cartBtn = document.querySelector('.cart-btn');
-            cartBtn.textContent = `🛒 Carrito (${cartCount})`;
-            
-            // Animación del botón
-            cartBtn.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                cartBtn.style.transform = 'scale(1)';
-            }, 200);
-        }
-
-        // Mostrar carrito (función placeholder)
-        function showCart() {
-            let cartMessage = 'Productos en el carrito:\n\n';
-            let total = 0;
-            
-            if (cart.length === 0) {
-                alert('Tu carrito está vacío');
-                return;
-            }
-            
-            cart.forEach(item => {
-                cartMessage += `${item.name} - $${item.price.toLocaleString()}\n`;
-                total += item.price;
-            });
-            
-            cartMessage += `\nTotal: $${total.toLocaleString()}`;
-            alert(cartMessage);
-        }
 
         // ========================================
         // SISTEMA DE NOTIFICACIONES
         // ========================================
         
         // Mostrar notificación
-        function showNotification(message) {
-            // Crear elemento de notificación
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 100px;
-                right: 20px;
-                background: linear-gradient(45deg, #dc3545, #28a745);
-                color: white;
-                padding: 1rem 2rem;
-                border-radius: 10px;
-                z-index: 10000;
-                font-weight: bold;
-                box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
-                transform: translateX(400px);
-                transition: all 0.3s ease;
-            `;
-            notification.textContent = message;
+        // function showNotification(message) {
+        //     // Crear elemento de notificación
+        //     const notification = document.createElement('div');
+        //     notification.style.cssText = `
+        //         position: fixed;
+        //         top: 100px;
+        //         right: 20px;
+        //         background: linear-gradient(45deg, #dc3545, #28a745);
+        //         color: white;
+        //         padding: 1rem 2rem;
+        //         border-radius: 10px;
+        //         z-index: 10000;
+        //         font-weight: bold;
+        //         box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        //         transform: translateX(400px);
+        //         transition: all 0.3s ease;
+        //     `;
+        //     notification.textContent = message;
             
             // Agregar al DOM
-            document.body.appendChild(notification);
+            // document.body.appendChild(notification);
             
             // Animar entrada
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 100);
+        //     setTimeout(() => {
+        //         notification.style.transform = 'translateX(0)';
+        //     }, 100);
             
-            // Remover después de 3 segundos
-            setTimeout(() => {
-                notification.style.transform = 'translateX(400px)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
+        //     // Remover después de 3 segundos
+        //     setTimeout(() => {
+        //         notification.style.transform = 'translateX(400px)';
+        //         setTimeout(() => {
+        //             document.body.removeChild(notification);
+        //         }, 300);
+        //     }, 3000);
+        // }
 
         // ========================================
         // ANIMACIONES DE SCROLL
@@ -453,12 +350,6 @@
             // Guardar preferencia en localStorage sería ideal aquí
             // pero recordemos que localStorage no está disponible en artifacts
         }
-
-        console.log('🎉 Box Jeans Urban - Sitio web cargado correctamente!');
-        console.log('📱 Responsive design activado');
-        console.log('🛒 Sistema de carrito funcional');
-        console.log('✨ Animaciones y efectos activos');
-
         // ========================================
         // JAVASCRIPT - FIN
         // ========================================

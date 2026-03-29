@@ -49,7 +49,7 @@ urlpatterns = [
     path("eliminar_imagen/<int:pk>", EliminarImagen.as_view(), name="eliminar_imagen"),
     
     # Modulo Tipo
-    path("listar_tipo/", ListarTipo.as_view(), name="listar_tipo"),
+    path("listar_tipos/", ListarTipo.as_view(), name="listar_tipos"),
     path("crear_tipo/", CrearTipo.as_view(), name="crear_tipo"),
     path("editar_tipo/<int:pk>", EditarTipo.as_view(), name="editar_tipo"),
     path("eliminar_tipo/<int:pk>", EliminarTipo.as_view(), name="eliminar_tipo"),

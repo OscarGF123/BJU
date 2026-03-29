@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito de Compras - Urban Style</title>
+    <style>
+        /* ========================================
+           RESET Y ESTILOS GLOBALES
+           ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* ========================================
+           HEADER - Igual que tu página principal
+           ======================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #dc3545;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.5);
+        }
+
+        /* ========================================
+           CONTENEDOR PRINCIPAL DEL CARRITO
+           ======================================== */
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        /* ========================================
+           TÍTULO DE LA PÁGINA
+           ======================================== */
+        .page-title {
+            grid-column: 1 / -1;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            position: relative;
+            padding-bottom: 1rem;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, #dc3545, #ffffff);
+            border-radius: 2px;
+        }
+
+        /* ========================================
+           LISTA DE PRODUCTOS EN EL CARRITO
+           ======================================== */
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* ========================================
+           TARJETA DE PRODUCTO INDIVIDUAL
+           Similar a tu diseño de productos pero horizontal
+           ======================================== */
+        .cart-item {
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border-radius: 15px;
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 120px 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .cart-item:hover {
+            border-color: rgba(220, 53, 69, 0.5);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
+        }
+
+        /* ========================================
+           IMAGEN DEL PRODUCTO EN EL CARRITO
+           ======================================== */
+        .item-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #333, #555);
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .cart-item:hover .item-image img {
+            transform: scale(1.05);
+        }
+
+        /* ========================================
+           INFORMACIÓN DEL PRODUCTO
+           ======================================== */
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .item-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .item-size {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .item-price {
+            font-size: 1.3rem;
+            color: #dc3545;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        /* ========================================
+           CONTROLES DE CANTIDAD
+           Botones para aumentar/disminuir cantidad
+           ======================================== */
+        .item-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 25px;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .qty-btn {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .qty-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .qty-number {
+            font-size: 1.1rem;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        /* ========================================
+           BOTÓN ELIMINAR PRODUCTO
+           ======================================== */
+        .remove-btn {
+            background: transparent;
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #dc3545;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+            border-color: #dc3545;
+            transform: translateY(-2px);
+        }
+
+        /* ========================================
+           PANEL DE RESUMEN (SIDEBAR DERECHO)
+           Muestra subtotal, envío y total
+           ======================================== */
+        .cart-summary {
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border-radius: 20px;
+            padding: 2rem;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+
+        /* ========================================
+           LÍNEAS DE DETALLES DEL RESUMEN
+           ======================================== */
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            border-top: 2px solid rgba(220, 53, 69, 0.5);
+            margin-top: 1rem;
+            padding-top: 1.5rem;
+        }
+
+        .summary-label {
+            color: #cccccc;
+            font-size: 1rem;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .summary-row:last-child .summary-label {
+            font-size: 1.3rem;
+            color: #ffffff;
+        }
+
+        .summary-row:last-child .summary-value {
+            font-size: 1.5rem;
+            color: #dc3545;
+        }
+
+        /* ========================================
+           BOTÓN DE CHECKOUT (PAGAR)
+           ======================================== */
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border: none;
+            padding: 1.2rem;
+            margin-top: 1.5rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(220, 53, 69, 0.5);
+        }
+
+        /* ========================================
+           INFORMACIÓN ADICIONAL
+           Envío gratis, garantía, etc.
+           ======================================== */
+        .info-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .info-badge-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* ========================================
+           MENSAJE DE CARRITO VACÍO
+           ======================================== */
+        .empty-cart {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 4rem 2rem;
+            background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+            border-radius: 20px;
+            border: 1px solid rgba(220, 53, 69, 0.2);
+        }
+
+        .empty-cart-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .empty-cart-text {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: #999;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN PARA MÓVILES
+           ======================================== */
+        @media (max-width: 968px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cart-summary {
+                position: static;
+                margin-top: 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .cart-item {
+                grid-template-columns: 80px 1fr;
+                gap: 1rem;
+            }
+
+            .item-controls {
+                grid-column: 1 / -1;
+                flex-direction: row;
+                justify-content: space-between;
+                margin-top: 1rem;
+            }
+
+            .item-image {
+                width: 80px;
+                height: 80px;
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .cart-container {
+                padding: 0 1rem;
+            }
+        }
+
+        /* ========================================
+           ANIMACIONES
+           ======================================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cart-item {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .cart-item:nth-child(1) { animation-delay: 0.1s; }
+        .cart-item:nth-child(2) { animation-delay: 0.2s; }
+        .cart-item:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- ========================================
+         HEADER - Navegación superior
+         ======================================== -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">Urban Style</a>
+            <a href="#" class="back-btn">← Seguir Comprando</a>
+        </nav>
+    </header>
+
+    <!-- ========================================
+         CONTENEDOR PRINCIPAL DEL CARRITO
+         ======================================== -->
+    <div class="cart-container">
+        <!-- Título de la página -->
+        <h1 class="page-title">Mi Carrito</h1>
+
+        <!-- ========================================
+             LISTA DE PRODUCTOS EN EL CARRITO
+             ======================================== -->
+        <div class="cart-items">
+            <!-- Producto 1 -->
+            <div class="cart-item">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&h=400&fit=crop" alt="Producto">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-name">Jean Urban Classic</h3>
+                    <p class="item-size">Talla: L</p>
+                    <p class="item-price">$89.900</p>
+                </div>
+                <div class="item-controls">
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQty(1)">−</button>
+                        <span class="qty-number" id="qty-1">1</span>
+                        <button class="qty-btn" onclick="increaseQty(1)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(1)">Eliminar</button>
+                </div>
+            </div>
+
+            <!-- Producto 2 -->
+            <div class="cart-item">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400&h=400&fit=crop" alt="Producto">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-name">Sudadera Oversize Negro</h3>
+                    <p class="item-size">Talla: M</p>
+                    <p class="item-price">$68.269</p>
+                </div>
+                <div class="item-controls">
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQty(2)">−</button>
+                        <span class="qty-number" id="qty-2">2</span>
+                        <button class="qty-btn" onclick="increaseQty(2)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(2)">Eliminar</button>
+                </div>
+            </div>
+
+            <!-- Producto 3 -->
+            <div class="cart-item">
+                <div class="item-image">
+                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&h=400&fit=crop" alt="Producto">
+                </div>
+                <div class="item-info">
+                    <h3 class="item-name">Chaqueta Kimono Japonés</h3>
+                    <p class="item-size">Talla: XL</p>
+                    <p class="item-price">$124.500</p>
+                </div>
+                <div class="item-controls">
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="decreaseQty(3)">−</button>
+                        <span class="qty-number" id="qty-3">1</span>
+                        <button class="qty-btn" onclick="increaseQty(3)">+</button>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(3)">Eliminar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             PANEL DE RESUMEN (SIDEBAR DERECHO)
+             ======================================== -->
+        <div class="cart-summary">
+            <h2 class="summary-title">Resumen del Pedido</h2>
+            
+            <!-- Subtotal -->
+            <div class="summary-row">
+                <span class="summary-label">Subtotal (4 productos)</span>
+                <span class="summary-value" id="subtotal">$419.407</span>
+            </div>
+            
+            <!-- Envío -->
+            <div class="summary-row">
+                <span class="summary-label">Envío</span>
+                <span class="summary-value" style="color: #4CAF50;">GRATIS</span>
+            </div>
+            
+            <!-- Descuento (opcional) -->
+            <div class="summary-row">
+                <span class="summary-label">Descuento</span>
+                <span class="summary-value" style="color: #4CAF50;">-$20.000</span>
+            </div>
+            
+            <!-- Total -->
+            <div class="summary-row">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="total">$399.407</span>
+            </div>
+            
+            <!-- Botón de pagar -->
+            <button class="checkout-btn" onclick="checkout()">Proceder al Pago</button>
+            
+            <!-- Información adicional -->
+            <div class="info-badges">
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Envío gratis en compras superiores a $50.000</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Devolución gratis en 30 días</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Pago seguro y protegido</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad del carrito
+         ======================================== -->
+    <script>
+        /* ========================================
+           FUNCIÓN: Aumentar cantidad de un producto
+           Parámetro: id del producto
+           ======================================== */
+        function increaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.textContent);
+            qtyElement.textContent = currentQty + 1;
+            updateTotal();
+        }
+
+        /* ========================================
+           FUNCIÓN: Disminuir cantidad de un producto
+           Parámetro: id del producto
+           No permite menos de 1
+           ======================================== */
+        function decreaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.textContent);
+            if (currentQty > 1) {
+                qtyElement.textContent = currentQty - 1;
+                updateTotal();
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Eliminar un producto del carrito
+           Parámetro: id del producto
+           ======================================== */
+        function removeItem(itemId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                // Encuentra el elemento del carrito y lo elimina
+                const items = document.querySelectorAll('.cart-item');
+                items[itemId - 1].style.animation = 'fadeOut 0.3s ease';
+                
+                setTimeout(() => {
+                    items[itemId - 1].remove();
+                    updateTotal();
+                    
+                    // Si no quedan productos, muestra mensaje de carrito vacío
+                    if (document.querySelectorAll('.cart-item').length === 0) {
+                        showEmptyCart();
+                    }
+                }, 300);
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Actualizar totales del resumen
+           Recalcula subtotal y total
+           ======================================== */
+        function updateTotal() {
+            // En un proyecto real, aquí calcularías basado en precios reales
+            // Este es un ejemplo simplificado
+            const items = document.querySelectorAll('.cart-item');
+            let itemCount = 0;
+            
+            items.forEach(item => {
+                const qty = parseInt(item.querySelector('.qty-number').textContent);
+                itemCount += qty;
+            });
+            
+            // Actualiza el texto del subtotal
+            document.querySelector('.summary-label').textContent = 
+                `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
+        }
+
+        /* ========================================
+           FUNCIÓN: Mostrar carrito vacío
+           ======================================== */
+        function showEmptyCart() {
+            const container = document.querySelector('.cart-container');
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <p class="empty-cart-text">Tu carrito está vacío</p>
+                    <a href="#" class="back-btn">Ir a Comprar</a>
+                </div>
+            `;
+        }
+
+        /* ========================================
+           FUNCIÓN: Proceder al pago
+           ======================================== */
+        function checkout() {
+            alert('Redirigiendo a la página de pago...\n\nEn un proyecto real, aquí se procesaría el pago.');
+            // En tu proyecto real, aquí redirigirías a la página de checkout
+            // window.location.href = '/checkout';
+        }
+
+        /* ========================================
+           ANIMACIÓN DE FADE OUT PARA ELIMINAR
+           ======================================== */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

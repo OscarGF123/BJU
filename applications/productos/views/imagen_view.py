@@ -17,7 +17,7 @@ class ListarImagen(AdminRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['seccion_plural'] = "Imagenes"
         context['seccion'] = "Imagen"
-        context['formulario'] = ImagenForm(excluir_campos=['fecha_creacion'])
+        context['formulario'] = ImagenForm(es_edicion=True)
         context['campos'] =  [i.name for i in self.model._meta.fields if not i.name.endswith('_ptr')]
         context["url_crear"] = reverse_lazy("productos:crear_imagen")
 
@@ -30,17 +30,22 @@ class CrearImagen(VistaBaseCrear):
     model = Imagen
     form_class = ImagenForm
 
-    def form_valid(self, form):
-
-        formulario = form.save(commit=False)
-
-        print(formulario.link_imagen)
-        return super().form_valid(form)
+    def get_form(self, form_class=None):
+        form = ImagenForm(**self.get_form_kwargs())
+        return form
 
 class EditarImagen(VistaBaseEditar):
     model = Imagen
     form_class = ImagenForm
-
+    
+    # Excluye el campo link_imagen
+    def get_form(self, form_class=None):
+        form = ImagenForm(
+            **self.get_form_kwargs(),
+            excluir_campos=['link_imagen'],  # ← aquí usas tu parámetro
+            es_edicion=True
+        )
+        return form
 
 
 class EliminarImagen(VistaBaseEliminar):
