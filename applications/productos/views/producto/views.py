@@ -21,7 +21,7 @@ ImagenFormSet = inlineformset_factory(
     extra=0,
     can_delete=False,
     validate_min=True,
-    validate_max=False
+    validate_max=False,
 )
 ImagenFormSetEditar = inlineformset_factory(
     Producto,
@@ -48,15 +48,9 @@ class ListarProducto(AdminRequiredMixin, ListView):
                 self.request.FILES,
                 instance=self.object
             )
-            context['imagen_formset_editar'] = ImagenFormSetEditar(
-                self.request.POST,
-                self.request.FILES,
-                instance=self.object
-            )
         else:
             # ✅ Pasa ambos formsets al contexto
             context['imagen_formset'] = ImagenFormSet()
-            context['imagen_formset_editar'] = ImagenFormSetEditar()
 
         context['seccion_plural'] = "Productos"
         context['seccion'] = "Producto"
@@ -183,8 +177,12 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
             instance=self.object
         )
 
-        if imagen_formset.is_valid() and self.request.POST.get('imagen_set-0-link_imagen'):
-            imagen_formset.save()
+        print(True if self.request.FILES else False)
+
+        if imagen_formset.is_valid():
+            # Si se añadio alguna imagen entonces guardar el formset
+            if self.request.FILES:
+                imagen_formset.save()
             return super().form_valid(form)
         else:
             # Guardas el formset para usarlo en form_invalid
@@ -202,6 +200,8 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
         for i, f in enumerate(imagen_formset):
             if f.errors:
                 formset_errors[f'imagen_{i}'] = f.errors
+
+        print(formset_errors)
 
         errores_generales = imagen_formset.non_form_errors()
 
