@@ -439,6 +439,7 @@ $(document).on('click', '#btn-eliminar', function(e) {
         }
     })
     .catch(error => {
+        this.disabled = false;
         Swal.fire({
             title: '¡Error!',
             icon: 'error',

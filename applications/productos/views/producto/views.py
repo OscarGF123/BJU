@@ -175,13 +175,15 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
     def form_valid(self, form):
         self.object = form.save()
 
+
+
         imagen_formset = ImagenFormSetEditar(
             self.request.POST,
             self.request.FILES,
             instance=self.object
         )
 
-        if imagen_formset.is_valid():
+        if imagen_formset.is_valid() and self.request.POST.get('imagen_set-0-link_imagen'):
             imagen_formset.save()
             return super().form_valid(form)
         else:
@@ -228,16 +230,17 @@ class EliminarProducto(AdminRequiredMixin, VistaBaseEliminar):
 
     model = Producto
 
-    def delete(self, request, *args, **kwargs):
+    # def delete(self, request, *args, **kwargs):
 
-        self.object = self.get_object()
-        producto_id = self.object.id
+    #     self.object = self.get_object()
+    #     producto_id = self.object.id
 
-        # Construye la ruta de la imagen relacionada al producto
-        ruta_imagen = str(f"{MEDIA_URL}{Imagen.objects.filter(producto_id=producto_id).first().link_imagen}")
+    #     return  super().delete(request, *args, **kwargs)
+    #     # Construye la ruta de la imagen relacionada al producto
+    #     # ruta_imagen = str(f"{MEDIA_URL}{Imagen.objects.filter(producto_id=producto_id).first().link_imagen}")
 
-        eliminar = super().delete(request, *args, **kwargs)
-        # elimina la imagen si la es correcta
-        if ruta_imagen and os.path.exists(ruta_imagen):
-            os.remove(ruta_imagen)
-        return eliminar
+    #     # eliminar = super().delete(request, *args, **kwargs)
+    #     # # elimina la imagen si la es correcta
+    #     # if ruta_imagen and os.path.exists(ruta_imagen):
+    #     #     os.remove(ruta_imagen)
+    #     # return eliminar

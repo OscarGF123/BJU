@@ -135,19 +135,12 @@ class ImagenForm(ModelForm):
 
         es_edicion = es_edicion or (self.instance and self.instance.pk is not None)
 
-        # ← Agrega estos prints para verificar
-        print("es_edicion:", es_edicion)
-        print("instance pk:", self.instance.pk if self.instance else None)
-        print("link_imagen required ANTES:", self.fields.get('link_imagen') and self.fields['link_imagen'].required)
-
         if es_edicion:
             if 'link_imagen' in self.fields:
                 self.fields['link_imagen'].required = False
                 self.fields['link_imagen'].widget.is_required = False
             if 'portada' in self.fields:
                 self.fields['portada'].required = False
-
-        print("link_imagen required DESPUÉS:", self.fields.get('link_imagen') and self.fields['link_imagen'].required)
     
     def clean_portada(self):
         # Validar que solo haya una sola portada por producto, en caso de existir, preguntar al usuario si desea cambiar la portada

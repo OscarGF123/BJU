@@ -74,7 +74,6 @@ class VistaBaseEditar(UpdateView):
 
         # Usar model_to_dict que maneja mejor la serialización
         data = get_display_data(formulario)
-        print(data)
 
         # Filtrar campos si es necesario
         campos_excluidos = ['password']
@@ -105,7 +104,6 @@ class VistaBaseEditar(UpdateView):
             for field, error_list in form.errors.items():
                 errors[field] = [str(error) for error in error_list]
 
-            print(form.errors.items())
             return JsonResponse({
                 'status': 'error',
                 'type': 'form_invalid',
@@ -127,7 +125,7 @@ class VistaBaseEliminar(DeleteView):
             return JsonResponse({"status": "success", "id": id})
         except Exception as e:
 
-            return JsonResponse({"status": "error", 'type': 'form_invalid', "error": e}, 400)
+            return JsonResponse({"status": "error", 'type': 'form_invalid', "error": str(e)})
 
 
     
