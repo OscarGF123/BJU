@@ -230,17 +230,16 @@ class EliminarProducto(AdminRequiredMixin, VistaBaseEliminar):
 
     model = Producto
 
-    # def delete(self, request, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
 
-    #     self.object = self.get_object()
-    #     producto_id = self.object.id
+        self.object = self.get_object()
+        producto_id = self.object.id
 
-    #     return  super().delete(request, *args, **kwargs)
-    #     # Construye la ruta de la imagen relacionada al producto
-    #     # ruta_imagen = str(f"{MEDIA_URL}{Imagen.objects.filter(producto_id=producto_id).first().link_imagen}")
+        # Construye la ruta de la imagen relacionada al producto
+        ruta_imagen = str(f"{MEDIA_URL}{Imagen.objects.filter(producto_id=producto_id).first().link_imagen}")
 
-    #     # eliminar = super().delete(request, *args, **kwargs)
-    #     # # elimina la imagen si la es correcta
-    #     # if ruta_imagen and os.path.exists(ruta_imagen):
-    #     #     os.remove(ruta_imagen)
-    #     # return eliminar
+        eliminar = super().delete(request, *args, **kwargs)
+        # elimina la imagen si la es correcta
+        if ruta_imagen and os.path.exists(ruta_imagen):
+            os.remove(ruta_imagen)
+        return eliminar
