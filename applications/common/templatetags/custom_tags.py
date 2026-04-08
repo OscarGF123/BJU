@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.simple_tag()
 def obtener_campos(modelo: Model, titulo=False):
-    campos_excluidos = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'is_verified','date_joined', 'preferencias', 'conf_contrasena']
+    campos_excluidos = ['password', 'last_login', 'is_superuser', 'is_staff', 'is_active', 'is_verified','date_joined', 'preferencias', 'conf_contrasena', "slug"]
     # Obtener solo los campos del modelo
     campos_modelo = [i.name for i in modelo._meta.fields if not i.name.endswith('_ptr') and i.name not in campos_excluidos]
 
@@ -29,4 +29,11 @@ def obtener_atributo(modelo, campo):
 @register.simple_tag()
 def obtener_imagen_producto(producto_id):
 
-    return Imagen.objects.get(producto_id=producto_id).link_imagen
+    imagen_portada = Imagen.objects.filter(producto_id=producto_id, portada="Si").first()
+
+    if imagen_portada:
+
+        return imagen_portada.link_imagen
+    else:
+
+        return Imagen.objects.filter(producto_id=producto_id).order_by('?').first().link_imagen

@@ -1,0 +1,323 @@
+{% extends "home.html" %}
+
+{% block body %}
+
+<body>
+    <!-- ========================================
+         HEADER - Barra de navegación
+         ======================================== -->
+    {% include 'pagina_principal/header.html' %}
+
+    <!-- ========================================
+         BREADCRUMB - Navegación de ruta
+         ======================================== -->
+    <!-- <nav class="breadcrumb">
+        <a href="#">Página principal</a> /
+        <a href="#">Hombres</a> /
+        <a href="#">Ropa tradicional y cultural para hombres</a> /
+        <a href="#">Ropa asiática para hombres</a> /
+        <span>Camisa tipo kimono japonés</span>
+    </nav> -->
+
+    <!-- ========================================
+         CONTENEDOR PRINCIPAL DEL PRODUCTO
+         ======================================== -->
+    <div class="product-container">
+        <!-- ========================================
+             GALERÍA DE IMÁGENES - COLUMNA IZQUIERDA
+             ======================================== -->
+        <div class="product-gallery">
+            <!-- Miniaturas verticales -->
+            <div class="gallery-thumbnails">
+                <div class="thumbnail active" onclick="changeImage(this, 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&h=200&fit=crop" alt="Vista 1">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200&h=200&fit=crop" alt="Vista 2">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop" alt="Vista 3">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=200&h=200&fit=crop" alt="Vista 4">
+                </div>
+            </div>
+
+            <!-- Imagen principal grande -->
+            <div class="main-image-container">
+                <div class="video-badge">▶ Video</div>
+                <img id="mainImage" class="main-image" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop" alt="Chaqueta Kimono">
+            </div>
+        </div>
+
+        <!-- ========================================
+             INFORMACIÓN DEL PRODUCTO - COLUMNA DERECHA
+             ======================================== -->
+        <div class="product-info">
+            <!-- Título -->
+            <h1 class="product-title">{{producto.nombre}}</h1>
+
+            <!-- SKU y valoraciones -->
+            <div class="product-meta">
+                <span class="sku">SKU: sm2506232240482828</span>
+                <div class="rating">
+                    <span class="stars">★★★★★</span>
+                    <a href="#reviews" class="reviews">(109+ Comentarios)</a>
+                </div>
+            </div>
+
+            <!-- Precio -->
+            <div class="price-section">
+                <div class="price-main">${{producto.precio_unitario}}</div>
+                <div class="price-details">
+                    <span class="price-old">$50.798</span>
+                    <span class="discount-badge">Estimado -44%</span>
+                </div>
+                <p class="price-note"><span class="last-day">🔥 ¡Último día!</span></p>
+            </div>
+
+            <!-- Promociones -->
+            <div class="promo-badges">
+                <div class="promo-badge">
+                    <strong>32% DE DTO.</strong> Sin mínimos de compra
+                </div>
+                <div class="promo-badge">
+                    <strong>24% DE DTO.</strong> para pedidos de 4 productos o más
+                </div>
+                <div class="promo-badge promo-highlight">
+                    ⭐ <strong>#5 Más Vendidos</strong> en Ropa asiática para hombres
+                </div>
+            </div>
+
+            <!-- Selector de tallas -->
+            <div class="size-section">
+                <div class="size-header">
+                    <span class="size-title">Talla</span>
+                    <a href="#" class="size-guide">📏 Guía de Tallas</a>
+                </div>
+                
+                <div class="size-options">
+                    <button class="size-button" onclick="selectSize(this)">XS</button>
+                    <button class="size-button" onclick="selectSize(this)">S</button>
+                    <button class="size-button selected" onclick="selectSize(this)">M</button>
+                    <button class="size-button out-of-stock" disabled>L</button>
+                    <button class="size-button" onclick="selectSize(this)">XL</button>
+                    <button class="size-button" onclick="selectSize(this)">XXL</button>
+                </div>
+            </div>
+
+            <!-- Botón agregar al carrito -->
+            <div class="add-to-cart-section">
+                <button class="add-to-cart-btn" onclick="addToCart()">
+                    Añadir a la Bolsa
+                </button>
+                <button class="favorite-btn" onclick="toggleFavorite(this)">
+                    ♡
+                </button>
+            </div>
+
+            <!-- Información de envío -->
+            <div class="shipping-info">
+                <div class="shipping-item">
+                    <div class="shipping-icon">📦</div>
+                    <div class="shipping-content">
+                        <h4>Envío a Rafael Uribe Uribe, Bogotá D.C, Colombia</h4>
+                        <p>Envío gratis (Pedidos ≥ $58.900) | Entrega estimada Feb 12 - Feb 19 | <strong style="color: #4CAF50;">60% con ≥ 16 días⏱</strong></p>
+                    </div>
+                </div>
+                <div class="shipping-item">
+                    <div class="shipping-icon">↩️</div>
+                    <div class="shipping-content">
+                        <h4>Política de devoluciones</h4>
+                        <p>Devoluciones gratuitas en 30 días</p>
+                    </div>
+                </div>
+                <div class="shipping-item">
+                    <div class="shipping-icon">✓</div>
+                    <div class="shipping-content">
+                        <h4>Seguridad en las compras</h4>
+                        <p>Pagos seguros • Protección de privacidad</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secciones colapsables -->
+            <div class="collapsible-sections">
+                <!-- Descripción -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Descripción</h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Vacaciones, Oficina, Cuello Cardigan lavadora o limpieza...</p>
+                        <ul>
+                            <li>Material: Algodón y poliéster de alta calidad</li>
+                            <li>Diseño tradicional japonés moderno</li>
+                            <li>Perfecto para uso casual o formal</li>
+                            <li>Disponible en múltiples colores</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tallas y Dimensiones -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Tallas Y Dimensiones</h3>
+                        <span class="icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <ul>
+                            <li><strong>XS:</strong> Pecho 92cm, Largo 68cm</li>
+                            <li><strong>S:</strong> Pecho 96cm, Largo 70cm</li>
+                            <li><strong>M:</strong> Pecho 100cm, Largo 72cm</li>
+                            <li><strong>L:</strong> Pecho 104cm, Largo 74cm</li>
+                            <li><strong>XL:</strong> Pecho 108cm, Largo 76cm</li>
+                            <li><strong>XXL:</strong> Pecho 112cm, Largo 78cm</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sobre La Tienda -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Sobre La Tienda</h3>
+                        <span class="icon">−</span>
+                    </div>
+                    <div class="section-content">
+                        <p><strong>Life Filter</strong></p>
+                        <p>97,5 % pagó a tiempo | 3K+ vendido recientemente</p>
+                        <p>Tienda especializada en moda urbana y ropa asiática de alta calidad. Más de 5 años de experiencia brindando productos únicos y auténticos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad interactiva
+         ======================================== -->
+    <script>
+        /* ========================================
+           FUNCIÓN: Cambiar imagen principal
+           Parámetros:
+           - thumbnail: elemento miniatura clickeado
+           - newSrc: ruta de la nueva imagen
+           ======================================== */
+        function changeImage(thumbnail, newSrc) {
+            // Remover clase 'active' de todas las miniaturas
+            document.querySelectorAll('.thumbnail').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Agregar clase 'active' a la miniatura clickeada
+            thumbnail.classList.add('active');
+            
+            // Cambiar la imagen principal
+            const mainImage = document.getElementById('mainImage');
+            mainImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                mainImage.src = newSrc;
+                mainImage.style.opacity = '1';
+            }, 200);
+        }
+
+        /* ========================================
+           FUNCIÓN: Seleccionar talla
+           Parámetro: button - botón de talla clickeado
+           ======================================== */
+        function selectSize(button) {
+            // Remover selección de todos los botones
+            document.querySelectorAll('.size-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Seleccionar el botón clickeado
+            button.classList.add('selected');
+            
+            console.log('Talla seleccionada:', button.textContent);
+        }
+
+        /* ========================================
+           FUNCIÓN: Agregar al carrito
+           ======================================== */
+        function addToCart() {
+            const selectedSize = document.querySelector('.size-button.selected');
+            
+            if (!selectedSize) {
+                alert('Por favor, selecciona una talla');
+                return;
+            }
+            
+            // Animación del botón
+            const btn = document.querySelector('.add-to-cart-btn');
+            btn.textContent = '✓ Agregado al Carrito';
+            btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            
+            setTimeout(() => {
+                btn.textContent = 'Añadir a la Bolsa';
+                btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+            }, 2000);
+            
+            // En tu proyecto real, aquí agregarías el producto al carrito
+            console.log('Producto agregado:', {
+                talla: selectedSize.textContent,
+                precio: '$28.321'
+            });
+        }
+
+        /* ========================================
+           FUNCIÓN: Toggle favorito (corazón)
+           ======================================== */
+        function toggleFavorite(button) {
+            if (button.textContent === '♡') {
+                button.textContent = '❤️';
+                button.style.background = 'var(--primary-red)';
+            } else {
+                button.textContent = '♡';
+                button.style.background = 'var(--bg-dark-alt)';
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Toggle secciones colapsables
+           Parámetro: header - encabezado de la sección
+           ======================================== */
+        function toggleSection(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.section-content');
+            const icon = header.querySelector('.icon');
+            
+            // Toggle clase 'active'
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            // Cambiar ícono
+            if (content.classList.contains('active')) {
+                icon.textContent = '▼';
+            } else {
+                icon.textContent = '+';
+            }
+        }
+
+        /* ========================================
+           INICIALIZACIÓN: Abrir primera sección por defecto
+           ======================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Abrir la sección de Descripción por defecto
+            const firstSection = document.querySelector('.section-header');
+            if (firstSection) {
+                toggleSection(firstSection);
+            }
+        });
+
+        /* ========================================
+           ANIMACIÓN: Transición de imagen principal
+           ======================================== */
+        const mainImage = document.getElementById('mainImage');
+        mainImage.style.transition = 'opacity 0.3s ease';
+    </script>
+</body>
+
+{% endblock body %}

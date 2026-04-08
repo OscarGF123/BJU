@@ -84,7 +84,7 @@ class ListarProducto(AdminRequiredMixin, ListView):
         }
 
         # campos de la tabla
-        context['campos'] =  [i.name for i in self.model._meta.fields if not i.name.endswith('_ptr')]
+        context['campos'] =  [i.name for i in self.model._meta.fields if not i.name.endswith('_ptr') and i.name is not "slug"]
         context["url_crear"] = reverse_lazy("productos:crear_producto")
 
         # pk debe estar en 0 en las urls para que despues sea remplazado por un id
