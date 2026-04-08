@@ -3,6 +3,7 @@ import os
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 
 from config import settings
 # Create your models here.
@@ -73,6 +74,8 @@ class Promocione(models.Model):
 
 class Producto(models.Model):
 
+    slug = models.SlugField(unique=True, blank=True)
+
     nombre = models.CharField(max_length=60, verbose_name="Nombre")
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
     cantidad = models.IntegerField(verbose_name="Cantidad")
@@ -87,6 +90,13 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+    def save(self, *args, **kwargs):
+
+        if not self.slug:
+            self.slug = slugify(self.nombre)
+
+        return super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Producto"

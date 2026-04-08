@@ -16,6 +16,7 @@ urlpatterns = [
     path('admin/', include('applications.usuarios.urls')),
     path('', include('applications.login.urls')),
     path('', include('applications.tienda.urls')),
+    path('', include('applications.carrito_compras.urls')),
 
     # URLs de prueba
     path('persona/', PersonaListView.as_view(), name='listar_persona'),
