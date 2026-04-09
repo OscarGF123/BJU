@@ -74,7 +74,13 @@ class Promocione(models.Model):
 
 class Producto(models.Model):
 
+    ESTADOS = [
+        ("Si", "Si"),
+        ("No", "No")
+    ]
+
     slug = models.SlugField(unique=True, blank=True)
+    
 
     nombre = models.CharField(max_length=60, verbose_name="Nombre")
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
@@ -85,15 +91,16 @@ class Producto(models.Model):
     talla = models.ForeignKey(Talla, on_delete=models.PROTECT)
     marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT)
+    pagina_principal = models.CharField(choices=ESTADOS, verbose_name="Pagina Principal", max_length=10, default="No")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
-
+    
     def __str__(self):
         return self.nombre
     
     def save(self, *args, **kwargs):
 
-        if not self.slug:
+        if not self.slug and self.pagina_principal == "Si":
             self.slug = slugify(self.nombre)
 
         return super().save(*args, **kwargs)

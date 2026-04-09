@@ -1,4 +1,5 @@
 {% extends "home.html" %}
+{% load custom_tags %}
 
 {% block body %}
 
@@ -29,24 +30,18 @@
         <div class="product-gallery">
             <!-- Miniaturas verticales -->
             <div class="gallery-thumbnails">
-                <div class="thumbnail active" onclick="changeImage(this, 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop')">
-                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&h=200&fit=crop" alt="Vista 1">
+                {% for producto in productos_relacionados %}
+                {% obtener_imagen_producto producto.id as imagen_url %}
+                <div class="thumbnail active" onclick="changeImage(this, '{% media imagen_url %}')">
+                    <img src="{% media imagen_url %}" alt="Vista 1">
                 </div>
-                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&h=800&fit=crop')">
-                    <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200&h=200&fit=crop" alt="Vista 2">
-                </div>
-                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=800&fit=crop')">
-                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop" alt="Vista 3">
-                </div>
-                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=800&h=800&fit=crop')">
-                    <img src="https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=200&h=200&fit=crop" alt="Vista 4">
-                </div>
+                {% endfor %}
             </div>
 
             <!-- Imagen principal grande -->
             <div class="main-image-container">
-                <div class="video-badge">▶ Video</div>
-                <img id="mainImage" class="main-image" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop" alt="Chaqueta Kimono">
+                {% obtener_imagen_producto producto.id as imagen_url %}
+                <img id="mainImage" class="main-image" src="{% media imagen_url %}" alt="{{producto.nombre}}">
             </div>
         </div>
 

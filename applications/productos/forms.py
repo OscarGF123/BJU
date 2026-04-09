@@ -27,7 +27,18 @@ class AtributoProductoForm(ModelForm):
 class ProductoForm(ModelForm):
     class Meta:
         model = Producto
-        fields = ["nombre", "descripcion", "cantidad", "precio_unitario", "categoria", "tipo", "talla", "marca", "color"]
+        fields = [
+            "nombre", 
+            "descripcion", 
+            "cantidad", 
+            "precio_unitario", 
+            "categoria", 
+            "tipo", 
+            "talla", 
+            "marca", 
+            "color", 
+            "pagina_principal"
+            ]
         widgets = {
 
             "tipo": Select(
@@ -88,6 +99,11 @@ class ProductoForm(ModelForm):
                     'class': "bj-form-select"
                 }
             ),
+            "pagina_principal": Select(
+                attrs={
+                    'class': 'bj-form-select'
+                }
+            ),
         }
         labels = {
             'nombre': 'Nombre del Producto',
@@ -99,6 +115,29 @@ class ProductoForm(ModelForm):
             'marca': 'Marca',
             'color': 'Color'
         }
+    def clean_pagina_principal(self):
+        
+        producto_id = self.cleaned_data.get("producto_id")
+        pagina_principal = self.cleaned_data.get("portada")
+
+        if not producto_id or not producto_id.pk:
+            return pagina_principal
+
+        if pagina_principal == "Si":
+            # Busca si ya existe una portada para este producto
+            portada_existente = Imagen.objects.filter(
+                producto_id=producto_id, 
+                portada="Si"
+            )
+
+            # Si es edición, excluye el registro actual de la búsqueda
+            if self.instance and self.instance.pk:
+                portada_existente = portada_existente.exclude(pk=self.instance.pk)
+
+            if portada_existente.exists():
+                raise ValidationError('Ya existe una imagen como portada del producto')
+
+        return portada
 
 from django.forms import ModelForm, Select, FileInput
 from .models import Imagen
@@ -143,8 +182,7 @@ class ImagenForm(ModelForm):
                 self.fields['portada'].required = False
     
     def clean_portada(self):
-        # Validar que solo haya una sola portada por producto, en caso de existir, preguntar al usuario si desea cambiar la portada
-        # Mostrar la portada que ya ha sido seleccionada
+        
         producto_id = self.cleaned_data.get("producto_id")
         portada = self.cleaned_data.get("portada")
 

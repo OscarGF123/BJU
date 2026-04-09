@@ -33,7 +33,7 @@ class VistaBaseCrear(CreateView):
         print(data)
 
         # Filtrar campos si es necesario
-        campos_excluidos = ['password']
+        campos_excluidos = ['slug']
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo
@@ -76,7 +76,7 @@ class VistaBaseEditar(UpdateView):
         data = get_display_data(formulario)
 
         # Filtrar campos si es necesario
-        campos_excluidos = ['password']
+        campos_excluidos = ['password', 'slug']
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo

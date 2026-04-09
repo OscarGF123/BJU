@@ -48,6 +48,7 @@
 .product-image img.contain-mode {
     object-fit: contain; /* Muestra toda la imagen, puede dejar espacios */
     object-position: center;
+    display: block; /* Elimina espacios blancos debajo de la imagen */
 }
 
 /* Responsividad para tablets (pantallas medianas) */
