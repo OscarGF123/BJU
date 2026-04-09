@@ -7,7 +7,7 @@ from django.views.generic import ListView
 from django.forms import inlineformset_factory
 
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
-from applications.productos.forms import ColorForm, TallaForm, MarcaForm, CategoriaForm, TipoForm
+from applications.productos.forms import ColorForm, NombreForm, TallaForm, MarcaForm, CategoriaForm, TipoForm
 from applications.common.mixins import AdminRequiredMixin
 from applications.productos.models import Producto, Imagen
 from applications.productos.forms import ProductoForm, ImagenForm, ImagenFormEdicion
@@ -80,6 +80,11 @@ class ListarProducto(AdminRequiredMixin, ListView):
                 "nombre": "tipo",
                 "formulario": str(TipoForm()),
                 "url": str(reverse_lazy("productos:crear_tipo"))
+            }),
+            'nombre': json.dumps({
+                "nombre": "Nombre",
+                "formulario": str(NombreForm()),
+                "url": str(reverse_lazy("productos:crear_nombre"))
             })
         }
 

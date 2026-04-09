@@ -17,11 +17,19 @@ class AtributoProducto(models.Model):
         ('Inactivo', 'Inactivo')
     ]
 
-    nombre = models.CharField(max_length=20, verbose_name="Nombre")
+    valor = models.CharField(max_length=20, verbose_name="Nombre")
     estado = models.CharField(max_length=50, choices=ESTADOS, verbose_name="Estado", default="Activo")
 
     def __str__(self):
-        return self.nombre
+        return self.valor
+    
+class Nombre(AtributoProducto):
+
+    class Meta:
+        verbose_name = "Nombre"
+        verbose_name_plural = "Nombres"
+        db_table = "Nombres"
+
 
 class Talla(AtributoProducto):
 
@@ -82,7 +90,7 @@ class Producto(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     
 
-    nombre = models.CharField(max_length=60, verbose_name="Nombre")
+    nombre = models.ForeignKey(Nombre, on_delete=models.PROTECT)
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")

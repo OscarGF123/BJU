@@ -1,7 +1,7 @@
 from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput, ValidationError
 from django.utils.safestring import mark_safe
 
-from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo
+from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo, Nombre
 
 # la clase AtributoProductoForm es para que las clases Categoria, Talla, Marca y Color hereden esta clase
 # por que me da pereza escribir el mismo codigo varias veces
@@ -10,7 +10,7 @@ class AtributoProductoForm(ModelForm):
         model = Categoria
         fields = '__all__'
         widgets = {
-            "nombre": TextInput(
+            "valor": TextInput(
                 attrs={
                     "class": "bj-form-control",
                     "placeholder": "Nombre"
@@ -22,6 +22,9 @@ class AtributoProductoForm(ModelForm):
                     "placeholder": "Estado"
                 }
             )
+        }
+        labels = {
+            'valor': "Nombre"
         }
 
 class ProductoForm(ModelForm):
@@ -47,9 +50,9 @@ class ProductoForm(ModelForm):
                     'required': True
                 }
             ),
-            "nombre": TextInput(
+            "nombre": Select(
                 attrs={
-                    'class': "bj-form-control",
+                    'class': "bj-form-select",
                     'placeholder': "Nombre del producto",
                     'required': True
                 }
@@ -115,29 +118,45 @@ class ProductoForm(ModelForm):
             'marca': 'Marca',
             'color': 'Color'
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Solo mostrar los que estan activos en el fomulario
+        self.fields['tipo'].queryset = Tipo.objects.filter(estado="Activo")
+        self.fields['talla'].queryset = Talla.objects.filter(estado="Activo")
+        self.fields['marca'].queryset = Marca.objects.filter(estado="Activo")
+        self.fields['color'].queryset = Color.objects.filter(estado="Activo")
+        self.fields['categoria'].queryset = Categoria.objects.filter(estado="Activo")
+        self.fields['nombre'].queryset = Nombre.objects.filter(estado="Activo")
+        
+
     def clean_pagina_principal(self):
         
+        # si ya hay un producto en la pagina principal entonces no permitir que haya otro
+
         producto_id = self.cleaned_data.get("producto_id")
-        pagina_principal = self.cleaned_data.get("portada")
+        producto_nombre = self.cleaned_data.get("nombre")
+        producto_talla = self.cleaned_data.get("talla")
+        pagina_principal = self.cleaned_data.get("pagina_principal")
 
         if not producto_id or not producto_id.pk:
             return pagina_principal
 
         if pagina_principal == "Si":
-            # Busca si ya existe una portada para este producto
-            portada_existente = Imagen.objects.filter(
+            # Busca si ya existe un producto ya publicado en la pagina principal
+            pagina_principal_existente = Producto.objects.filter(
                 producto_id=producto_id, 
-                portada="Si"
+                pagina_principal="Si"
             )
 
             # Si es edición, excluye el registro actual de la búsqueda
             if self.instance and self.instance.pk:
-                portada_existente = portada_existente.exclude(pk=self.instance.pk)
+                pagina_principal_existente = pagina_principal_existente.exclude(pk=self.instance.pk)
 
-            if portada_existente.exists():
-                raise ValidationError('Ya existe una imagen como portada del producto')
+            if pagina_principal_existente.exists():
+                raise ValidationError(f'El producto {producto_nombre} talla {producto_talla} ya esta publicado en la pagina principal')
 
-        return portada
+        return pagina_principal
 
 from django.forms import ModelForm, Select, FileInput
 from .models import Imagen
@@ -231,3 +250,8 @@ class ColorForm(AtributoProductoForm):
 class TipoForm(AtributoProductoForm):
     class Meta(AtributoProductoForm.Meta):
         model = Tipo
+
+class NombreForm(AtributoProductoForm):
+
+    class Meta(AtributoProductoForm.Meta):
+        model = Nombre

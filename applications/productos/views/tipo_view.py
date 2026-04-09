@@ -15,7 +15,7 @@ class ListarTipo(ListView):
         context = super().get_context_data(**kwargs)
         context['seccion_plural'] = "Tipo"
         context['seccion'] = "Tipos"
-        context['formulario'] = Tipo()
+        context['formulario'] = TipoForm()
         context['campos'] =  [i.name for i in self.model._meta.fields if not i.name.endswith('_ptr')]
         context["url_crear"] = reverse_lazy("productos:crear_tipo")
 
