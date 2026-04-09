@@ -1,6 +1,6 @@
 from django.urls import path
 
-from applications.carrito_compras.views.detalle_producto_view import ProductoDetailView
+from applications.tienda.views.detalle_producto_view import ProductoDetailView
 
 app_name = "carrito_compras"
 

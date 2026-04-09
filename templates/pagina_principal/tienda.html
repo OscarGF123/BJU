@@ -59,14 +59,10 @@
                 <!-- Producto 1: Jean Urban Classic -->
                 {% for producto in productos %}
                     <div class="product-card fade-in">
-                        <a href="{% url 'carrito_compras:detalle_producto' producto.slug  %}"><div class="product-image"><img src="media/{% obtener_imagen_producto producto.id %}" alt=""></div></a>
+                        <a href="{% url 'carrito_compras:detalle_producto' producto.slug  %}"><div class="product-image"><img  src="media/{% obtener_imagen_producto producto.id %}" alt=""></div></a>
                         <div class="product-info">
                             <h3 class="product-name">{{producto.nombre}}</h3>
                             <p class="product-price">{{producto.precio_unitario}}</p>
-                            <button class="add-to-cart">
-                                Agregar al Carrito
-                            </button>
-                            
                         </div>
                     </div>
                 {% endfor %}

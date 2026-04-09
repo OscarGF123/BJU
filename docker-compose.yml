@@ -52,7 +52,7 @@ services:
       - .:/django
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthy"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthy/"]
       interval: 60s
       retries: 5
       start_period: 30s
