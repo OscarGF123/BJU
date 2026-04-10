@@ -17,8 +17,8 @@ class AtributoProducto(models.Model):
         ('Inactivo', 'Inactivo')
     ]
 
-    valor = models.CharField(max_length=20, verbose_name="Nombre")
-    estado = models.CharField(max_length=50, choices=ESTADOS, verbose_name="Estado", default="Activo")
+    valor = models.CharField(max_length=50, verbose_name="Nombre")
+    estado = models.CharField(max_length=10, choices=ESTADOS, verbose_name="Estado", default="Activo")
 
     def __str__(self):
         return self.valor
@@ -90,15 +90,15 @@ class Producto(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     
 
-    nombre = models.ForeignKey(Nombre, on_delete=models.PROTECT)
+    nombre = models.ForeignKey(Nombre, on_delete=models.SET_NULL, null=True)
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     tipo = models.ForeignKey(Tipo, on_delete=models.SET_NULL, null=True)
-    talla = models.ForeignKey(Talla, on_delete=models.PROTECT)
-    marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
-    color = models.ForeignKey(Color, on_delete=models.PROTECT)
+    talla = models.ForeignKey(Talla, on_delete=models.SET_NULL, null=True)
+    marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True)
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True)
     pagina_principal = models.CharField(choices=ESTADOS, verbose_name="Pagina Principal", max_length=10, default="No")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
