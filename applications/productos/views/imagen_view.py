@@ -1,5 +1,7 @@
 import os
 
+from django.db import IntegrityError
+from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
@@ -17,7 +19,7 @@ class ListarImagen(AdminRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         context['seccion_plural'] = "Imagenes"
         context['seccion'] = "Imagen"
-        context['formulario'] = ImagenForm(es_edicion=True)
+        context['formulario'] = ImagenForm()
         context['campos'] =  [i.name for i in self.model._meta.fields if not i.name.endswith('_ptr')]
         context["url_crear"] = reverse_lazy("productos:crear_imagen")
 
@@ -30,23 +32,23 @@ class CrearImagen(VistaBaseCrear):
     model = Imagen
     form_class = ImagenForm
 
-    def get_form(self, form_class=None):
-        form = ImagenForm(**self.get_form_kwargs())
-        return form
-
+    def form_valid(self, form):
+        try:
+            super().form_valid(form)
+        except IntegrityError:
+            if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'error',
+                    'type': 'form_invalid',
+                    'errors': {
+                        'link_imagen': ['Ya existe una imagen cargada igual a la que se intenta cargar.']
+                    }
+                }, status=400)
+            form.add_error(None, 'Ya existe una imagen cargada igual a la que se intenta cargar.')
+            return self.form_invalid(form)
 class EditarImagen(VistaBaseEditar):
     model = Imagen
     form_class = ImagenForm
-    
-    # Excluye el campo link_imagen
-    def get_form(self, form_class=None):
-        form = ImagenForm(
-            **self.get_form_kwargs(),
-            excluir_campos=['link_imagen'],  # ← aquí usas tu parámetro
-            es_edicion=True
-        )
-        return form
-
 
 class EliminarImagen(VistaBaseEliminar):
     model = Imagen
