@@ -17,8 +17,8 @@ class AtributoProducto(models.Model):
         ('Inactivo', 'Inactivo')
     ]
 
-    valor = models.CharField(max_length=20, verbose_name="Nombre")
-    estado = models.CharField(max_length=50, choices=ESTADOS, verbose_name="Estado", default="Activo")
+    valor = models.CharField(max_length=50, verbose_name="Nombre", unique=True)
+    estado = models.CharField(max_length=10, choices=ESTADOS, verbose_name="Estado", default="Activo")
 
     def __str__(self):
         return self.valor
@@ -90,23 +90,29 @@ class Producto(models.Model):
     slug = models.SlugField(unique=True, blank=True)
     
 
-    nombre = models.ForeignKey(Nombre, on_delete=models.PROTECT)
+    nombre = models.ForeignKey(Nombre, on_delete=models.SET_NULL, null=True)
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
-    tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT)
-    talla = models.ForeignKey(Talla, on_delete=models.PROTECT)
-    marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
-    color = models.ForeignKey(Color, on_delete=models.PROTECT)
+    tipo = models.ForeignKey(Tipo, on_delete=models.SET_NULL, null=True)
+    talla = models.ForeignKey(Talla, on_delete=models.SET_NULL, null=True)
+    marca = models.ForeignKey(Marca, on_delete=models.SET_NULL, null=True)
+    color = models.ForeignKey(Color, on_delete=models.SET_NULL, null=True)
     pagina_principal = models.CharField(choices=ESTADOS, verbose_name="Pagina Principal", max_length=10, default="No")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
     
     def __str__(self):
-        return self.nombre
+        return self.nombre.valor
     
     def save(self, *args, **kwargs):
+
+        # Verifica si ya hay un producto con pagina principal para no volver a hacer el slug
+        existe_producto = Producto.objects.filter(nombre=self.nombre, pagina_principal="Si").exists()
+
+        if existe_producto:
+            return super().save(*args, **kwargs)
 
         if not self.slug and self.pagina_principal == "Si":
             self.slug = slugify(self.nombre)
@@ -134,16 +140,29 @@ class OverwriteStorage(FileSystemStorage):
         if self.exists(name):
             os.remove(os.path.join(settings.MEDIA_ROOT, name))
         return name
+    
+
 
 class Imagen(models.Model):
 
+    link_imagen = models.ImageField(upload_to='productos', verbose_name='Imagen', storage=OverwriteStorage(), unique=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
+
+    def __str__(self):
+        return str(self.link_imagen)
+
+class ImagenProducto(models.Model):
+
+    """Modelo pivote que relaciona productos con imagenes"""
+    
     ESTADOS = [
         ("Si", "Si"),
         ("No", "No")
     ]
 
     producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    link_imagen = models.ImageField(upload_to='productos', verbose_name='Imagen', storage=OverwriteStorage())
+    imagen_id = models.ForeignKey(Imagen, on_delete=models.CASCADE)
     portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")

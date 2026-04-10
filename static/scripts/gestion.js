@@ -278,9 +278,6 @@ function agregar(url, agregarFila) {
                 html: `Error en los siguientes campos:<br>${errorMessage}`,
                 icon: 'error'
             })
-for (let [clave, valor] of new FormData(formulario)) {
-    console.log(clave, valor)
-}
         } else {
             // evitar errores con el aria-hidden
 
@@ -290,17 +287,17 @@ for (let [clave, valor] of new FormData(formulario)) {
             }
             handlePermissionError(data);
         }
-    });
-    // .catch(error => {
-    //     console.error('Error:', error);
-    //     document.getElementById('btnGuardarForm').disabled = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('btnGuardarForm').disabled = false;
 
-    //     Swal.fire({
-    //         title: 'Error',
-    //         text: `Ha ocurrido un error inesperado ${error}`,
-    //         icon: 'error'
-    //     })
-    // });
+        Swal.fire({
+            title: 'Error',
+            text: `Ha ocurrido un error inesperado ${error}`,
+            icon: 'error'
+        })
+    });
 
 }
 
@@ -428,14 +425,16 @@ $(document).on('click', '#btn-eliminar', function(e) {
                 icon: 'success',
                 text: 'El registro se ha eliminado correctamente',
             });
-        } else if (data.status === "error" && data.tyoe === 'form_invalid') {
+        } else if (data.status === "error" && data.type === 'form_invalid') {
             Swal.fire({
                 title: '¡Error!',
                 icon: 'error',
                 text: `No se ha podido eliminar el registro\n${data.error}`
             });
+            self.disabled = false;
         } else {
-            console.log('Error en el backend');
+            console.log(`Error en el backend ${data.status} ${data.type}`);
+            self.disabled = false;
         }
     })
     .catch(error => {
