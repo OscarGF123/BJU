@@ -428,14 +428,16 @@ $(document).on('click', '#btn-eliminar', function(e) {
                 icon: 'success',
                 text: 'El registro se ha eliminado correctamente',
             });
-        } else if (data.status === "error" && data.tyoe === 'form_invalid') {
+        } else if (data.status === "error" && data.type === 'form_invalid') {
             Swal.fire({
                 title: '¡Error!',
                 icon: 'error',
                 text: `No se ha podido eliminar el registro\n${data.error}`
             });
+            self.disabled = false;
         } else {
-            console.log('Error en el backend');
+            console.log(`Error en el backend ${data.status} ${data.type}`);
+            self.disabled = false;
         }
     })
     .catch(error => {

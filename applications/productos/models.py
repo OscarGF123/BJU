@@ -95,7 +95,7 @@ class Producto(models.Model):
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
-    tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT)
+    tipo = models.ForeignKey(Tipo, on_delete=models.SET_NULL, null=True)
     talla = models.ForeignKey(Talla, on_delete=models.PROTECT)
     marca = models.ForeignKey(Marca, on_delete=models.PROTECT)
     color = models.ForeignKey(Color, on_delete=models.PROTECT)
@@ -104,7 +104,7 @@ class Producto(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
     
     def __str__(self):
-        return self.nombre
+        return self.nombre.valor
     
     def save(self, *args, **kwargs):
 
