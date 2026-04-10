@@ -180,7 +180,8 @@ class ImagenForm(ModelForm):
             )
         }
         labels = {  # ojo: es 'labels', no 'label'
-            'link_imagen': 'Imagen del Producto'
+            'link_imagen': 'Imagen del Producto',
+            'portada': "Portada de la imagen?"
         }
 
     def __init__(self, *args, excluir_campos=None, es_edicion=None, **kwargs):
