@@ -278,9 +278,6 @@ function agregar(url, agregarFila) {
                 html: `Error en los siguientes campos:<br>${errorMessage}`,
                 icon: 'error'
             })
-for (let [clave, valor] of new FormData(formulario)) {
-    console.log(clave, valor)
-}
         } else {
             // evitar errores con el aria-hidden
 
@@ -290,17 +287,17 @@ for (let [clave, valor] of new FormData(formulario)) {
             }
             handlePermissionError(data);
         }
-    });
-    // .catch(error => {
-    //     console.error('Error:', error);
-    //     document.getElementById('btnGuardarForm').disabled = false;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('btnGuardarForm').disabled = false;
 
-    //     Swal.fire({
-    //         title: 'Error',
-    //         text: `Ha ocurrido un error inesperado ${error}`,
-    //         icon: 'error'
-    //     })
-    // });
+        Swal.fire({
+            title: 'Error',
+            text: `Ha ocurrido un error inesperado ${error}`,
+            icon: 'error'
+        })
+    });
 
 }
 
