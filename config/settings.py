@@ -74,6 +74,9 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'pagina_principal'
 LOGOUT_REDIRECT_URL = 'pagina_principal'
+AUTHENTICATION_BACKENDS = [
+    'applications.usuarios.backends.EmailOUsernameBackend',
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

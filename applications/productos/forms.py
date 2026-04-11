@@ -178,6 +178,8 @@ class ImagenForm(ModelForm):
         labels = {
             'link_imagen': 'Cargar Imagen'
         }
+
+
 class ImagenProductoForm(ModelForm):
     class Meta:
         model = ImagenProducto
@@ -203,11 +205,14 @@ class ImagenProductoForm(ModelForm):
     def __init__(self, *args, excluir_campos=None, es_edicion=None, **kwargs):
         super().__init__(*args, **kwargs)
 
+
+        # Solo cambia la etiqueta visible, no el nombre interno
+        self.fields['imagen_id'].widget.attrs['id'] = 'id_imagen'
+
         if excluir_campos:
             for campo in excluir_campos:
                 if campo in self.fields:
                     del self.fields[campo]
-
         # es_edicion = es_edicion or (self.instance and self.instance.pk is not None)
 
         # if es_edicion:
@@ -227,7 +232,7 @@ class ImagenProductoForm(ModelForm):
 
         if portada == "Si":
             # Busca si ya existe una portada para este producto
-            portada_existente = Imagen.objects.filter(
+            portada_existente = ImagenProducto.objects.filter(
                 producto_id=producto_id, 
                 portada="Si"
             )

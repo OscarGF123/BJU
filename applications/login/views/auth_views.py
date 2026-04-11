@@ -134,12 +134,7 @@ class RegistroView(FormView):
         # Enviar email de verificación
         email_sent = default_email_service.send_verification_email(usuario, self.request)
         
-        if email_sent:
-            messages.success(
-                self.request, 
-                f'Cuenta creada exitosamente. Hemos enviado un email de verificación a {usuario.email}'
-            )
-        else:
+        if not email_sent:
             messages.warning(
                 self.request,
                 'Cuenta creada, pero hubo un problema enviando el email de verificación. Intenta solicitar un nuevo email.'
@@ -208,11 +203,6 @@ class VerificarEmailView(TemplateView):
                 usuario.verification_token_created = None
                 usuario.save()
                 
-                messages.success(
-                    request, 
-                    'Tu cuenta ha sido verificada exitosamente. Ya puedes iniciar sesión.'
-                )
-                
                 context = {
                     'verificacion_exitosa': True,
                     'usuario': usuario,
@@ -256,12 +246,7 @@ class ReenviarVerificacionView(FormView):
             # Reenviar email
             email_sent = default_email_service.send_verification_email(usuario, self.request)
             
-            if email_sent:
-                messages.success(
-                    self.request,
-                    f'Email de verificación reenviado a {email}'
-                )
-            else:
+            if not email_sent:
                 messages.error(
                     self.request,
                     'Error enviando el email. Intenta más tarde.'

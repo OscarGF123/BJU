@@ -46,7 +46,8 @@ class ListarProducto(AdminRequiredMixin, ListView):
             context['imagen_formset'] = ImagenFormSet(
                 self.request.POST, 
                 self.request.FILES,
-                instance=self.object
+                instance=self.object,
+                prefix="imagen"
             )
         else:
             # ✅ Pasa ambos formsets al contexto
@@ -88,7 +89,7 @@ class ListarProducto(AdminRequiredMixin, ListView):
             }),
             'imagen': json.dumps({
                 "nombre": "Imagen",
-                "formulario": str(ImagenProductoForm()),
+                "formulario": str(ImagenForm()),
                 "url": str(reverse_lazy("productos:crear_imagen"))
             })
         }
