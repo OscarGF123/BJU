@@ -34,7 +34,7 @@ class CrearImagen(VistaBaseCrear):
 
     def form_valid(self, form):
         try:
-            super().form_valid(form)
+            return super().form_valid(form)
         except IntegrityError:
             if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({
