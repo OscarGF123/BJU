@@ -9,14 +9,14 @@ from django.forms import inlineformset_factory
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
 from applications.productos.forms import ColorForm, NombreForm, TallaForm, MarcaForm, CategoriaForm, TipoForm
 from applications.common.mixins import AdminRequiredMixin
-from applications.productos.models import Producto, Imagen, ImagenProducto
-from applications.productos.forms import ProductoForm, ImagenProductoFormEdicion, ImagenProductoForm, ImagenForm
+from applications.productos.models import Producto, Imagen
+from applications.productos.forms import ProductoForm, ImagenForm, ImagenFormEdicion
 from config.settings import MEDIA_URL
 
 ImagenFormSet = inlineformset_factory(
     Producto,
-    ImagenProducto,
-    form=ImagenProductoForm,
+    Imagen,
+    form=ImagenForm,
     min_num=1,
     extra=0,
     can_delete=False,
@@ -25,8 +25,8 @@ ImagenFormSet = inlineformset_factory(
 )
 ImagenFormSetEditar = inlineformset_factory(
     Producto,
-    ImagenProducto,
-    form=ImagenProductoFormEdicion,
+    Imagen,
+    form=ImagenFormEdicion,
     min_num=1,
     extra=0,
     can_delete=False,

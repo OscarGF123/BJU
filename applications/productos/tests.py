@@ -1,8 +1,9 @@
 from django.test import TestCase
-from applications.productos.models import Imagen, Producto
+from applications.usuarios.models import TipoIdentificacion
 # Create your tests here.
 
-print(Producto.objects.all())
+TipoIdentificacion.objects.create(nombre="Cedula Ciudadana", codigo="CC")
+
 
 
 

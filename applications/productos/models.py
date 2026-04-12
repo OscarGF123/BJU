@@ -145,6 +145,13 @@ class OverwriteStorage(FileSystemStorage):
 
 class Imagen(models.Model):
 
+    ESTADOS = [
+        ("Si", "Si"),
+        ("No", "No")
+    ]
+
+    producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
     link_imagen = models.ImageField(upload_to='productos', verbose_name='Imagen', storage=OverwriteStorage(), unique=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
@@ -152,17 +159,17 @@ class Imagen(models.Model):
     def __str__(self):
         return str(self.link_imagen)
 
-class ImagenProducto(models.Model):
+# class ImagenProducto(models.Model):
 
-    """Modelo pivote que relaciona productos con imagenes"""
+    # """Modelo pivote que relaciona productos con imagenes"""
     
-    ESTADOS = [
-        ("Si", "Si"),
-        ("No", "No")
-    ]
+    # ESTADOS = [
+    #     ("Si", "Si"),
+    #     ("No", "No")
+    # ]
 
-    producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    imagen_id = models.ForeignKey(Imagen, on_delete=models.CASCADE)
-    portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
-    fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
-    fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
+    # producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    # imagen_id = models.ForeignKey(Imagen, on_delete=models.CASCADE)
+    # portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
+    # fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
+    # fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
