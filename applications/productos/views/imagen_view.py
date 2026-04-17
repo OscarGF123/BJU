@@ -32,6 +32,10 @@ class CrearImagen(VistaBaseCrear):
     model = Imagen
     form_class = ImagenForm
 
+    def get_form(self, form_class=None):
+        form = ImagenForm(**self.get_form_kwargs())
+        return form
+    
     def form_valid(self, form):
         try:
             return super().form_valid(form)
@@ -46,9 +50,12 @@ class CrearImagen(VistaBaseCrear):
                 }, status=400)
             form.add_error(None, 'Ya existe una imagen cargada igual a la que se intenta cargar.')
             return self.form_invalid(form)
+
 class EditarImagen(VistaBaseEditar):
     model = Imagen
     form_class = ImagenForm
+
+
 
 class EliminarImagen(VistaBaseEliminar):
     model = Imagen
