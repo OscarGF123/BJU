@@ -130,22 +130,19 @@ class ProductoForm(ModelForm):
         self.fields['nombre'].queryset = Nombre.objects.filter(estado="Activo")
         
 
+
+
     def clean_pagina_principal(self):
-        
         # si ya hay un producto en la pagina principal entonces no permitir que haya otro
 
-        producto_id = self.cleaned_data.get("producto_id")
         producto_nombre = self.cleaned_data.get("nombre")
         producto_talla = self.cleaned_data.get("talla")
         pagina_principal = self.cleaned_data.get("pagina_principal")
 
-        if not producto_id or not producto_id.pk:
-            return pagina_principal
 
         if pagina_principal == "Si":
             # Busca si ya existe un producto ya publicado en la pagina principal
             pagina_principal_existente = Producto.objects.filter(
-                producto_id=producto_id,
                 nombre=producto_nombre,
                 pagina_principal="Si"
             )
@@ -153,9 +150,9 @@ class ProductoForm(ModelForm):
             # Si es edición, excluye el registro actual de la búsqueda
             if self.instance and self.instance.pk:
                 pagina_principal_existente = pagina_principal_existente.exclude(pk=self.instance.pk)
-
             if pagina_principal_existente.exists():
                 raise ValidationError(f'El producto {producto_nombre} talla {producto_talla} ya esta publicado en la pagina principal')
+            # print(Imagen.objects.filter(producto_id=pagina_principal_existente.first().id).exists())
 
         return pagina_principal
 
@@ -189,6 +186,22 @@ class ImagenForm(ModelForm):
             'link_imagen': 'Cargar Imagen',
             'portada': "Portada del Producto"
         }
+
+    def __init__(self, *args, excluir_campos=None, es_edicion=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if excluir_campos:
+            for campo in excluir_campos:
+                if campo in self.fields:
+                    del self.fields[campo]
+        es_edicion = es_edicion or (self.instance and self.instance.pk is not None)
+
+        if es_edicion:
+            if 'link_imagen' in self.fields:
+                self.fields['link_imagen'].required = False
+                self.fields['link_imagen'].widget.is_required = False
+            if 'portada' in self.fields:
+                self.fields['portada'].required = False
 
     def clean_portada(self):
         

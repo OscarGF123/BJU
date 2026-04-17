@@ -87,7 +87,7 @@ class Producto(models.Model):
         ("No", "No")
     ]
 
-    slug = models.SlugField(unique=True, blank=True)
+    slug = models.SlugField(unique=True, blank=True, null=True)
     
 
     nombre = models.ForeignKey(Nombre, on_delete=models.SET_NULL, null=True)
@@ -104,14 +104,15 @@ class Producto(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
     
     def __str__(self):
-        return self.nombre.valor
+        return str(self.nombre.valor if self.nombre else self.nombre)
     
     def save(self, *args, **kwargs):
 
         # Verifica si ya hay un producto con pagina principal para no volver a hacer el slug
         existe_producto = Producto.objects.filter(nombre=self.nombre, pagina_principal="Si").exists()
 
-        if existe_producto:
+        if existe_producto and self.pagina_principal == "No":
+            self.slug = None
             return super().save(*args, **kwargs)
 
         if not self.slug and self.pagina_principal == "Si":
@@ -151,8 +152,8 @@ class Imagen(models.Model):
     ]
 
     producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
     link_imagen = models.ImageField(upload_to='productos', verbose_name='Imagen', storage=OverwriteStorage(), unique=True)
+    portada = models.CharField(verbose_name="portada", default="No", choices=ESTADOS, max_length=10)
     fecha_creacion = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
 
