@@ -38,7 +38,7 @@ def obtener_imagen_producto(producto_id):
     if imagen_portada:
         return str(imagen_portada.link_imagen)
         
-    else:
+    elif imagen_portada is None:
 
         return str(Imagen.objects.filter(producto_id=producto_id).order_by('?').first().link_imagen)
     
