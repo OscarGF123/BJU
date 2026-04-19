@@ -9,24 +9,14 @@ from django.forms import inlineformset_factory
 from applications.common.views import VistaBaseCrear, VistaBaseEditar, VistaBaseEliminar
 from applications.productos.forms import ColorForm, NombreForm, TallaForm, MarcaForm, CategoriaForm, TipoForm
 from applications.common.mixins import AdminRequiredMixin
-from applications.productos.models import Producto, Imagen, ImagenProducto
-from applications.productos.forms import ProductoForm, ImagenProductoFormEdicion, ImagenProductoForm, ImagenForm
+from applications.productos.models import Producto, Imagen
+from applications.productos.forms import ProductoForm, ImagenForm, ImagenFormEdicion
 from config.settings import MEDIA_URL
 
 ImagenFormSet = inlineformset_factory(
     Producto,
-    ImagenProducto,
-    form=ImagenProductoForm,
-    min_num=1,
-    extra=0,
-    can_delete=False,
-    validate_min=True,
-    validate_max=False,
-)
-ImagenFormSetEditar = inlineformset_factory(
-    Producto,
-    ImagenProducto,
-    form=ImagenProductoFormEdicion,
+    Imagen,
+    form=ImagenFormEdicion,
     min_num=1,
     extra=0,
     can_delete=False,
@@ -125,7 +115,8 @@ class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
                 if not instancia.link_imagen:
                     imagen_original = Imagen.objects.get(pk=instancia.pk)
                     instancia.link_imagen = imagen_original.link_imagen
-                instancia.save()
+                if self.request.FILES:
+                    instancia.save()
 
             return super().form_valid(form)
         else:
@@ -182,13 +173,11 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
 
 
 
-        imagen_formset = ImagenFormSetEditar(
+        imagen_formset = ImagenFormSet(
             self.request.POST,
             self.request.FILES,
             instance=self.object
         )
-
-        print(True if self.request.FILES else False)
 
         if imagen_formset.is_valid():
             # Si se añadio alguna imagen entonces guardar el formset
@@ -201,7 +190,7 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
             return self.form_invalid(form)
 
     def form_invalid(self, form):
-        imagen_formset = getattr(self, '_imagen_formset', ImagenFormSetEditar(
+        imagen_formset = getattr(self, '_imagen_formset', ImagenFormSet(
             self.request.POST,
             self.request.FILES,
             instance=self.object
@@ -245,9 +234,14 @@ class EliminarProducto(AdminRequiredMixin, VistaBaseEliminar):
 
         self.object = self.get_object()
         producto_id = self.object.id
+        imagen = Imagen.objects.filter(producto_id=producto_id)
+
+        if not imagen.exists():
+
+            return super().delete(request, *args, **kwargs)
 
         # Construye la ruta de la imagen relacionada al producto
-        ruta_imagen = str(f"{MEDIA_URL}{Imagen.objects.filter(producto_id=producto_id).first().link_imagen}")
+        ruta_imagen = str(f"{MEDIA_URL}{imagen.first().link_imagen}")
 
         eliminar = super().delete(request, *args, **kwargs)
         # elimina la imagen si la es correcta

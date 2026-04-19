@@ -86,12 +86,10 @@
                                     {{ imagen_formset.management_form }}
                                     
                                     <div id="imagen-forms">
-                                        {% for form in imagen_formset %}
+                                        {% for imagen_form in imagen_formset %}
                                             <div class="imagen-form-item">
-                                                {{form.imagen_id.label}}
-                                                <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.imagen}}" ><i class="fas fa-plus" title="Agregar nueva talla"></i></button>
+                                                {{ imagen_form.as_p }}
                                             </div>
-                                            {{form.imagen_id}}
                                         {% endfor %}
                                     </div>                                    
                                 </div>
