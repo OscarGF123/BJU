@@ -33,7 +33,7 @@
                 {% for producto in productos_relacionados %}
                 {% obtener_imagen_producto producto.id as imagen_url %}
                 <div class="thumbnail active" onclick="changeImage(this, '{% media imagen_url %}')">
-                    <img src="{% media imagen_url %}" alt="Vista 1">
+                    <a href="{% url 'carrito_compras:detalle_producto' producto.slug %}"><img src="{% media imagen_url %}" alt="Vista 1"></a>
                 </div>
                 {% endfor %}
             </div>
