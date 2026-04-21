@@ -22,8 +22,6 @@ class ProductoDetailView(DetailView):
                     output_field=IntegerField()
                 )
             ).order_by('relevancia')
-        
-        print(context['productos_relacionados'])
 
         return context
     
