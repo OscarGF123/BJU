@@ -99,25 +99,37 @@ class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
     form_class = ProductoForm
 
     def form_valid(self, form):
-        self.object = form.save()
-
+        self.object = form.save(commit=False)
+        
         imagen_formset = ImagenFormSet(
             self.request.POST,
             self.request.FILES,
             instance=self.object
         )
+        
+        if self.object.pagina_principal == "Si" and not self.request.FILES:
+            return JsonResponse({
+                    'status': 'error',
+                    'type': 'form_invalid',
+                    'errors': {
+                        'Cargar Imagen': ['Para publicar este producto a la pagina principal debe relacionarse por lo menos una imagen al mismo.']
+                    }
+                }, status=400)
 
         if imagen_formset.is_valid():
             instancias = imagen_formset.save(commit=False)
-
             for instancia in instancias:
                 # Si no subió imagen nueva, conserva la que ya tenía
                 if not instancia.link_imagen:
                     imagen_original = Imagen.objects.get(pk=instancia.pk)
                     instancia.link_imagen = imagen_original.link_imagen
-                if self.request.FILES:
+                
+                if self.request.FILES and self.object.pagina_principal == "Si":
+                    self.object = form.save()
                     instancia.save()
-
+                    return super().form_valid(form)
+                    
+            self.object = form.save()
             return super().form_valid(form)
         else:
             self._imagen_formset = imagen_formset
@@ -169,9 +181,17 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
     form_class = ProductoForm
 
     def form_valid(self, form):
-        self.object = form.save()
-
-
+        self.object = form.save(commit=False)
+        
+        # Si se quiere publicar el producto y no se cargo una imagen ni tampoco hay imagenes relacionadas al producto dar error
+        if self.object.pagina_principal == "Si" and not self.request.FILES and not Imagen.objects.filter(producto_id=self.object.id).exists():
+            return JsonResponse({
+                    'status': 'error',
+                    'type': 'form_invalid',
+                    'errors': {
+                        'Cargar Imagen': ['Para publicar este producto a la pagina principal debe relacionarse por lo menos una imagen al mismo.']
+                    }
+                }, status=400)
 
         imagen_formset = ImagenFormSet(
             self.request.POST,
@@ -182,6 +202,7 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
         if imagen_formset.is_valid():
             # Si se añadio alguna imagen entonces guardar el formset
             if self.request.FILES:
+                self.object = form.save(commit=False)
                 imagen_formset.save()
             return super().form_valid(form)
         else:

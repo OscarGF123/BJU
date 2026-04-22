@@ -130,8 +130,6 @@ class ProductoForm(ModelForm):
         self.fields['nombre'].queryset = Nombre.objects.filter(estado="Activo")
         
 
-
-
     def clean_pagina_principal(self):
         # si ya hay un producto en la pagina principal entonces no permitir que haya otro
 
@@ -151,10 +149,25 @@ class ProductoForm(ModelForm):
             if self.instance and self.instance.pk:
                 pagina_principal_existente = pagina_principal_existente.exclude(pk=self.instance.pk)
             if pagina_principal_existente.exists():
-                raise ValidationError(f'El producto {producto_nombre} talla {producto_talla} ya esta publicado en la pagina principal')
-            # print(Imagen.objects.filter(producto_id=pagina_principal_existente.first().id).exists())
+                raise ValidationError(f'El producto {pagina_principal_existente.first().nombre} talla {pagina_principal_existente.first().talla} ya esta publicado en la pagina principal')
+
 
         return pagina_principal
+
+    def clean_talla(self):
+
+        talla = self.cleaned_data.get("talla")
+        nombre = self.cleaned_data.get("nombre")
+
+        # Valida si ya existe un producto con la talla seleccionada por el usuario
+        producto = Producto.objects.filter(nombre=nombre, talla=talla)
+
+        if self.instance and self.instance.pk:
+            producto = producto.exclude(pk=self.instance.pk)
+
+        if producto.exists():
+            raise ValidationError(f"Ya existe {nombre} talla {talla}.")
+        return talla
 
 from django.forms import ModelForm, Select, FileInput
 from .models import Imagen

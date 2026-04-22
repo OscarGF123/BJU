@@ -4,8 +4,8 @@ from django import template
 from django.db.models import Model
 from django.utils import timezone
 
-from applications.productos.models import Imagen
-from config.settings import MEDIA_URL
+from applications.productos.models import Imagen, Producto
+from config.settings import MEDIA_URL, STATIC_URL
 
 
 register = template.Library()
@@ -33,15 +33,17 @@ def obtener_atributo(modelo, campo):
 @register.simple_tag()
 def obtener_imagen_producto(producto_id):
 
-    imagen_portada = Imagen.objects.filter(producto_id=producto_id, portada="Si").first()
+    imagen_portada = Imagen.objects.filter(producto_id=producto_id, portada="Si")
 
-    if imagen_portada:
-        return str(imagen_portada.link_imagen)
-        
-    elif imagen_portada is None:
+    if imagen_portada.exists():
+        return str(imagen_portada.first().link_imagen)
 
+    elif Imagen.objects.filter(producto_id=producto_id, portada="No").exists():
         return str(Imagen.objects.filter(producto_id=producto_id).order_by('?').first().link_imagen)
+        
+    else:
+        return os.path.join(STATIC_URL, "img/Imagen_no_encontrada.svg")
     
 @register.simple_tag()
 def media(url):
-    return os.path.join(MEDIA_URL, url)
+    return os.path.join(MEDIA_URL, str(url))

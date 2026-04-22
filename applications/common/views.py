@@ -30,7 +30,6 @@ class VistaBaseCrear(CreateView):
 
         # Usar model_to_dict que maneja mejor la serialización
         data = get_display_data(formulario)
-        print(data)
 
         # Filtrar campos si es necesario
         campos_excluidos = ['slug']
@@ -49,7 +48,6 @@ class VistaBaseCrear(CreateView):
         }
         
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            print(f"enviado {response}")
             return JsonResponse(response, encoder=DjangoJSONEncoder, status=200)
     
         return super().form_valid(form)
