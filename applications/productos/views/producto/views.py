@@ -182,8 +182,9 @@ class EditarProducto(AdminRequiredMixin, VistaBaseEditar):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-
-        if self.object.pagina_principal == "Si" and not self.request.FILES:
+        
+        # Si se quiere publicar el producto y no se cargo una imagen ni tampoco hay imagenes relacionadas al producto dar error
+        if self.object.pagina_principal == "Si" and not self.request.FILES and not Imagen.objects.filter(producto_id=self.object.id).exists():
             return JsonResponse({
                     'status': 'error',
                     'type': 'form_invalid',
