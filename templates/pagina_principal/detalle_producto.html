@@ -64,11 +64,11 @@
             <!-- Precio -->
             <div class="price-section">
                 <div class="price-main">${{producto.precio_unitario}}</div>
-                <div class="price-details">
+                <!-- <div class="price-details">
                     <span class="price-old">$50.798</span>
                     <span class="discount-badge">Estimado -44%</span>
                 </div>
-                <p class="price-note"><span class="last-day">🔥 ¡Último día!</span></p>
+                <p class="price-note"><span class="last-day">🔥 ¡Último día!</span></p> -->
             </div>
 
             <!-- Promociones -->
@@ -92,12 +92,18 @@
                 </div>
                 
                 <div class="size-options">
-                    <button class="size-button" onclick="selectSize(this)">XS</button>
-                    <button class="size-button" onclick="selectSize(this)">S</button>
-                    <button class="size-button selected" onclick="selectSize(this)">M</button>
+                    <!-- Mostrar las tallas disponibles del producto -->
+                    {% for talla, disponible in tallas.items %}
+                        {% if disponible %}
+                            <button class="size-button" onclick="selectSize(this)">{{talla}}</button>
+                        {% else %}
+                            <button class="size-button out-of-stock" disabled>{{talla}}</button>
+                        {% endif %}
+                    {% endfor %}
+                    <!-- <button class="size-button selected" onclick="selectSize(this)">M</button>
                     <button class="size-button out-of-stock" disabled>L</button>
                     <button class="size-button" onclick="selectSize(this)">XL</button>
-                    <button class="size-button" onclick="selectSize(this)">XXL</button>
+                    <button class="size-button" onclick="selectSize(this)">XXL</button> -->
                 </div>
             </div>
 
@@ -231,7 +237,6 @@
             // Seleccionar el botón clickeado
             button.classList.add('selected');
             
-            console.log('Talla seleccionada:', button.textContent);
         }
 
         /* ========================================
