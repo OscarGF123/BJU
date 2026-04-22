@@ -36,11 +36,9 @@ def obtener_imagen_producto(producto_id):
     imagen_portada = Imagen.objects.filter(producto_id=producto_id, portada="Si")
 
     if imagen_portada.exists():
-        print(f"hola")
         return str(imagen_portada.first().link_imagen)
 
     elif Imagen.objects.filter(producto_id=producto_id, portada="No").exists():
-        print(f"Aqui {Producto.objects.get(pk=producto_id).nombre}")
         return str(Imagen.objects.filter(producto_id=producto_id).order_by('?').first().link_imagen)
         
     else:
