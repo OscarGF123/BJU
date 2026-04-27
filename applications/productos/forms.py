@@ -1,4 +1,4 @@
-from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput, ValidationError
+from django.forms import TextInput, Textarea, Select, ModelForm, FileInput, ValidationError, IntegerField
 from django.utils.safestring import mark_safe
 
 from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo, Nombre
@@ -65,7 +65,7 @@ class ProductoForm(ModelForm):
                     'rows': 4
                 }
             ),
-            "cantidad": NumberInput(
+            "cantidad": IntegerField(
                 attrs={
                     'class': "bj-form-control",
                     'placeholder': "0",
@@ -73,7 +73,7 @@ class ProductoForm(ModelForm):
                     'step': "1"
                 }
             ),
-            "precio_unitario": NumberInput(
+            "precio_unitario": IntegerField(
                 attrs={
                     'class': "bj-form-control",
                     'placeholder': "0.00",
