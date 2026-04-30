@@ -29,11 +29,6 @@ class PaginaPrincipal(ListView):
         return context
     
     def get_queryset(self):
-        print(Producto.objects.filter(
-            pagina_principal="Si"
-            ).select_related(
-                'nombre', 'categoria', 'tipo', 'marca', 'color', 'talla'
-            ).prefetch_related('imagen_set'))
         return Producto.objects.filter(
             pagina_principal="Si"
             ).select_related(

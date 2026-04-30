@@ -1,9 +1,9 @@
 from django.urls import path
 
-from applications.tienda.views.detalle_producto_view import ProductoDetailView
+from applications.carrito_compras.views import CarritoComprasListView
 
 app_name = "carrito_compras"
 
 urlpatterns = [
-    path("<slug:slug>", ProductoDetailView.as_view(), name="detalle_producto")
+    path('carrito_compras/', CarritoComprasListView.as_view(), name="items_carrito")
 ]
