@@ -1,7 +1,7 @@
-from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput
+from django.forms import TextInput, NumberInput, Textarea, Select, ModelForm, FileInput, ValidationError
 from django.utils.safestring import mark_safe
 
-from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen
+from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo, Nombre
 
 # la clase AtributoProductoForm es para que las clases Categoria, Talla, Marca y Color hereden esta clase
 # por que me da pereza escribir el mismo codigo varias veces
@@ -10,7 +10,7 @@ class AtributoProductoForm(ModelForm):
         model = Categoria
         fields = '__all__'
         widgets = {
-            "nombre": TextInput(
+            "valor": TextInput(
                 attrs={
                     "class": "bj-form-control",
                     "placeholder": "Nombre"
@@ -23,15 +23,36 @@ class AtributoProductoForm(ModelForm):
                 }
             )
         }
+        labels = {
+            'valor': "Nombre"
+        }
 
 class ProductoForm(ModelForm):
     class Meta:
         model = Producto
-        fields = ["nombre", "descripcion", "cantidad", "precio_unitario", "categoria", "talla", "marca", "color"]
+        fields = [
+            "nombre", 
+            "descripcion", 
+            "cantidad", 
+            "precio_unitario", 
+            "categoria", 
+            "tipo", 
+            "talla", 
+            "marca", 
+            "color", 
+            "pagina_principal"
+            ]
         widgets = {
-            "nombre": TextInput(
+
+            "tipo": Select(
                 attrs={
-                    'class': "bj-form-control",
+                    'class': "bj-form-select",
+                    'required': True
+                }
+            ),
+            "nombre": Select(
+                attrs={
+                    'class': "bj-form-select",
                     'placeholder': "Nombre del producto",
                     'required': True
                 }
@@ -81,6 +102,11 @@ class ProductoForm(ModelForm):
                     'class': "bj-form-select"
                 }
             ),
+            "pagina_principal": Select(
+                attrs={
+                    'class': 'bj-form-select'
+                }
+            ),
         }
         labels = {
             'nombre': 'Nombre del Producto',
@@ -92,38 +118,176 @@ class ProductoForm(ModelForm):
             'marca': 'Marca',
             'color': 'Color'
         }
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Solo mostrar los que estan activos en el fomulario
+        self.fields['tipo'].queryset = Tipo.objects.filter(estado="Activo")
+        self.fields['talla'].queryset = Talla.objects.filter(estado="Activo")
+        self.fields['marca'].queryset = Marca.objects.filter(estado="Activo")
+        self.fields['color'].queryset = Color.objects.filter(estado="Activo")
+        self.fields['categoria'].queryset = Categoria.objects.filter(estado="Activo")
+        self.fields['nombre'].queryset = Nombre.objects.filter(estado="Activo")
+        
+
+    def clean_pagina_principal(self):
+        # si ya hay un producto en la pagina principal entonces no permitir que haya otro
+
+        producto_nombre = self.cleaned_data.get("nombre")
+        producto_talla = self.cleaned_data.get("talla")
+        pagina_principal = self.cleaned_data.get("pagina_principal")
+
+
+        if pagina_principal == "Si":
+            # Busca si ya existe un producto ya publicado en la pagina principal
+            pagina_principal_existente = Producto.objects.filter(
+                nombre=producto_nombre,
+                pagina_principal="Si"
+            )
+
+            # Si es edición, excluye el registro actual de la búsqueda
+            if self.instance and self.instance.pk:
+                pagina_principal_existente = pagina_principal_existente.exclude(pk=self.instance.pk)
+            if pagina_principal_existente.exists():
+                raise ValidationError(f'El producto {pagina_principal_existente.first().nombre} talla {pagina_principal_existente.first().talla} ya esta publicado en la pagina principal')
+
+
+        return pagina_principal
+
+    def clean_talla(self):
+
+        talla = self.cleaned_data.get("talla")
+        nombre = self.cleaned_data.get("nombre")
+
+        # Valida si ya existe un producto con la talla seleccionada por el usuario
+        producto = Producto.objects.filter(nombre=nombre, talla=talla)
+
+        if self.instance and self.instance.pk:
+            producto = producto.exclude(pk=self.instance.pk)
+
+        if producto.exists():
+            raise ValidationError(f"Ya existe {nombre} talla {talla}.")
+        return talla
 
 from django.forms import ModelForm, Select, FileInput
 from .models import Imagen
 
 class ImagenForm(ModelForm):
+
     class Meta:
         model = Imagen
         fields = '__all__'
         widgets = {
-            'producto_id': Select(
-                attrs={'class': 'bj-form-control'}
-            ),
             'link_imagen': FileInput(
                 attrs={
                     'class': 'bj-form-control',
-                    'accept': 'image/*'
+                    'accept': 'image/*',
+                }
+            ),
+            'portada': Select(
+                attrs={
+                    'class': 'bj-form-control'
+                }
+            ),
+            'producto_id': Select(
+                attrs={
+                    'class': 'bj-form-control'
                 }
             )
         }
-        labels = {  # ojo: es 'labels', no 'label'
-            'link_imagen': 'Imagen del Producto'
+        labels = {
+            'link_imagen': 'Cargar Imagen',
+            'portada': "Portada del Producto"
         }
 
-    def __init__(self, *args, excluir_campos=None, **kwargs):
+    def __init__(self, *args, excluir_campos=None, es_edicion=None, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # excluir_campos puede ser una lista de nombres de campos
+
         if excluir_campos:
             for campo in excluir_campos:
                 if campo in self.fields:
                     del self.fields[campo]
+        es_edicion = es_edicion or (self.instance and self.instance.pk is not None)
 
+        if es_edicion:
+            if 'link_imagen' in self.fields:
+                self.fields['link_imagen'].required = False
+                self.fields['link_imagen'].widget.is_required = False
+            if 'portada' in self.fields:
+                self.fields['portada'].required = False
+
+    def clean_portada(self):
+        
+        producto_id = self.cleaned_data.get("producto_id")
+        portada = self.cleaned_data.get("portada")
+
+        if not producto_id or not producto_id.pk:
+            return portada
+
+        if portada == "Si":
+            # Busca si ya existe una portada para este producto
+            portada_existente = Imagen.objects.filter(
+                producto_id=producto_id, 
+                portada="Si"
+            )
+
+            # Si es edición, excluye el registro actual de la búsqueda
+            if self.instance and self.instance.pk:
+                portada_existente = portada_existente.exclude(pk=self.instance.pk)
+
+            if portada_existente.exists():
+                raise ValidationError('Ya existe una imagen como portada del producto')
+
+        return portada
+# class ImagenProductoForm(ModelForm):
+#     class Meta:
+#         model = ImagenProducto
+#         fields = '__all__'
+#         widgets = {
+#             'producto_id': Select(
+#                 attrs={'class': 'bj-form-control'}
+#             ),
+#             'imagen_id': Select(
+#                 attrs={'class': 'bj-form-control'}
+#             ),
+#             'portada': Select(
+#                 attrs={
+#                     'class': 'bj-form-control',
+#                 }
+#             )
+#         }
+#         labels = {
+#             'portada': "Portada del Producto",
+#             'imagen_id': "Imagen"
+#         }
+
+#     def __init__(self, *args, excluir_campos=None, es_edicion=None, **kwargs):
+#         super().__init__(*args, **kwargs)
+
+
+#         # Solo cambia la etiqueta visible, no el nombre interno
+#         self.fields['imagen_id'].widget.attrs['id'] = 'id_imagen'
+
+#         if excluir_campos:
+#             for campo in excluir_campos:
+#                 if campo in self.fields:
+#                     del self.fields[campo]
+        # es_edicion = es_edicion or (self.instance and self.instance.pk is not None)
+
+        # if es_edicion:
+        #     if 'link_imagen' in self.fields:
+        #         self.fields['link_imagen'].required = False
+        #         self.fields['link_imagen'].widget.is_required = False
+        #     if 'portada' in self.fields:
+        #         self.fields['portada'].required = False
+    
+
+
+class ImagenFormEdicion(ImagenForm):
+    def __init__(self, *args, **kwargs):
+        # Fuerza es_edicion=True siempre
+        kwargs['es_edicion'] = True
+        super().__init__(*args, **kwargs)
 
 class CategoriaForm(AtributoProductoForm):
 
@@ -141,3 +305,12 @@ class MarcaForm(AtributoProductoForm):
 class ColorForm(AtributoProductoForm):
     class Meta(AtributoProductoForm.Meta):
         model = Color
+
+class TipoForm(AtributoProductoForm):
+    class Meta(AtributoProductoForm.Meta):
+        model = Tipo
+
+class NombreForm(AtributoProductoForm):
+
+    class Meta(AtributoProductoForm.Meta):
+        model = Nombre

@@ -1,0 +1,217 @@
+{% extends "home.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block body %}
+
+<body>
+    <!-- ========================================
+         HEADER - Navegación superior
+         ======================================== -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">Urban Style</a>
+            <a href="#" class="back-btn">← Seguir Comprando</a>
+        </nav>
+    </header>
+
+    <!-- ========================================
+         CONTENEDOR PRINCIPAL DEL CARRITO
+         ======================================== -->
+    <div class="cart-container">
+        <!-- Título de la página -->
+        <h1 class="page-title">Mi Carrito</h1>
+
+        <!-- ========================================
+             LISTA DE PRODUCTOS EN EL CARRITO
+             ======================================== -->
+        <div class="cart-items">
+            <!-- Productos -->
+            {% for item in items %}
+                <div class="cart-item">
+                    <div class="item-image">
+                        <img src="{% media item.producto_id.imagen_set.link_imagen %}" alt="Producto">
+                    </div>
+                    <div class="item-info">
+                        <h3 class="item-name">Jean Urban Classic</h3>
+                        <p class="item-size">Talla: L</p>
+                        <p class="item-price">$89.900</p>
+                    </div>
+                    <div class="item-controls">
+                        <div class="quantity-controls">
+                            <button class="qty-btn" onclick="decreaseQty(1)">−</button>
+                            <span class="qty-number" id="qty-1">1</span>
+                            <button class="qty-btn" onclick="increaseQty(1)">+</button>
+                        </div>
+                        <button class="remove-btn" onclick="removeItem(1)">Eliminar</button>
+                    </div>
+                </div>
+            {% endfor %}    
+        </div>
+
+        <!-- ========================================
+             PANEL DE RESUMEN (SIDEBAR DERECHO)
+             ======================================== -->
+        <div class="cart-summary">
+            <h2 class="summary-title">Resumen del Pedido</h2>
+            
+            <!-- Subtotal -->
+            <div class="summary-row">
+                <span class="summary-label">Subtotal (4 productos)</span>
+                <span class="summary-value" id="subtotal">$419.407</span>
+            </div>
+            
+            <!-- Envío -->
+            <div class="summary-row">
+                <span class="summary-label">Envío</span>
+                <span class="summary-value" style="color: #4CAF50;">GRATIS</span>
+            </div>
+            
+            <!-- Descuento (opcional) -->
+            <div class="summary-row">
+                <span class="summary-label">Descuento</span>
+                <span class="summary-value" style="color: #4CAF50;">-$20.000</span>
+            </div>
+            
+            <!-- Total -->
+            <div class="summary-row">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="total">$399.407</span>
+            </div>
+            
+            <!-- Botón de pagar -->
+            <button class="checkout-btn" onclick="checkout()">Proceder al Pago</button>
+            
+            <!-- Información adicional -->
+            <div class="info-badges">
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Envío gratis en compras superiores a $50.000</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Devolución gratis en 30 días</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Pago seguro y protegido</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad del carrito
+         ======================================== -->
+    <script>
+        /* ========================================
+           FUNCIÓN: Aumentar cantidad de un producto
+           Parámetro: id del producto
+           ======================================== */
+        function increaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.textContent);
+            qtyElement.textContent = currentQty + 1;
+            updateTotal();
+        }
+
+        /* ========================================
+           FUNCIÓN: Disminuir cantidad de un producto
+           Parámetro: id del producto
+           No permite menos de 1
+           ======================================== */
+        function decreaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.textContent);
+            if (currentQty > 1) {
+                qtyElement.textContent = currentQty - 1;
+                updateTotal();
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Eliminar un producto del carrito
+           Parámetro: id del producto
+           ======================================== */
+        function removeItem(itemId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                // Encuentra el elemento del carrito y lo elimina
+                const items = document.querySelectorAll('.cart-item');
+                items[itemId - 1].style.animation = 'fadeOut 0.3s ease';
+                
+                setTimeout(() => {
+                    items[itemId - 1].remove();
+                    updateTotal();
+                    
+                    // Si no quedan productos, muestra mensaje de carrito vacío
+                    if (document.querySelectorAll('.cart-item').length === 0) {
+                        showEmptyCart();
+                    }
+                }, 300);
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Actualizar totales del resumen
+           Recalcula subtotal y total
+           ======================================== */
+        function updateTotal() {
+            // En un proyecto real, aquí calcularías basado en precios reales
+            // Este es un ejemplo simplificado
+            const items = document.querySelectorAll('.cart-item');
+            let itemCount = 0;
+            
+            items.forEach(item => {
+                const qty = parseInt(item.querySelector('.qty-number').textContent);
+                itemCount += qty;
+            });
+            
+            // Actualiza el texto del subtotal
+            document.querySelector('.summary-label').textContent = 
+                `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
+        }
+
+        /* ========================================
+           FUNCIÓN: Mostrar carrito vacío
+           ======================================== */
+        function showEmptyCart() {
+            const container = document.querySelector('.cart-container');
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <p class="empty-cart-text">Tu carrito está vacío</p>
+                    <a href="#" class="back-btn">Ir a Comprar</a>
+                </div>
+            `;
+        }
+
+        /* ========================================
+           FUNCIÓN: Proceder al pago
+           ======================================== */
+        function checkout() {
+            alert('Redirigiendo a la página de pago...\n\nEn un proyecto real, aquí se procesaría el pago.');
+            // En tu proyecto real, aquí redirigirías a la página de checkout
+            // window.location.href = '/checkout';
+        }
+
+        /* ========================================
+           ANIMACIÓN DE FADE OUT PARA ELIMINAR
+           ======================================== */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+{% endblock %}

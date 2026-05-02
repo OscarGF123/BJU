@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaqueta Kimono Japonés - Urban Style</title>
+    <style>
+        /* ========================================
+           RESET Y VARIABLES CSS
+           ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Colores principales de tu página */
+            --primary-red: #dc3545;
+            --primary-red-dark: #c82333;
+            --bg-dark: #1a1a1a;
+            --bg-dark-alt: #2d2d2d;
+            --text-white: #ffffff;
+            --text-gray: #cccccc;
+            --text-gray-dark: #999999;
+            --border-red: rgba(220, 53, 69, 0.2);
+            --shadow-red: rgba(220, 53, 69, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-dark-alt) 100%);
+            color: var(--text-white);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* ========================================
+           HEADER - Barra de navegación superior
+           ======================================== */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px var(--shadow-red);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-white);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-red);
+        }
+
+        .cart-icon {
+            background: linear-gradient(45deg, var(--primary-red), var(--primary-red-dark));
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .cart-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--shadow-red);
+        }
+
+        /* ========================================
+           BREADCRUMB - Navegación de ruta
+           ======================================== */
+        .breadcrumb {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-gray-dark);
+        }
+
+        .breadcrumb a {
+            color: var(--text-gray-dark);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-red);
+        }
+
+        .breadcrumb span {
+            color: var(--text-gray);
+        }
+
+        /* ========================================
+           LAYOUT PRINCIPAL - Grid de 2 columnas
+           Columna izquierda: Galería de imágenes
+           Columna derecha: Información del producto
+           ======================================== */
+        .product-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+
+        /* ========================================
+           GALERÍA DE IMÁGENES - COLUMNA IZQUIERDA
+           ======================================== */
+        .product-gallery {
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Miniaturas verticales a la izquierda */
+        .gallery-thumbnails {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 80px;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            background: var(--bg-dark-alt);
+        }
+
+        .thumbnail.active {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 15px var(--shadow-red);
+        }
+
+        .thumbnail:hover {
+            border-color: var(--primary-red);
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Imagen principal grande */
+        .main-image-container {
+            flex: 1;
+            border-radius: 20px;
+            overflow: hidden;
+            background: var(--bg-dark-alt);
+            position: relative;
+            height: 650px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .main-image-container:hover .main-image {
+            transform: scale(1.05);
+        }
+
+        /* Badge de video */
+        .video-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ========================================
+           INFORMACIÓN DEL PRODUCTO - COLUMNA DERECHA
+           ======================================== */
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* Título del producto */
+        .product-title {
+            font-size: 2rem;
+            font-weight: bold;
+            line-height: 1.3;
+            color: var(--text-white);
+        }
+
+        /* SKU y valoraciones */
+        .product-meta {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .sku {
+            color: var(--text-gray-dark);
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .stars {
+            color: #ffc107;
+            font-size: 1.1rem;
+        }
+
+        .reviews {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .reviews:hover {
+            text-decoration: underline;
+        }
+
+        /* ========================================
+           PRECIO Y DESCUENTO
+           ======================================== */
+        .price-section {
+            background: linear-gradient(145deg, var(--bg-dark-alt), var(--bg-dark));
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid var(--border-red);
+        }
+
+        .price-main {
+            font-size: 2.5rem;
+            color: var(--primary-red);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .price-details {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .price-old {
+            font-size: 1.2rem;
+            color: var(--text-gray-dark);
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: var(--primary-red);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .price-note {
+            font-size: 0.85rem;
+            color: var(--text-gray-dark);
+            margin-top: 0.5rem;
+        }
+
+        .last-day {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        /* ========================================
+           PROMOCIONES Y OFERTAS
+           ======================================== */
+        .promo-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .promo-badge {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid var(--border-red);
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        .promo-highlight {
+            background: linear-gradient(45deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.2));
+            border-color: rgba(255, 193, 7, 0.5);
+        }
+
+        .promo-badge strong {
+            color: var(--primary-red);
+        }
+
+        /* ========================================
+           SELECTOR DE TALLAS
+           ======================================== */
+        .size-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+        }
+
+        .size-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .size-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .size-guide {
+            color: var(--primary-red);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .size-guide:hover {
+            text-decoration: underline;
+        }
+
+        /* Grid de botones de tallas */
+        .size-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 1rem;
+        }
+
+        .size-button {
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: var(--text-white);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .size-button:hover {
+            border-color: var(--primary-red);
+            transform: translateY(-2px);
+        }
+
+        .size-button.selected {
+            background: linear-gradient(45deg, var(--primary-red), var(--primary-red-dark));
+            border-color: var(--primary-red);
+            box-shadow: 0 4px 15px var(--shadow-red);
+        }
+
+        .size-button.out-of-stock {
+            opacity: 0.3;
+            cursor: not-allowed;
+            position: relative;
+        }
+
+        .size-button.out-of-stock::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: var(--text-gray-dark);
+            transform: rotate(-15deg);
+        }
+
+        /* ========================================
+           BOTÓN AGREGAR AL CARRITO
+           ======================================== */
+        .add-to-cart-section {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .add-to-cart-btn {
+            flex: 1;
+            background: linear-gradient(45deg, var(--primary-red), var(--primary-red-dark));
+            border: none;
+            padding: 1.3rem;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px var(--shadow-red);
+        }
+
+        .add-to-cart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px var(--shadow-red);
+        }
+
+        .favorite-btn {
+            width: 60px;
+            height: 60px;
+            background: var(--bg-dark-alt);
+            border: 2px solid var(--border-red);
+            border-radius: 12px;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .favorite-btn:hover {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+            transform: scale(1.1);
+        }
+
+        /* ========================================
+           INFORMACIÓN DE ENVÍO
+           ======================================== */
+        .shipping-info {
+            background: linear-gradient(145deg, var(--bg-dark-alt), var(--bg-dark));
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shipping-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .shipping-item:last-child {
+            border-bottom: none;
+        }
+
+        .shipping-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, var(--primary-red), var(--primary-red-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .shipping-content h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .shipping-content p {
+            font-size: 0.9rem;
+            color: var(--text-gray);
+        }
+
+        /* ========================================
+           SECCIONES COLAPSABLES (Descripción, Tallas, etc.)
+           ======================================== */
+        .collapsible-sections {
+            margin-top: 2rem;
+            border-top: 2px solid var(--border-red);
+        }
+
+        .collapsible-section {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .section-header .icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.active .icon {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .section-content.active {
+            max-height: 1000px;
+            padding-bottom: 1.5rem;
+        }
+
+        .section-content p {
+            line-height: 1.8;
+            color: var(--text-gray);
+        }
+
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .section-content li {
+            padding: 0.5rem 0;
+            color: var(--text-gray);
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .section-content li::before {
+            content: '•';
+            color: var(--primary-red);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+        @media (max-width: 1024px) {
+            .product-container {
+                grid-template-columns: 1fr;
+            }
+
+            .main-image-container {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .product-gallery {
+                flex-direction: column-reverse;
+            }
+
+            .gallery-thumbnails {
+                flex-direction: row;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            .thumbnail {
+                flex-shrink: 0;
+            }
+
+            .main-image-container {
+                height: 400px;
+            }
+
+            .product-title {
+                font-size: 1.5rem;
+            }
+
+            .price-main {
+                font-size: 2rem;
+            }
+
+            .size-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .nav-container {
+                padding: 0 1rem;
+            }
+
+            .product-container {
+                padding: 1rem;
+            }
+        }
+
+        /* ========================================
+           ANIMACIONES
+           ======================================== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-info > * {
+            animation: fadeIn 0.6s ease;
+        }
+
+        .product-info > *:nth-child(1) { animation-delay: 0.1s; }
+        .product-info > *:nth-child(2) { animation-delay: 0.2s; }
+        .product-info > *:nth-child(3) { animation-delay: 0.3s; }
+        .product-info > *:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- ========================================
+         HEADER - Barra de navegación
+         ======================================== -->
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">Urban Style</a>
+            <div class="nav-links">
+                <a href="#" class="nav-link">Inicio</a>
+                <a href="#" class="nav-link">Productos</a>
+                <a href="#" class="nav-link">Ofertas</a>
+                <a href="#" class="cart-icon">🛒 Carrito (3)</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ========================================
+         BREADCRUMB - Navegación de ruta
+         ======================================== -->
+    <nav class="breadcrumb">
+        <a href="#">Página principal</a> /
+        <a href="#">Hombres</a> /
+        <a href="#">Ropa tradicional y cultural para hombres</a> /
+        <a href="#">Ropa asiática para hombres</a> /
+        <span>Camisa tipo kimono japonés</span>
+    </nav>
+
+    <!-- ========================================
+         CONTENEDOR PRINCIPAL DEL PRODUCTO
+         ======================================== -->
+    <div class="product-container">
+        <!-- ========================================
+             GALERÍA DE IMÁGENES - COLUMNA IZQUIERDA
+             ======================================== -->
+        <div class="product-gallery">
+            <!-- Miniaturas verticales -->
+            <div class="gallery-thumbnails">
+                <div class="thumbnail active" onclick="changeImage(this, 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=200&h=200&fit=crop" alt="Vista 1">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=200&h=200&fit=crop" alt="Vista 2">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=200&h=200&fit=crop" alt="Vista 3">
+                </div>
+                <div class="thumbnail" onclick="changeImage(this, 'https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=800&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1622445272461-c6580cab8755?w=200&h=200&fit=crop" alt="Vista 4">
+                </div>
+            </div>
+
+            <!-- Imagen principal grande -->
+            <div class="main-image-container">
+                <div class="video-badge">▶ Video</div>
+                <img id="mainImage" class="main-image" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&h=800&fit=crop" alt="Chaqueta Kimono">
+            </div>
+        </div>
+
+        <!-- ========================================
+             INFORMACIÓN DEL PRODUCTO - COLUMNA DERECHA
+             ======================================== -->
+        <div class="product-info">
+            <!-- Título -->
+            <h1 class="product-title">Camisa tipo kimono japonés para hombres en negro y azul, de punto abierto, ligera, tipo yukata y haori, chaqueta de punto</h1>
+
+            <!-- SKU y valoraciones -->
+            <div class="product-meta">
+                <span class="sku">SKU: sm2506232240482828</span>
+                <div class="rating">
+                    <span class="stars">★★★★★</span>
+                    <a href="#reviews" class="reviews">(109+ Comentarios)</a>
+                </div>
+            </div>
+
+            <!-- Precio -->
+            <div class="price-section">
+                <div class="price-main">$28.321</div>
+                <div class="price-details">
+                    <span class="price-old">$50.798</span>
+                    <span class="discount-badge">Estimado -44%</span>
+                </div>
+                <p class="price-note"><span class="last-day">🔥 ¡Último día!</span></p>
+            </div>
+
+            <!-- Promociones -->
+            <div class="promo-badges">
+                <div class="promo-badge">
+                    <strong>32% DE DTO.</strong> Sin mínimos de compra
+                </div>
+                <div class="promo-badge">
+                    <strong>24% DE DTO.</strong> para pedidos de 4 productos o más
+                </div>
+                <div class="promo-badge promo-highlight">
+                    ⭐ <strong>#5 Más Vendidos</strong> en Ropa asiática para hombres
+                </div>
+            </div>
+
+            <!-- Selector de tallas -->
+            <div class="size-section">
+                <div class="size-header">
+                    <span class="size-title">Talla</span>
+                    <a href="#" class="size-guide">📏 Guía de Tallas</a>
+                </div>
+                
+                <div class="size-options">
+                    <button class="size-button" onclick="selectSize(this)">XS</button>
+                    <button class="size-button" onclick="selectSize(this)">S</button>
+                    <button class="size-button selected" onclick="selectSize(this)">M</button>
+                    <button class="size-button out-of-stock" disabled>L</button>
+                    <button class="size-button" onclick="selectSize(this)">XL</button>
+                    <button class="size-button" onclick="selectSize(this)">XXL</button>
+                </div>
+            </div>
+
+            <!-- Botón agregar al carrito -->
+            <div class="add-to-cart-section">
+                <button class="add-to-cart-btn" onclick="addToCart()">
+                    Añadir a la Bolsa
+                </button>
+                <button class="favorite-btn" onclick="toggleFavorite(this)">
+                    ♡
+                </button>
+            </div>
+
+            <!-- Información de envío -->
+            <div class="shipping-info">
+                <div class="shipping-item">
+                    <div class="shipping-icon">📦</div>
+                    <div class="shipping-content">
+                        <h4>Envío a Rafael Uribe Uribe, Bogotá D.C, Colombia</h4>
+                        <p>Envío gratis (Pedidos ≥ $58.900) | Entrega estimada Feb 12 - Feb 19 | <strong style="color: #4CAF50;">60% con ≥ 16 días⏱</strong></p>
+                    </div>
+                </div>
+                <div class="shipping-item">
+                    <div class="shipping-icon">↩️</div>
+                    <div class="shipping-content">
+                        <h4>Política de devoluciones</h4>
+                        <p>Devoluciones gratuitas en 30 días</p>
+                    </div>
+                </div>
+                <div class="shipping-item">
+                    <div class="shipping-icon">✓</div>
+                    <div class="shipping-content">
+                        <h4>Seguridad en las compras</h4>
+                        <p>Pagos seguros • Protección de privacidad</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Secciones colapsables -->
+            <div class="collapsible-sections">
+                <!-- Descripción -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Descripción</h3>
+                        <span class="icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <p>Vacaciones, Oficina, Cuello Cardigan lavadora o limpieza...</p>
+                        <ul>
+                            <li>Material: Algodón y poliéster de alta calidad</li>
+                            <li>Diseño tradicional japonés moderno</li>
+                            <li>Perfecto para uso casual o formal</li>
+                            <li>Disponible en múltiples colores</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tallas y Dimensiones -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Tallas Y Dimensiones</h3>
+                        <span class="icon">+</span>
+                    </div>
+                    <div class="section-content">
+                        <ul>
+                            <li><strong>XS:</strong> Pecho 92cm, Largo 68cm</li>
+                            <li><strong>S:</strong> Pecho 96cm, Largo 70cm</li>
+                            <li><strong>M:</strong> Pecho 100cm, Largo 72cm</li>
+                            <li><strong>L:</strong> Pecho 104cm, Largo 74cm</li>
+                            <li><strong>XL:</strong> Pecho 108cm, Largo 76cm</li>
+                            <li><strong>XXL:</strong> Pecho 112cm, Largo 78cm</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Sobre La Tienda -->
+                <div class="collapsible-section">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h3>Sobre La Tienda</h3>
+                        <span class="icon">−</span>
+                    </div>
+                    <div class="section-content">
+                        <p><strong>Life Filter</strong></p>
+                        <p>97,5 % pagó a tiempo | 3K+ vendido recientemente</p>
+                        <p>Tienda especializada en moda urbana y ropa asiática de alta calidad. Más de 5 años de experiencia brindando productos únicos y auténticos.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad interactiva
+         ======================================== -->
+    <script>
+        /* ========================================
+           FUNCIÓN: Cambiar imagen principal
+           Parámetros:
+           - thumbnail: elemento miniatura clickeado
+           - newSrc: ruta de la nueva imagen
+           ======================================== */
+        function changeImage(thumbnail, newSrc) {
+            // Remover clase 'active' de todas las miniaturas
+            document.querySelectorAll('.thumbnail').forEach(t => {
+                t.classList.remove('active');
+            });
+            
+            // Agregar clase 'active' a la miniatura clickeada
+            thumbnail.classList.add('active');
+            
+            // Cambiar la imagen principal
+            const mainImage = document.getElementById('mainImage');
+            mainImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                mainImage.src = newSrc;
+                mainImage.style.opacity = '1';
+            }, 200);
+        }
+
+        /* ========================================
+           FUNCIÓN: Seleccionar talla
+           Parámetro: button - botón de talla clickeado
+           ======================================== */
+        function selectSize(button) {
+            // Remover selección de todos los botones
+            document.querySelectorAll('.size-button').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Seleccionar el botón clickeado
+            button.classList.add('selected');
+            
+            console.log('Talla seleccionada:', button.textContent);
+        }
+
+        /* ========================================
+           FUNCIÓN: Agregar al carrito
+           ======================================== */
+        function addToCart() {
+            const selectedSize = document.querySelector('.size-button.selected');
+            
+            if (!selectedSize) {
+                alert('Por favor, selecciona una talla');
+                return;
+            }
+            
+            // Animación del botón
+            const btn = document.querySelector('.add-to-cart-btn');
+            btn.textContent = '✓ Agregado al Carrito';
+            btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            
+            setTimeout(() => {
+                btn.textContent = 'Añadir a la Bolsa';
+                btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+            }, 2000);
+            
+            // En tu proyecto real, aquí agregarías el producto al carrito
+            console.log('Producto agregado:', {
+                talla: selectedSize.textContent,
+                precio: '$28.321'
+            });
+        }
+
+        /* ========================================
+           FUNCIÓN: Toggle favorito (corazón)
+           ======================================== */
+        function toggleFavorite(button) {
+            if (button.textContent === '♡') {
+                button.textContent = '❤️';
+                button.style.background = 'var(--primary-red)';
+            } else {
+                button.textContent = '♡';
+                button.style.background = 'var(--bg-dark-alt)';
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Toggle secciones colapsables
+           Parámetro: header - encabezado de la sección
+           ======================================== */
+        function toggleSection(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.section-content');
+            const icon = header.querySelector('.icon');
+            
+            // Toggle clase 'active'
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+            
+            // Cambiar ícono
+            if (content.classList.contains('active')) {
+                icon.textContent = '▼';
+            } else {
+                icon.textContent = '+';
+            }
+        }
+
+        /* ========================================
+           INICIALIZACIÓN: Abrir primera sección por defecto
+           ======================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            // Abrir la sección de Descripción por defecto
+            const firstSection = document.querySelector('.section-header');
+            if (firstSection) {
+                toggleSection(firstSection);
+            }
+        });
+
+        /* ========================================
+           ANIMACIÓN: Transición de imagen principal
+           ======================================== */
+        const mainImage = document.getElementById('mainImage');
+        mainImage.style.transition = 'opacity 0.3s ease';
+    </script>
+</body>
+</html>

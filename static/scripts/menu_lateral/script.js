@@ -1,6 +1,17 @@
 // Inicialización del DataTable con configuración responsive mejorada
 $(document).ready(function() {
     var datatable = $('#datatable').DataTable({
+        columnDefs: [
+            {
+                targets: '_all',  // ← aplica a todas las columnas
+                render: function(data) {
+                    if (data === null || data === undefined || data === 'None' || data === '') {
+                        return 'Vacio';
+                    }
+                    return data;
+                }
+            }
+        ],
         responsive: {
             details: {
                 type: 'inline',

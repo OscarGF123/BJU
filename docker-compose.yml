@@ -1,4 +1,17 @@
 services:
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    hostname: "Redis_BJU"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - red_bju
+
+
   db:
     image: mysql:9.3
     ports:
@@ -19,6 +32,8 @@ services:
       interval: 60s
       retries: 20
       start_period: 30s
+    networks:
+      - red_bju
 
   web:
     build: .
@@ -28,6 +43,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - DEBUG=${DEBUG}
       - PYTHONUNBUFFERED=1 #Para ver los logs en tiempo real
@@ -35,10 +52,29 @@ services:
       - .:/django
 
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthy"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthy/"]
       interval: 60s
       retries: 5
       start_period: 30s
+    
+    networks:
+      - red_bju
+
+  # Celery Worker
+  celery:
+    build: .
+    command: celery -A config worker --loglevel=debug
+    volumes:
+      - .:/django
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - CELERY_BROKER_URL=redis://redis:6379/0          # ← Nombre del servicio
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    depends_on:
+        web:
+          condition: service_healthy
+    networks:
+      - red_bju
 
   # ngrok:
   #   image: ngrok/ngrok:latest
@@ -56,3 +92,8 @@ services:
 
 volumes:
   db:
+  redis_data:
+
+networks:
+  red_bju:
+    driver: bridge

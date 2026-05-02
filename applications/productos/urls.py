@@ -6,6 +6,9 @@ from applications.productos.views.talla.views import ListarTalla, CrearTalla, Ed
 from applications.productos.views.color.views import ListarColor, CrearColor, EditarColor, EliminarColor
 from applications.productos.views.marca.views import ListarMarca, CrearMarca, EditarMarca, EliminarMarca
 from applications.productos.views.imagen_view import ListarImagen, CrearImagen, EditarImagen, EliminarImagen
+from applications.productos.views.tipo_view import ListarTipo, CrearTipo, EditarTipo, EliminarTipo
+from applications.productos.views.nombre_view import ListarNombre, CrearNombre, EditarNombre, EliminarNombre
+# from applications.productos.views.imagen_producto_view import ListarImagenProducto, CrearImagenProducto, EditarImagenProducto, EliminarImagenProducto
 
 app_name = "productos"
 
@@ -47,4 +50,21 @@ urlpatterns = [
     path("editar_imagen/<int:pk>", EditarImagen.as_view(), name="editar_imagen"),
     path("eliminar_imagen/<int:pk>", EliminarImagen.as_view(), name="eliminar_imagen"),
     
+    # Modulo Tipo
+    path("listar_tipos/", ListarTipo.as_view(), name="listar_tipos"),
+    path("crear_tipo/", CrearTipo.as_view(), name="crear_tipo"),
+    path("editar_tipo/<int:pk>", EditarTipo.as_view(), name="editar_tipo"),
+    path("eliminar_tipo/<int:pk>", EliminarTipo.as_view(), name="eliminar_tipo"),
+
+    # Modulo Nombre
+    path("listar_nombres/", ListarNombre.as_view(), name="listar_nombres"),
+    path("crear_nombre/", CrearNombre.as_view(), name="crear_nombre"),
+    path("editar_nombre/<int:pk>", EditarNombre.as_view(), name="editar_nombre"),
+    path("eliminar_nombre/<int:pk>", EliminarNombre.as_view(), name="eliminar_nombre"),
+
+    # # Modulo ImagenProducto
+    # path("listar_imagen_productos/", ListarImagenProducto.as_view(), name="listar_imagen_productos"),
+    # path("crear_imagen_producto/", CrearImagenProducto.as_view(), name="crear_imagen_producto"),
+    # path("editar_imagen_producto/<int:pk>", EditarImagenProducto.as_view(), name="editar_imagen_producto"),
+    # path("eliminar_imagen_producto/<int:pk>", EliminarImagenProducto.as_view(), name="eliminar_imagen_producto"),
 ]

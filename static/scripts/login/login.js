@@ -49,7 +49,20 @@ document.getElementById("loginForm").addEventListener('submit', function(e) {
     .then(data => {
         if (data.status === "success"){
             window.location.href = data.redirect_url
-        } else if (data.status == 'error' && data.type == 'form_invalid') {
+        } else if (data.status == 'error' && data.type == 'credentials_invalid') {
+            Swal.fire({
+                title: '¡Error!',
+                html: `<p>Ocurrio un error al iniciar sesión:</p><p>${data.errors}</p>`,
+                icon: 'error',
+            });
+        } else if(data.status === 'error' && data.type === 'inactive_account'){
+                Swal.fire({
+                    title: '¡Error!',
+                    html: `</p>${data.errors}</p><p>Haz click <a href="${data.verification_link}">aqui</a> para verificar tu cuenta</p>`,
+                    icon: 'error',
+                });
+        } else if (data.status === 'error' && data.typem === 'form_invalid'){
+
             let errorMessage = '<ul>';
             for (const [field, messages] of Object.entries(data.errors)) {
                 errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
@@ -58,9 +71,10 @@ document.getElementById("loginForm").addEventListener('submit', function(e) {
 
             Swal.fire({
                 title: '¡Error!',
-                text: `Ocurrio un error al iniciar sesión\n${errorMessage}`,
+                text: `Ocurrio un error al iniciar sesión:\n${errorMessage}`,
                 icon: 'error',
-            })
+            });
+
         }
     })
     .catch(error => {

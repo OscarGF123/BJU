@@ -32,7 +32,7 @@
                     <a class="bj-icons-header" href="#" title="Ayuda">
                         <i class="fa-solid fa-question-circle"></i>
                     </a>
-                    <a href="/logout"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario"></a>
+                    <a href="/logout/"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario"></a>
                 </div>
             </header>
 
@@ -58,6 +58,14 @@
                                     <a href="{% url 'productos:listar_producto' %}">
                                         <i class="fa-solid fa-shirt"></i>
                                         <span>Listar Productos</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="nombres">
+                                    <a href="{% url 'productos:listar_nombres' %}">
+                                        <i class="fa-solid fa-font"></i>
+                                        <span>Nombres</span>
                                     </a>
                                 </li>
                             </ul>
@@ -90,6 +98,14 @@
                                     <a href="{% url 'productos:listar_categoria' %}">
                                         <i class="fa-solid fa-layer-group"></i>
                                         <span>Categoria</span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <ul class="submenu">
+                                <li data-subpage="tipo">
+                                    <a href="{% url 'productos:listar_tipos' %}">
+                                        <i class="fa-solid fa-filter"></i>
+                                        <span>Tipo</span>
                                     </a>
                                 </li>
                             </ul>

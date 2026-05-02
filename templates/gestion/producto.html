@@ -10,6 +10,10 @@
         <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.marca}}"><i class="fas fa-plus" title="Agregar nueva marca"></i></button>
     {% elif field.label == "Color" %}
         <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.color}}"><i class="fas fa-plus" title="Agregar nuevo color"></i></button>
+    {% elif field.label == "Tipo" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.tipo}}"><i class="fas fa-plus" title="Agregar nuevo tipo"></i></button>
+    {% elif field.label == "Nombre del Producto" %}
+        <button type="button" class="bj-btn bj-btn-primary bj-btn-sm" id="formAdicional" data-value="{{formularios.nombre}}"><i class="fas fa-plus" title="Agregar nuevo nombre"></i></button>
     {% endif %}
 
 {% endblock %}

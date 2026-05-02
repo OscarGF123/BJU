@@ -38,9 +38,18 @@ document.getElementById("formularioRegistro").addEventListener('submit', functio
 
             window.location.href = data.redirect_url;
 
-        } else {
+        } else if (data.status === "error"){
 
-            alert(`Ha ocurrido un error \n${data}`);
+            let errorMessage = '<ul>';
+            for (const [field, messages] of Object.entries(data.errors)) {
+                errorMessage += `<li><strong>Campo ${field}:</strong> ${messages.join(', ')}</li>`;
+            }
+            errorMessage += '</ul>';
+            Swal.fire({
+                title: 'Error',
+                html: `Error en los siguientes campos:<br>${errorMessage}`,
+                icon: 'error'
+            })
 
         }
     })

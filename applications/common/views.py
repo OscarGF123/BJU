@@ -30,10 +30,9 @@ class VistaBaseCrear(CreateView):
 
         # Usar model_to_dict que maneja mejor la serialización
         data = get_display_data(formulario)
-        print(data)
 
         # Filtrar campos si es necesario
-        campos_excluidos = ['password']
+        campos_excluidos = ['slug']
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo
@@ -49,7 +48,6 @@ class VistaBaseCrear(CreateView):
         }
         
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            print(f"enviado {response}")
             return JsonResponse(response, encoder=DjangoJSONEncoder, status=200)
     
         return super().form_valid(form)
@@ -74,10 +72,9 @@ class VistaBaseEditar(UpdateView):
 
         # Usar model_to_dict que maneja mejor la serialización
         data = get_display_data(formulario)
-        print(data)
 
         # Filtrar campos si es necesario
-        campos_excluidos = ['password']
+        campos_excluidos = ['password', 'slug']
         data = {k: v for k, v in data.items() if k not in campos_excluidos and not k.endswith('_ptr')}
 
         # añadir el campo fecha_actualizacion si asi lo tiene el modelo
@@ -104,6 +101,7 @@ class VistaBaseEditar(UpdateView):
             errors = {}
             for field, error_list in form.errors.items():
                 errors[field] = [str(error) for error in error_list]
+
             return JsonResponse({
                 'status': 'error',
                 'type': 'form_invalid',
@@ -125,7 +123,7 @@ class VistaBaseEliminar(DeleteView):
             return JsonResponse({"status": "success", "id": id})
         except Exception as e:
 
-            return JsonResponse({"status": "error", 'type': 'form_invalid', "error": e}, 400)
+            return JsonResponse({"status": "error", 'type': 'form_invalid', "error": str(e)})
 
 
     
