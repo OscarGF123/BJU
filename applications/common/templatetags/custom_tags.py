@@ -46,4 +46,9 @@ def obtener_imagen_producto(producto_id):
     
 @register.simple_tag()
 def media(url):
-    return os.path.join(MEDIA_URL, str(url))
+    return f"/{os.path.join(MEDIA_URL, str(url))}"
+
+@register.simple_tag()
+def obtener_valor(diccionario: dict, llave):
+
+    return diccionario.get(str(llave))

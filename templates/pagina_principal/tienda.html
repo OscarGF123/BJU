@@ -59,7 +59,7 @@
                 <!-- Producto 1: Jean Urban Classic -->
                 {% for producto in productos %}
                     <div class="product-card fade-in">
-                        <a href="{% url 'carrito_compras:detalle_producto' producto.slug  %}"><div class="product-image">
+                        <a href="{% url 'tienda:detalle_producto' producto.slug  %}"><div class="product-image">
                             {% if producto.imagenes %}
                                 <img  src="{% media producto.imagenes.0.link_imagen %}" alt=""></div>
                             {% else %}
