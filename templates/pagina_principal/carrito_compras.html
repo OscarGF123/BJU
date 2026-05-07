@@ -34,15 +34,24 @@
                         <img src="{% media imagen %}" alt="Producto">
                     </div>
                     <div class="item-info">
-                        <h3 class="item-name">Jean Urban Classic</h3>
-                        <p class="item-size">Talla: L</p>
-                        <p class="item-price">$89.900</p>
+                        <h3 class="item-name">{{item.producto_id.nombre}}</h3>
+                        <p class="item-size">Talla {{item.producto_id.talla}}</p>
+                        <p class="item-price">${{item.producto_id.precio_unitario}}</p>
                     </div>
                     <div class="item-controls">
                         <div class="quantity-controls">
                             <button class="qty-btn" onclick="decreaseQty(1)">−</button>
-                            <span class="qty-number" id="qty-1">1</span>
-                            <button class="qty-btn" onclick="increaseQty(1)">+</button>
+                            <input 
+                                type="number" 
+                                class="qty-number" 
+                                id="qty-{{forloop.counter}}" 
+                                value="{{item.cantidad}}"
+                                min="1" 
+                                max="{{item.producto_id.cantidad}}"
+                                data-producto-id="{{item.producto_id.id}}"
+                                style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
+                            >
+                            <button class="qty-btn" onclick="increaseQty(1, '{{item.producto_id.cantidad}}')">+</button>
                         </div>
                         <button class="remove-btn" onclick="removeItem(1)">Eliminar</button>
                     </div>
@@ -105,27 +114,20 @@
          JAVASCRIPT - Funcionalidad del carrito
          ======================================== -->
     <script>
-        /* ========================================
-           FUNCIÓN: Aumentar cantidad de un producto
-           Parámetro: id del producto
-           ======================================== */
-        function increaseQty(itemId) {
+        function increaseQty(itemId, cantidadTotalProducto) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
-            let currentQty = parseInt(qtyElement.textContent);
-            qtyElement.textContent = currentQty + 1;
-            updateTotal();
+            let currentQty = parseInt(qtyElement.value);  // ← .value en vez de .textContent
+            if (currentQty < parseInt(cantidadTotalProducto)){
+                qtyElement.value = currentQty + 1;  // ← .value
+                updateTotal();
+            }
         }
 
-        /* ========================================
-           FUNCIÓN: Disminuir cantidad de un producto
-           Parámetro: id del producto
-           No permite menos de 1
-           ======================================== */
         function decreaseQty(itemId) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
-            let currentQty = parseInt(qtyElement.textContent);
+            let currentQty = parseInt(qtyElement.value);  // ← .value
             if (currentQty > 1) {
-                qtyElement.textContent = currentQty - 1;
+                qtyElement.value = currentQty - 1;  // ← .value
                 updateTotal();
             }
         }
@@ -139,7 +141,6 @@
                 // Encuentra el elemento del carrito y lo elimina
                 const items = document.querySelectorAll('.cart-item');
                 items[itemId - 1].style.animation = 'fadeOut 0.3s ease';
-                
                 setTimeout(() => {
                     items[itemId - 1].remove();
                     updateTotal();
