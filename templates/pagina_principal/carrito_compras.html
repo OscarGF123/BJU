@@ -44,7 +44,7 @@
                             <input 
                                 type="number" 
                                 class="qty-number" 
-                                id="qty-{{forloop.counter}}" 
+                                id="qty-{{item.id}}" 
                                 value="{{item.cantidad}}"
                                 min="1" 
                                 max="{{item.producto_id.cantidad}}"
@@ -114,6 +114,39 @@
          JAVASCRIPT - Funcionalidad del carrito
          ======================================== -->
     <script>
+        const csrftoken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+
+        // Funcion para guardar la cantidad de un producto cada cierto tiempo
+        let timer;
+        document.querySelectorAll('.qty-number').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    actualizarCantidad(this.dataset.productoId, this.value)
+                }, 600)
+            })
+        });
+
+        function actualizarCantidad(producto_id, cantidad){
+            const formData = new FormData()
+            formData.append('cantidad', cantidad)
+            fetch(`/carrito/actualizar_cantidad_producto/${producto_id}`,{
+                'method': 'POST',
+                'headers': {
+                    'X-CSRFToken': csrftoken
+                },
+                'body': formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log(data)
+            });
+        }
+
         function increaseQty(itemId, cantidadTotalProducto) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
             let currentQty = parseInt(qtyElement.value);  // ← .value en vez de .textContent
