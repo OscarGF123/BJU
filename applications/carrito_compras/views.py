@@ -14,13 +14,10 @@ class CarritoComprasListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id').prefetch_related("producto_id__imagen_set")
-        context['imagenes'] = {}
-        for item in items:
-            if not (item.producto_id.nombre.valor in list(context['imagenes'].keys())):
-                imagen = item.producto_id.imagen_set.filter(producto_id__pagina_principal="Si", portada="Si")
-                if imagen.exists():
-                    context['imagenes'][item.producto_id.nombre.valor] = str(imagen.first().link_imagen)
+        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id')
+        imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
+        context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
+
         return context
 
     def get_queryset(self):
