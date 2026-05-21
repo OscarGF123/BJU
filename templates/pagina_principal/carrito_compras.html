@@ -28,7 +28,7 @@
         <div class="cart-items">
             <!-- Productos -->
             {% for item in items %}
-                <div class="cart-item">
+                <div class="cart-item" id="item-{{item.id}}">
                     <div class="item-image">
                         {% obtener_valor imagenes item.producto_id.nombre as imagen %}
                         <img src="{% media imagen %}" alt="Producto">
@@ -40,7 +40,7 @@
                     </div>
                     <div class="item-controls">
                         <div class="quantity-controls">
-                            <button class="qty-btn" onclick="decreaseQty(1)">−</button>
+                            <button class="qty-btn" onclick="decreaseQty('{{item.id}}')">−</button>
                             <input 
                                 type="number" 
                                 class="qty-number" 
@@ -51,9 +51,9 @@
                                 data-producto-id="{{item.producto_id.id}}"
                                 style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                             >
-                            <button class="qty-btn" onclick="increaseQty(1, '{{item.producto_id.cantidad}}')">+</button>
+                            <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
                         </div>
-                        <button class="remove-btn" onclick="removeItem(1)">Eliminar</button>
+                        <button class="remove-btn" onclick="removeItem('{{item.id}}')">Eliminar</button>
                     </div>
                 </div>
             {% endfor %}    
@@ -114,6 +114,12 @@
          JAVASCRIPT - Funcionalidad del carrito
          ======================================== -->
     <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // Si no quedan productos, muestra mensaje de carrito vacío
+            if (document.querySelectorAll('.cart-item').length === 0) {
+                showEmptyCart();
+            }
+        });
         const csrftoken = document.cookie
             .split('; ')
             .find(row => row.startsWith('csrftoken='))
@@ -132,8 +138,9 @@
         });
 
         function actualizarCantidad(producto_id, cantidad){
-            const formData = new FormData()
-            formData.append('cantidad', cantidad)
+            const formData = new FormData();
+            formData.append('cantidad', cantidad);
+
             fetch(`/carrito/actualizar_cantidad_producto/${producto_id}`,{
                 'method': 'POST',
                 'headers': {
@@ -153,6 +160,7 @@
             if (currentQty < parseInt(cantidadTotalProducto)){
                 qtyElement.value = currentQty + 1;  // ← .value
                 updateTotal();
+                qtyElement.dispatchEvent(new Event('input'))
             }
         }
 
@@ -161,6 +169,7 @@
             let currentQty = parseInt(qtyElement.value);  // ← .value
             if (currentQty > 1) {
                 qtyElement.value = currentQty - 1;  // ← .value
+                qtyElement.dispatchEvent(new Event('input'))
                 updateTotal();
             }
         }
@@ -172,17 +181,31 @@
         function removeItem(itemId) {
             if (confirm('¿Estás seguro de eliminar este producto?')) {
                 // Encuentra el elemento del carrito y lo elimina
-                const items = document.querySelectorAll('.cart-item');
-                items[itemId - 1].style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => {
-                    items[itemId - 1].remove();
-                    updateTotal();
-                    
-                    // Si no quedan productos, muestra mensaje de carrito vacío
-                    if (document.querySelectorAll('.cart-item').length === 0) {
-                        showEmptyCart();
+                const item = document.getElementById(`item-${itemId}`);
+                fetch(`eliminar_item/${itemId}`,{
+                    'method': 'DELETE',
+                    'headers': {
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
-                }, 300);
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status == "success"){
+                        item.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => {
+                            item.remove();
+                            updateTotal();
+                            
+                            // Si no quedan productos, muestra mensaje de carrito vacío
+                            if (document.querySelectorAll('.cart-item').length === 0) {
+                                showEmptyCart();
+                            }
+                        }, 300);
+                    } else if (data.status == "error") {
+                        console.log(data.error);
+                    }
+                });
             }
         }
 
@@ -215,7 +238,7 @@
                 <div class="empty-cart">
                     <div class="empty-cart-icon">🛒</div>
                     <p class="empty-cart-text">Tu carrito está vacío</p>
-                    <a href="#" class="back-btn">Ir a Comprar</a>
+                    <a href="/" class="back-btn">Ir a Comprar</a>
                 </div>
             `;
         }

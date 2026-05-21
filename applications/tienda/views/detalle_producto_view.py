@@ -16,7 +16,7 @@ class ProductoDetailView(DetailView):
             tipo=producto.tipo, 
             marca=producto.marca,
             pagina_principal="Si")
-            # ).annotate(
+            # .annotate(
             #     relevancia=Case(
             #         When(id=producto.id, then=0), #el producto seleccionado por el usuario va primero
             #         default=1, # el resto quedara con 1 por defecto

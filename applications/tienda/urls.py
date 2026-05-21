@@ -7,5 +7,5 @@ app_name = 'tienda'
 
 urlpatterns = [
     path('', PaginaPrincipal.as_view(), name="pagina_principal"),
-    path("<slug:slug>", ProductoDetailView.as_view(), name="detalle_producto")
+    path("producto/<slug:slug>", ProductoDetailView.as_view(), name="detalle_producto")
 ]

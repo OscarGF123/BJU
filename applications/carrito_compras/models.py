@@ -14,7 +14,7 @@ class CarritoCompras(models.Model):
 class ItemsCarritoCompras(models.Model):
     carrito_compra_id = models.ForeignKey(CarritoCompras, on_delete=models.CASCADE)
     producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
+    cantidad = models.PositiveIntegerField(verbose_name="Cantidad", default=1)
 
     class Meta:
         verbose_name = "item del Carrito de Compra"

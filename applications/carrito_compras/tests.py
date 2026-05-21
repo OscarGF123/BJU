@@ -6,7 +6,7 @@ from applications.usuarios.models import Usuario
 
 # Create your tests here.
 
-producto = Producto.objects.get(id=43)
+producto = Producto.objects.get(id=51)
 carrito = CarritoCompras.objects.get(id=1)
 ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, cantidad=1, producto_id=producto)
 
