@@ -235,7 +235,7 @@ class ImagenForm(ModelForm):
             if self.instance and self.instance.pk:
                 portada_existente = portada_existente.exclude(pk=self.instance.pk)
 
-            if portada_existente.exists():
+            if portada_existente.exists() and not producto_id.pk:
                 raise ValidationError('Ya existe una imagen como portada del producto')
 
         return portada
