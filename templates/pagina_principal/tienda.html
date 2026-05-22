@@ -386,6 +386,77 @@
         let showCart = () => {
             window.location.href = "carrito/"
         }
+        // ========================================
+        // MINI CARRITO
+        // ========================================
+
+        function formatCOP(value) {
+            return new Intl.NumberFormat('es-CO', {
+                style: 'currency', currency: 'COP', minimumFractionDigits: 0
+            }).format(value);
+        }
+
+        function cargarMiniCarrito() {
+            fetch('/carrito/json/')
+                .then(r => r.json())
+                .then(data => {
+                    const container = document.getElementById('miniCartItems');
+                    const badge     = document.getElementById('cartBadge');
+                    const total     = document.getElementById('miniCartTotal');
+                    const count     = document.getElementById('miniCartCount');
+
+                    badge.textContent = data.items.length;
+                    count.textContent = data.items.length;
+                    total.textContent = formatCOP(data.total);
+
+                    if (data.items.length === 0) {
+                        container.innerHTML = '<p class="cart-empty">Tu carrito está vacío</p>';
+                        return;
+                    }
+
+                    container.innerHTML = data.items.map(item => `
+                        <div class="cart-item-mini">
+                            <input type="checkbox" class="item-check" checked>
+                            <img class="cart-item-img"
+                                src="/media/${item.imagen}"
+                                onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
+                                alt="${item.nombre}">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${item.nombre}</div>
+                                <div class="cart-item-meta">Talla: ${item.talla || 'N/A'}</div>
+                                <div class="cart-item-price">${formatCOP(item.precio)}</div>
+                                <div class="cart-item-qty">
+                                    <span class="qty-label">Qty</span>
+                                    <select class="qty-select">
+                                        ${[1,2,3,4,5,6,7,8,9,10].map(n =>
+                                            `<option ${n == item.cantidad ? 'selected' : ''}>${n}</option>`
+                                        ).join('')}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    // Select All
+                    document.getElementById('selectAll').addEventListener('change', function() {
+                        document.querySelectorAll('.item-check')
+                            .forEach(cb => cb.checked = this.checked);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById('miniCartItems').innerHTML =
+                        '<p class="cart-empty">Error al cargar el carrito</p>';
+                });
+        }
+
+        // Cargar al hacer hover por primera vez
+        let carritoYaCargado = false;
+        document.getElementById('cartWrapper').addEventListener('mouseenter', function() {
+            if (!carritoYaCargado) {
+                cargarMiniCarrito();
+                carritoYaCargado = true;
+            }
+        });
     </script>
 </body>
 
