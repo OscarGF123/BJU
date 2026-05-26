@@ -778,8 +778,7 @@ body {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-.cart-wrapper:hover .mini-cart,
-.mini-cart:hover {
+.mini-cart.visible {
     display: flex;
     flex-direction: column;
 }
