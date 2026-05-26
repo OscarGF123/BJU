@@ -11,6 +11,7 @@ class ProductoDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         producto: Producto = Producto.objects.filter(slug=self.kwargs.get('slug')).first()
         context['tallas'] = {i.talla: True if i.cantidad != 0 else False for i in Producto.objects.filter(nombre=producto.nombre)}
+        context['login'] = True if self.request.user.is_authenticated else False
         context['productos_relacionados'] = Producto.objects.filter(
             categoria=producto.categoria, 
             tipo=producto.tipo, 

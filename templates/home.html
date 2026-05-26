@@ -34,7 +34,8 @@
     <link rel="stylesheet" href="{% static 'styles/pagina_principal/datatables.css' %}">
     <link rel="stylesheet" href="{% static 'styles/pagina_principal/detalle_producto.css' %}">
     <link rel="stylesheet" href="{% static 'styles/pagina_principal/carrito_compras.css'%}">
-
+    <link rel="stylesheet" href="{% static 'styles/pagina_principal/tienda.css' %}">
+    
     <!-- Estilo del menu lateral -->
     <link rel="stylesheet" href="{% static 'styles/barra_lateral/style.css' %}">
 
@@ -54,8 +55,13 @@
     <script src="{% static 'SweetAlert2/sweetalert2.all.min.js' %}"></script>
 
     <!--Script de funciones globales -->
-    <script src="{% static 'scripts/pagina_principal/funciones_globales.js' %}"></script>
+    <script src="{% static 'scripts/pagina_principal/funciones_globales.js' %}" defer></script>
 
+    <!-- Scripts de Interactividad -->
+    <script src="{% static 'scripts/pagina_principal/interactividad.js' %}"></script>
+
+    <!-- Script del navbar -->
+    <script src="{% static 'scripts/pagina_principal/navbar.js' %}"></script>
 </head>
 
 {% block body %}{% endblock %}

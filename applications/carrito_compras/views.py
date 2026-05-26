@@ -19,7 +19,8 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
         items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id')
         imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
         context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
-
+        context['login'] = True if self.request.user.is_authenticated else False
+        context['cantidad_items'] = items.count()
         return context
 
     def get_queryset(self):
@@ -101,8 +102,48 @@ class ActualizarItem(ClienteRequiredMixin, View):
 
         ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).update(cantidad=cantidad)
 
-        return JsonResponse({'hola': ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).first().cantidad})
+        return JsonResponse({'status': 'success', 'mesagge': ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).first().cantidad})
 
 class EliminarItem(VistaBaseEliminar):
 
     model = ItemsCarritoCompras
+
+def mini_carrito(request):
+    """
+        Carga todos los items seleccionados por el usuario al minicarrito de compras
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({'items': [], 'total': 0})
+
+    carrito = CarritoCompras.objects.filter(usuario_id=request.user)
+
+    if not carrito.exists():
+        return JsonResponse({'items': [], 'total': 0})
+
+    items = ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first()).select_related('producto_id')
+
+    data = []
+    for item in items:
+        imagen = Imagen.objects.filter(producto_id__nombre=item.producto_id.nombre, portada="Si")
+        imagen = imagen.first() if imagen.exists() else ""
+        data.append({
+            'id': item.id,
+            'nombre': item.producto_id.nombre.valor,
+            'talla': item.producto_id.talla.valor,
+            'cantidad': item.cantidad,
+            'precio': str(item.producto_id.precio_unitario),
+            'imagen': str(imagen.link_imagen),
+            'cant_max': item.producto_id.cantidad,
+            'producto_id': item.producto_id.id
+        })
+
+        total = sum(
+            int(i['precio']) * i['cantidad']
+            for i in data
+        )
+
+    return JsonResponse({'items': data, 'total': total})
+
+def seleccionar_item(request, producto):
+
+    return
