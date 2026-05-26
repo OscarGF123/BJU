@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'whitenoise.runserver_nostatic',
+    'django.contrib.humanize',
 
     # app de pruebas
     'apl',

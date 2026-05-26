@@ -1,23 +1,14 @@
 {% extends "home.html" %}
 {% load static %}
 {% load custom_tags %}
+{% load humanize %}
 
 {% block body %}
 
 <body>
-    <!-- ========================================
-         HEADER - Navegación superior
-         ======================================== -->
-    <header class="header">
-        <nav class="nav-container">
-            <a href="#" class="logo">Urban Style</a>
-            <a href="#" class="back-btn">← Seguir Comprando</a>
-        </nav>
-    </header>
+    
+    {% include "pagina_principal/navbar.html" %}
 
-    <!-- ========================================
-         CONTENEDOR PRINCIPAL DEL CARRITO
-         ======================================== -->
     <div class="cart-container">
         <!-- Título de la página -->
         <h1 class="page-title">Mi Carrito</h1>
@@ -36,7 +27,7 @@
                     <div class="item-info">
                         <h3 class="item-name">{{item.producto_id.nombre}}</h3>
                         <p class="item-size">Talla {{item.producto_id.talla}}</p>
-                        <p class="item-price">${{item.producto_id.precio_unitario}}</p>
+                        <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
                     </div>
                     <div class="item-controls">
                         <div class="quantity-controls">
@@ -132,27 +123,10 @@
                 clearTimeout(timer)
                 timer = setTimeout(() => {
                     // hace la petición solo después de 600ms sin escribir
-                    actualizarCantidad(this.dataset.productoId, this.value)
+                    window.actualizarCantidad(this.dataset.productoId, this.value)
                 }, 600)
             })
         });
-
-        function actualizarCantidad(producto_id, cantidad){
-            const formData = new FormData();
-            formData.append('cantidad', cantidad);
-
-            fetch(`/carrito/actualizar_cantidad_producto/${producto_id}`,{
-                'method': 'POST',
-                'headers': {
-                    'X-CSRFToken': csrftoken
-                },
-                'body': formData
-            })
-            .then(r => r.json())
-            .then(data => {
-                console.log(data)
-            });
-        }
 
         function increaseQty(itemId, cantidadTotalProducto) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
