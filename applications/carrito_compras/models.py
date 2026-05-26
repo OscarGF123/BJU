@@ -14,6 +14,8 @@ class CarritoCompras(models.Model):
 class ItemsCarritoCompras(models.Model):
     carrito_compra_id = models.ForeignKey(CarritoCompras, on_delete=models.CASCADE)
     producto_id = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    # Este atributo es para que el usuario defina que productos quiere comprar
+    seleccionado = models.BooleanField(verbose_name="seleccionado", default=True)
     cantidad = models.PositiveIntegerField(verbose_name="Cantidad", default=1)
 
     class Meta:
