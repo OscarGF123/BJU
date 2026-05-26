@@ -17,7 +17,7 @@ window.handlePermissionError = function(data, defaultRedirect = '/login'){
 // ========================================
 
 // Formatear precios en pesos colombianos
-wiwndow.formatPrice = function(price) {
+window.formatPrice = function(price) {
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',
@@ -37,3 +37,27 @@ window.toggleTheme = function () {
     // Guardar preferencia en localStorage sería ideal aquí
     // pero recordemos que localStorage no está disponible en artifacts
 }
+
+
+const csrftoken = document.cookie
+    .split('; ')
+    .find(row => row.startsWith('csrftoken='))
+    ?.split('=')[1];
+
+// Para actualizar la cantidad de un producto en el carrito de compras
+window.actualizarCantidad = function (producto_id, cantidad){
+            const formData = new FormData();
+            formData.append('cantidad', cantidad);
+
+            fetch(`/carrito/actualizar_cantidad_producto/${producto_id}`,{
+                'method': 'POST',
+                'headers': {
+                    'X-CSRFToken': csrftoken
+                },
+                'body': formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log(data)
+            });
+        }
