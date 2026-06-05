@@ -21,6 +21,7 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
         context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
         context['login'] = True if self.request.user.is_authenticated else False
         context['cantidad_items'] = items.count()
+        context['cantidad_productos_seleccionados'] = sum([i.cantidad for i in items.filter(seleccionado=True)])
         return context
 
     def get_queryset(self):
@@ -134,16 +135,52 @@ def mini_carrito(request):
             'precio': str(item.producto_id.precio_unitario),
             'imagen': str(imagen.link_imagen),
             'cant_max': item.producto_id.cantidad,
-            'producto_id': item.producto_id.id
+            'producto_id': item.producto_id.id,
+            'seleccionado': item.seleccionado
         })
 
         total = sum(
             int(i['precio']) * i['cantidad']
-            for i in data
+            for i in data if i['seleccionado']
         )
 
     return JsonResponse({'items': data, 'total': total})
 
-def seleccionar_item(request, producto):
+def seleccionar_item(request):
+
+    seleccionar_todo = request.POST.get('seleccionar_todo', None)
+    print(seleccionar_todo)
+    if seleccionar_todo:
+        ItemsCarritoCompras.objects.filter(
+            carrito_compra_id__usuario_id=request.user.id
+            ).update(seleccionado=True if seleccionar_todo == 'true' else False)
+        return JsonResponse({
+            'status': 'success',
+            'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.'
+        })
+    producto_id = request.POST.get('producto_id', None)
+    seleccionado = request.POST.get('seleccionado', None)
+
+    if not request.user.is_authenticated and producto_id is None and seleccionado is None:
+        return JsonResponse({'total': 1})
+
+    seleccionado = True if seleccionado == "true" else False
+
+    items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, producto_id=producto_id)
+
+    if not items.exists():
+        return JsonResponse({'total': 2})
+
+    items.update(seleccionado=seleccionado)
+
+    items_seleccionados = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user, seleccionado=True).select_related('producto_id')
+
+    for i in items_seleccionados:
+
+        print(i.producto_id.nombre.valor)
+
+    total = sum([i.cantidad * i.producto_id.precio_unitario for i in items_seleccionados])
+
+    return JsonResponse({'total': total})
 
     return

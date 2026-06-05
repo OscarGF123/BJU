@@ -1,3 +1,6 @@
+// esta variable es para evitar que se spameem muchas peticiones
+let timer
+
 // ========================================
 // FUNCIONES DEL HEADER
 // ========================================
@@ -186,11 +189,6 @@ let showCart = () => {
 // MINI CARRITO
 // ========================================
 
-function formatCOP(value) {
-    return new Intl.NumberFormat('es-CO', {
-        style: 'currency', currency: 'COP', minimumFractionDigits: 0
-    }).format(value);
-}
 
 function cargarMiniCarrito() {
     
@@ -204,7 +202,7 @@ function cargarMiniCarrito() {
 
             badge.textContent = data.items.length;
             count.textContent = data.items.length;
-            total.textContent = formatCOP(data.total);
+            total.textContent = window.formatPrice(data.total);
 
             if (data.items.length === 0) {
                 container.innerHTML = '<p class="cart-empty">Tu carrito está vacío</p>';
@@ -213,7 +211,7 @@ function cargarMiniCarrito() {
 
             container.innerHTML = data.items.map(item => `
                 <div class="cart-item-mini">
-                    <input type="checkbox" class="item-check" checked>
+                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.producto_id}">
                     <img class="cart-item-img"
                         src="/media/${item.imagen}"
                         onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -221,7 +219,7 @@ function cargarMiniCarrito() {
                     <div class="cart-item-info">
                         <div class="cart-item-name">${item.nombre}</div>
                         <div class="cart-item-meta">Talla: ${item.talla || 'N/A'}</div>
-                        <div class="cart-item-price">${formatCOP(item.precio)}</div>
+                        <div class="cart-item-price" data-precio='${item.precio}'>${window.formatPrice(item.precio)}</div>
                         <div class="cart-item-qty">
                             <div class="quantity-controls">
                                 <span class="qty-label">Qty</span>
@@ -241,13 +239,20 @@ function cargarMiniCarrito() {
                 </div>
             `).join('');
 
+
+
             // Select All
             document.getElementById('selectAll').addEventListener('change', function() {
-                document.querySelectorAll('.item-check')
-                    .forEach(cb => cb.checked = this.checked);
+                document.querySelectorAll('.item-check').forEach(cb => cb.checked = this.checked);
+                
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    window.seleccionarItem(null, null, this.checked);
+                    actualizarTotal();
+                }, 600)
             });
             // Funcion para guardar la cantidad de un producto cada cierto tiempo
-            let timer;
+
             document.querySelectorAll('.qty-number').forEach(input => {
                 input.addEventListener('input', function() {
                     clearTimeout(timer);
@@ -258,23 +263,41 @@ function cargarMiniCarrito() {
                 })
             });
 
+            // Funcion para seleccionar lo productos que seran comprados
             document.querySelectorAll('.item-check').forEach(check => {
-                check.addEventListener('change', e => {
+                check.addEventListener('change', function(e) {
 
                     clearTimeout(timer);
                     timer = setTimeout(() => {
-                        console.log(e.target.checked?'seleccionado':'deseleccionado');
+
+                        window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
+                        actualizarTotal()
                     }, 600)
                 })
             });
         })
-        .catch(() => {
-            document.getElementById('miniCartItems').innerHTML =
-                '<p class="cart-empty">Error al cargar el carrito</p>';
-        });
+        // .catch(() => {
+        //     document.getElementById('miniCartItems').innerHTML =
+        //         '<p class="cart-empty">Error al cargar el carrito</p>';
+        // });
 }
 
+// Actualizar Total del MiniCarito
 
+let actualizarTotal = () => {
+    let items = document.querySelectorAll('.cart-item-mini');
+    let total = 0;
+    items.forEach(item => {
+        if (item.querySelector('.cart-item-mini .item-check').checked){
+        let cantidad = item.querySelector('.cart-item-info .qty-number').value
+        let precio = item.querySelector('.cart-item-info .cart-item-price').dataset.precio
+        total += parseInt(precio) * parseInt(cantidad)
+        
+        }
+    });
+
+    document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`
+}
 
 document.addEventListener('DOMContentLoaded', function() {
 

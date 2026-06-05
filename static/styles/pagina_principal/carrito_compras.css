@@ -135,7 +135,7 @@ body {
     border-radius: 15px;
     padding: 1.5rem;
     display: grid;
-    grid-template-columns: 120px 1fr auto;
+    grid-template-columns: 30px 120px 1fr auto;
     gap: 1.5rem;
     align-items: center;
     border: 1px solid rgba(220, 53, 69, 0.2);
@@ -518,4 +518,53 @@ body {
     .mini-cart-items {
         max-height: 55vh !important;
     }
+}
+/* ========================================
+   CHECKBOX DE SELECCIÓN DE PRODUCTOS
+   ======================================== */
+.item-checkbox {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-select {
+    width: 20px;
+    height: 20px;
+    accent-color: #dc3545;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.select-all-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    padding-right: 2rem;
+}
+
+.select-all-container label {
+    font-size: 1rem;
+    color: #cccccc;
+    cursor: pointer;
+    font-weight: normal;
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+.select-all-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #dc3545;
+    cursor: pointer;
+}
+
+
+.title-row {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    align-items: center;
+    margin-bottom: 1rem;
 }

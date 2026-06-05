@@ -11,7 +11,13 @@
 
     <div class="cart-container">
         <!-- Título de la página -->
+        <div class="title-row">
         <h1 class="page-title">Mi Carrito</h1>
+            <div class="select-all-container">
+                <input type="checkbox" id="select-all">
+                <label for="select-all">Seleccionar todo</label>
+            </div>
+        </div>
 
         <!-- ========================================
              LISTA DE PRODUCTOS EN EL CARRITO
@@ -20,6 +26,15 @@
             <!-- Productos -->
             {% for item in items %}
                 <div class="cart-item" id="item-{{item.id}}">
+                    <div class="item-checkbox">
+                        <input 
+                            type="checkbox"
+                            class="item-select" 
+                            id="check-{{item.id}}" 
+                            data-item-id="{{item.id}}"
+                            {% if item.seleccionado %} checked {% endif %}
+                        >
+                    </div>
                     <div class="item-image">
                         {% obtener_valor imagenes item.producto_id.nombre as imagen %}
                         <img src="{% media imagen %}" alt="Producto">
@@ -58,7 +73,7 @@
             
             <!-- Subtotal -->
             <div class="summary-row">
-                <span class="summary-label">Subtotal (4 productos)</span>
+                <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
                 <span class="summary-value" id="subtotal">$419.407</span>
             </div>
             
@@ -110,14 +125,40 @@
             if (document.querySelectorAll('.cart-item').length === 0) {
                 showEmptyCart();
             }
+
+            // Seleccionar todo
+            document.getElementById('select-all').addEventListener('change', function() {
+                document.querySelectorAll('.item-select').forEach(cb => cb.checked = this.checked);
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    window.seleccionarItem(null, null, this.checked)
+                }, 600)
+            });
+
+            // Seleccionar un producto
+            document.querySelectorAll('.item-select').forEach(check => {
+                check.addEventListener('change', function(e){
+                clearTimeout(timer)
+                    timer = setTimeout(() => {
+                        // hace la petición solo después de 600ms sin escribir
+                        window.seleccionarItem(this.dataset.itemId, e.target.checked);
+                    }, 600)
+                });
+            });
+
+            // Cuando se desmarca uno individual, desactiva el "seleccionar todo"
+            document.querySelectorAll('.item-select').forEach(cb => {
+                
+                cb.addEventListener('change', function() {
+                    const total = document.querySelectorAll('.item-select').length;
+                    const marcados = document.querySelectorAll('.item-select:checked').length;
+                    document.getElementById('select-all').checked = total === marcados;
+                });
+            });
         });
-        const csrftoken = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
 
         // Funcion para guardar la cantidad de un producto cada cierto tiempo
-        let timer;
         document.querySelectorAll('.qty-number').forEach(input => {
             input.addEventListener('input', function() {
                 clearTimeout(timer)
