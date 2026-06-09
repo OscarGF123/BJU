@@ -7,7 +7,7 @@
     <!-- ========================================
          HEADER - Barra de navegación
          ======================================== -->
-    {% include 'pagina_principal/header.html' %}
+    {% include 'pagina_principal/navbar.html' %}
 
     <!-- ========================================
          BREADCRUMB - Navegación de ruta
@@ -33,7 +33,7 @@
                 {% for producto in productos_relacionados %}
                 {% obtener_imagen_producto producto.id as imagen_url %}
                 <div class="thumbnail active" onclick="changeImage(this, '{% media imagen_url %}')">
-                    <a href="{% url 'carrito_compras:detalle_producto' producto.slug %}"><img src="{% media imagen_url %}" alt="Vista 1"></a>
+                    <a href="{% url 'tienda:detalle_producto' producto.slug %}"><img src="{% media imagen_url %}" alt="Vista 1"></a>
                 </div>
                 {% endfor %}
             </div>
@@ -110,7 +110,7 @@
             <!-- Botón agregar al carrito -->
             <div class="add-to-cart-section">
                 <button class="add-to-cart-btn" onclick="addToCart()">
-                    Añadir a la Bolsa
+                    Añadir al carrito de compras
                 </button>
                 <button class="favorite-btn" onclick="toggleFavorite(this)">
                     ♡
@@ -199,31 +199,10 @@
          JAVASCRIPT - Funcionalidad interactiva
          ======================================== -->
     <script>
-        /* ========================================
-           FUNCIÓN: Cambiar imagen principal
-           Parámetros:
-           - thumbnail: elemento miniatura clickeado
-           - newSrc: ruta de la nueva imagen
-           ======================================== */
-        function changeImage(thumbnail, newSrc) {
-            // Remover clase 'active' de todas las miniaturas
-            document.querySelectorAll('.thumbnail').forEach(t => {
-                t.classList.remove('active');
-            });
-            
-            // Agregar clase 'active' a la miniatura clickeada
-            thumbnail.classList.add('active');
-            
-            // Cambiar la imagen principal
-            const mainImage = document.getElementById('mainImage');
-            mainImage.style.opacity = '0';
-            
-            setTimeout(() => {
-                mainImage.src = newSrc;
-                mainImage.style.opacity = '1';
-            }, 200);
-        }
-
+        const csrftoken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
         /* ========================================
            FUNCIÓN: Seleccionar talla
            Parámetro: button - botón de talla clickeado
@@ -243,28 +222,40 @@
            FUNCIÓN: Agregar al carrito
            ======================================== */
         function addToCart() {
-            const selectedSize = document.querySelector('.size-button.selected');
-            
-            if (!selectedSize) {
-                alert('Por favor, selecciona una talla');
+            const tallaSeleccionada = document.querySelector('.size-button.selected');
+            if (!tallaSeleccionada) {
+                Swal.fire({
+                    title: '¡Atención!',
+                    icon: 'warning',
+                    text: 'Debes elegir una talla para añadir este producto al carrito de compras'
+                })
                 return;
             }
-            
+            let slug = window.location.pathname.split('/').at(-1);
+            const formData = new FormData();
+            formData.append('talla', tallaSeleccionada.textContent);
+            fetch(`/carrito/agregar_item/${slug}`, {
+                'method': 'POST',
+                'headers': {
+                    'X-CSRFToken': csrftoken,
+                },
+                'body': formData,
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log(data)
+            });
+
             // Animación del botón
             const btn = document.querySelector('.add-to-cart-btn');
             btn.textContent = '✓ Agregado al Carrito';
             btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
             
             setTimeout(() => {
-                btn.textContent = 'Añadir a la Bolsa';
+                btn.textContent = 'Añadir al carrito de compras';
                 btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
             }, 2000);
             
-            // En tu proyecto real, aquí agregarías el producto al carrito
-            console.log('Producto agregado:', {
-                talla: selectedSize.textContent,
-                precio: '$28.321'
-            });
         }
 
         /* ========================================

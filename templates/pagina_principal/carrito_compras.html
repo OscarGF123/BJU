@@ -1,0 +1,290 @@
+{% extends "home.html" %}
+{% load static %}
+{% load custom_tags %}
+{% load humanize %}
+
+{% block body %}
+
+<body>
+    
+    {% include "pagina_principal/navbar.html" %}
+
+    <div class="cart-container">
+        <!-- Título de la página -->
+        <div class="title-row">
+        <h1 class="page-title">Mi Carrito</h1>
+            <div class="select-all-container">
+                <input type="checkbox" id="select-all">
+                <label for="select-all">Seleccionar todo</label>
+            </div>
+        </div>
+
+        <!-- ========================================
+             LISTA DE PRODUCTOS EN EL CARRITO
+             ======================================== -->
+        <div class="cart-items">
+            <!-- Productos -->
+            {% for item in items %}
+                <div class="cart-item" id="item-{{item.id}}">
+                    <div class="item-checkbox">
+                        <input 
+                            type="checkbox"
+                            class="item-select" 
+                            id="check-{{item.id}}" 
+                            data-item-id="{{item.id}}"
+                            {% if item.seleccionado %} checked {% endif %}
+                        >
+                    </div>
+                    <div class="item-image">
+                        {% obtener_valor imagenes item.producto_id.nombre as imagen %}
+                        <img src="{% media imagen %}" alt="Producto">
+                    </div>
+                    <div class="item-info">
+                        <h3 class="item-name">{{item.producto_id.nombre}}</h3>
+                        <p class="item-size">Talla {{item.producto_id.talla}}</p>
+                        <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
+                    </div>
+                    <div class="item-controls">
+                        <div class="quantity-controls">
+                            <button class="qty-btn" onclick="decreaseQty('{{item.id}}')">−</button>
+                            <input 
+                                type="number" 
+                                class="qty-number" 
+                                id="qty-{{item.id}}" 
+                                value="{{item.cantidad}}"
+                                min="1" 
+                                max="{{item.producto_id.cantidad}}"
+                                data-producto-id="{{item.producto_id.id}}"
+                                style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
+                            >
+                            <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
+                        </div>
+                        <button class="remove-btn" onclick="removeItem('{{item.id}}')">Eliminar</button>
+                    </div>
+                </div>
+            {% endfor %}    
+        </div>
+
+        <!-- ========================================
+             PANEL DE RESUMEN (SIDEBAR DERECHO)
+             ======================================== -->
+        <div class="cart-summary">
+            <h2 class="summary-title">Resumen del Pedido</h2>
+            
+            <!-- Subtotal -->
+            <div class="summary-row">
+                <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
+                <span class="summary-value" id="subtotal">$419.407</span>
+            </div>
+            
+            <!-- Envío -->
+            <div class="summary-row">
+                <span class="summary-label">Envío</span>
+                <span class="summary-value" style="color: #4CAF50;">GRATIS</span>
+            </div>
+            
+            <!-- Descuento (opcional) -->
+            <div class="summary-row">
+                <span class="summary-label">Descuento</span>
+                <span class="summary-value" style="color: #4CAF50;">-$20.000</span>
+            </div>
+            
+            <!-- Total -->
+            <div class="summary-row">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="total">$399.407</span>
+            </div>
+            
+            <!-- Botón de pagar -->
+            <button class="checkout-btn" onclick="checkout()">Proceder al Pago</button>
+            
+            <!-- Información adicional -->
+            <div class="info-badges">
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Envío gratis en compras superiores a $50.000</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Devolución gratis en 30 días</span>
+                </div>
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Pago seguro y protegido</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad del carrito
+         ======================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // Si no quedan productos, muestra mensaje de carrito vacío
+            if (document.querySelectorAll('.cart-item').length === 0) {
+                showEmptyCart();
+            }
+
+            // Seleccionar todo
+            document.getElementById('select-all').addEventListener('change', function() {
+                document.querySelectorAll('.item-select').forEach(cb => cb.checked = this.checked);
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    window.seleccionarItem(null, null, this.checked)
+                }, 600)
+            });
+
+            // Seleccionar un producto
+            document.querySelectorAll('.item-select').forEach(check => {
+                check.addEventListener('change', function(e){
+                clearTimeout(timer)
+                    timer = setTimeout(() => {
+                        // hace la petición solo después de 600ms sin escribir
+                        window.seleccionarItem(this.dataset.itemId, e.target.checked);
+                    }, 600)
+                });
+            });
+
+            // Cuando se desmarca uno individual, desactiva el "seleccionar todo"
+            document.querySelectorAll('.item-select').forEach(cb => {
+                
+                cb.addEventListener('change', function() {
+                    const total = document.querySelectorAll('.item-select').length;
+                    const marcados = document.querySelectorAll('.item-select:checked').length;
+                    document.getElementById('select-all').checked = total === marcados;
+                });
+            });
+        });
+
+        // Funcion para guardar la cantidad de un producto cada cierto tiempo
+        document.querySelectorAll('.qty-number').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    window.actualizarCantidad(this.dataset.productoId, this.value)
+                }, 600)
+            })
+        });
+
+        function increaseQty(itemId, cantidadTotalProducto) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.value);  // ← .value en vez de .textContent
+            if (currentQty < parseInt(cantidadTotalProducto)){
+                qtyElement.value = currentQty + 1;  // ← .value
+                updateTotal();
+                qtyElement.dispatchEvent(new Event('input'))
+            }
+        }
+
+        function decreaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.value);  // ← .value
+            if (currentQty > 1) {
+                qtyElement.value = currentQty - 1;  // ← .value
+                qtyElement.dispatchEvent(new Event('input'))
+                updateTotal();
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Eliminar un producto del carrito
+           Parámetro: id del producto
+           ======================================== */
+        function removeItem(itemId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                // Encuentra el elemento del carrito y lo elimina
+                const item = document.getElementById(`item-${itemId}`);
+                fetch(`eliminar_item/${itemId}`,{
+                    'method': 'DELETE',
+                    'headers': {
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status == "success"){
+                        item.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => {
+                            item.remove();
+                            updateTotal();
+                            
+                            // Si no quedan productos, muestra mensaje de carrito vacío
+                            if (document.querySelectorAll('.cart-item').length === 0) {
+                                showEmptyCart();
+                            }
+                        }, 300);
+                    } else if (data.status == "error") {
+                        console.log(data.error);
+                    }
+                });
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Actualizar totales del resumen
+           Recalcula subtotal y total
+           ======================================== */
+        function updateTotal() {
+            // En un proyecto real, aquí calcularías basado en precios reales
+            // Este es un ejemplo simplificado
+            const items = document.querySelectorAll('.cart-item');
+            let itemCount = 0;
+            
+            items.forEach(item => {
+                const qty = parseInt(item.querySelector('.qty-number').textContent);
+                itemCount += qty;
+            });
+            
+            // Actualiza el texto del subtotal
+            document.querySelector('.summary-label').textContent = 
+                `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
+        }
+
+        /* ========================================
+           FUNCIÓN: Mostrar carrito vacío
+           ======================================== */
+        function showEmptyCart() {
+            const container = document.querySelector('.cart-container');
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <p class="empty-cart-text">Tu carrito está vacío</p>
+                    <a href="/" class="back-btn">Ir a Comprar</a>
+                </div>
+            `;
+        }
+
+        /* ========================================
+           FUNCIÓN: Proceder al pago
+           ======================================== */
+        function checkout() {
+            alert('Redirigiendo a la página de pago...\n\nEn un proyecto real, aquí se procesaría el pago.');
+            // En tu proyecto real, aquí redirigirías a la página de checkout
+            // window.location.href = '/checkout';
+        }
+
+        /* ========================================
+           ANIMACIÓN DE FADE OUT PARA ELIMINAR
+           ======================================== */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+
+{% endblock %}

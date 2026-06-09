@@ -7,6 +7,7 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 
 from applications.login.forms import ReenviarVerificacionForm
+from applications.carrito_compras.models import CarritoCompras
 from applications.login.services import NotificationService, EmailService
 from applications.usuarios.models import Usuario, TipoIdentificacion
 from applications.login.forms import LoginForm, RegistroForm
@@ -203,6 +204,9 @@ class VerificarEmailView(TemplateView):
                 usuario.verification_token_created = None
                 usuario.save()
                 
+                # Se crea carrito de compras para el usuario
+                CarritoCompras.objects.create(usuario_id=usuario)
+
                 context = {
                     'verificacion_exitosa': True,
                     'usuario': usuario,

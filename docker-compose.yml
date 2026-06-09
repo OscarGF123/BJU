@@ -49,7 +49,7 @@ services:
       - DEBUG=${DEBUG}
       - PYTHONUNBUFFERED=1 #Para ver los logs en tiempo real
     volumes:
-      - .:/django
+      - .:/BJU:z
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthy/"]
@@ -65,9 +65,9 @@ services:
     build: .
     command: celery -A config worker --loglevel=debug
     volumes:
-      - .:/django
+      - .:/BJU:z #z es para indicarle a SELinux que etiquete los archivos para que los Contenedores accedan a ellos
     environment:
-      - DJANGO_SETTINGS_MODULE=config.settings
+      - BJU_SETTINGS_MODULE=config.settings
       - CELERY_BROKER_URL=redis://redis:6379/0          # ← Nombre del servicio
       - CELERY_RESULT_BACKEND=redis://redis:6379/0
     depends_on:
