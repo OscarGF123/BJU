@@ -45,11 +45,11 @@ const csrftoken = document.cookie
     ?.split('=')[1];
 
 // Para actualizar la cantidad de un producto en el carrito de compras
-window.actualizarCantidad = function (producto_id, cantidad){
+window.actualizarCantidad = function (item_id, cantidad){
     const formData = new FormData();
     formData.append('cantidad', cantidad);
 
-    fetch(`/carrito/actualizar_cantidad_producto/${producto_id}`,{
+    return fetch(`/carrito/actualizar_cantidad_producto/${item_id}`,{
         'method': 'POST',
         'headers': {
             'X-CSRFToken': csrftoken
@@ -57,13 +57,9 @@ window.actualizarCantidad = function (producto_id, cantidad){
         'body': formData
     })
     .then(r => r.json())
-    .then(data => {
-        console.log(data)
-    });
 }
 
 window.seleccionarItem = function (producto_id=null, seleccionado=null, seleccionarTodo=null){
-
     const formData = new FormData();
     if (seleccionarTodo!==null){
         formData.append('seleccionar_todo', seleccionarTodo)
@@ -71,15 +67,12 @@ window.seleccionarItem = function (producto_id=null, seleccionado=null, seleccio
         formData.append('seleccionado', seleccionado);
         formData.append('producto_id', producto_id)
     }
-    fetch('/carrito/seleccionar_item/', {
+    return fetch('/carrito/seleccionar_item/', {
         'method': 'POST',
         'headers': {
             'X-CSRFToken': csrftoken
         },
         'body': formData
     }).then(r => r.json())
-    .then(data => {
-        console.log(data)
-    });
 
 }

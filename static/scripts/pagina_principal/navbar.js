@@ -226,7 +226,8 @@ function cargarMiniCarrito() {
                                 <input 
                                     type="number" 
                                     class="qty-number" 
-                                    id="qty-${item.id}" 
+                                    id="qty-${item.id}"
+                                    
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
@@ -235,6 +236,8 @@ function cargarMiniCarrito() {
                                 >
                             </div>
                         </div>
+                        <!-- 👇 Contenedor del error -->
+                        <div class="item-error" id="error-${item.id}"></div>
                     </div>
                 </div>
             `).join('');
@@ -258,7 +261,16 @@ function cargarMiniCarrito() {
                     clearTimeout(timer);
                     timer = setTimeout(() => {
                         // hace la petición solo después de 600ms sin escribir
-                        window.actualizarCantidad(this.dataset.productoId, this.value)
+                        
+                        window.actualizarCantidad(this.id, this.value)
+                        .then(data => {
+                            if (data.status == 'success'){
+                                actualizarTotal(data.total);
+                            } else if (data.status = 'error'){
+                                mostrarErrorItem(data.id, data.message);
+                            }   
+                        });
+                        
                     }, 600)
                 })
             });
@@ -284,18 +296,7 @@ function cargarMiniCarrito() {
 
 // Actualizar Total del MiniCarito
 
-let actualizarTotal = () => {
-    let items = document.querySelectorAll('.cart-item-mini');
-    let total = 0;
-    items.forEach(item => {
-        if (item.querySelector('.cart-item-mini .item-check').checked){
-        let cantidad = item.querySelector('.cart-item-info .qty-number').value
-        let precio = item.querySelector('.cart-item-info .cart-item-price').dataset.precio
-        total += parseInt(precio) * parseInt(cantidad)
-        
-        }
-    });
-
+let  actualizarTotal = (total) => {
     document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`
 }
 
@@ -328,3 +329,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+function mostrarErrorItem(itemId, mensaje) {
+    const errorDiv = document.getElementById(`error-${itemId}`);
+    if (!errorDiv) return;
+
+    errorDiv.textContent = mensaje;
+    errorDiv.classList.add('visible');
+
+    // Se oculta automáticamente después de 3 segundos
+    setTimeout(() => {
+        errorDiv.classList.remove('visible');
+        errorDiv.textContent = '';
+    }, 10000);
+}
+
+function limpiarErrorItem(itemId) {
+    const errorDiv = document.getElementById(`error-${itemId}`);
+    if (errorDiv) {
+        errorDiv.classList.remove('visible');
+        errorDiv.textContent = '';
+    }
+}

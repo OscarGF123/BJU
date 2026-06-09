@@ -92,18 +92,33 @@ class AgregarItem(ClienteRequiredMixin, View):
 # Con usuario logueado
 class ActualizarItem(ClienteRequiredMixin, View):
     
-    def post(self, request, producto_id):
+    def post(self, request, item_id):
         cantidad = int(request.POST.get('cantidad', 1))
         producto_id = str(producto_id)
         usuario_id = request.session.get("_auth_user_id")
         cantidad_producto = Producto.objects.filter(id=producto_id).first().cantidad
 
         if cantidad > cantidad_producto:
-            return JsonResponse({'status': 'error', 'type': 'invalid_form', 'message': f"Solo quedan {cantidad_producto} productos disponibles"})
+            item_id = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).first().id
+            return JsonResponse({
+                'status': 'error', 
+                'type': 'invalid_form', 
+                'message': f"Solo quedan {cantidad_producto} productos disponibles",
+                'id': item_id
+                })
 
         ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).update(cantidad=cantidad)
 
-        return JsonResponse({'status': 'success', 'mesagge': ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).first().cantidad})
+        # Valor total de la compra
+        total = sum(
+            i.cantidad * i.producto_id.precio_unitario
+            for i in ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, seleccionado=True).select_related('producto_id')
+        )
+        return JsonResponse({
+            'status': 'success', 
+            'mesagge': 'Se ha actualizado la cantidad correctamente',
+            'total': total
+            })
 
 class EliminarItem(VistaBaseEliminar):
 
@@ -114,12 +129,12 @@ def mini_carrito(request):
         Carga todos los items seleccionados por el usuario al minicarrito de compras
     """
     if not request.user.is_authenticated:
-        return JsonResponse({'items': [], 'total': 0})
+        return JsonResponse({'status': 'error', 'type_error': 'is_not_authenticated', 'message': 'El usuario no se ha autenticado'})
 
     carrito = CarritoCompras.objects.filter(usuario_id=request.user)
 
     if not carrito.exists():
-        return JsonResponse({'items': [], 'total': 0})
+        return JsonResponse({'status': 'error', 'type_error': 'cart_not_found'})
 
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first()).select_related('producto_id')
 
@@ -149,7 +164,6 @@ def mini_carrito(request):
 def seleccionar_item(request):
 
     seleccionar_todo = request.POST.get('seleccionar_todo', None)
-    print(seleccionar_todo)
     if seleccionar_todo:
         ItemsCarritoCompras.objects.filter(
             carrito_compra_id__usuario_id=request.user.id
@@ -169,7 +183,11 @@ def seleccionar_item(request):
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, producto_id=producto_id)
 
     if not items.exists():
-        return JsonResponse({'total': 2})
+        return JsonResponse({
+            'status': 'error', 
+            'type_error': 'cart_items_not_found', 
+            'message': 'No se encontraron los productos del carrito del usuario'
+            })
 
     items.update(seleccionado=seleccionado)
 
@@ -182,5 +200,3 @@ def seleccionar_item(request):
     total = sum([i.cantidad * i.producto_id.precio_unitario for i in items_seleccionados])
 
     return JsonResponse({'total': total})
-
-    return

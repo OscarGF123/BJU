@@ -568,3 +568,25 @@ body {
     align-items: center;
     margin-bottom: 1rem;
 }
+
+/* ===== ERROR ITEM MINI CARRITO ===== */
+.item-error {
+    display: none;
+    color: #ff4d4d;
+    font-size: 11px;
+    margin-top: 4px;
+    padding: 3px 6px;
+    background: rgba(220, 53, 69, 0.15);
+    border-left: 2px solid #dc3545;
+    border-radius: 3px;
+    animation: fadeInError 0.2s ease;
+}
+
+.item-error.visible {
+    display: block;
+}
+
+@keyframes fadeInError {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
