@@ -231,7 +231,7 @@ function cargarMiniCarrito() {
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
-                                    data-producto-id="${item.producto_id}"
+                                    data-item-id="${item.id}"
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>
@@ -262,7 +262,7 @@ function cargarMiniCarrito() {
                     timer = setTimeout(() => {
                         // hace la petición solo después de 600ms sin escribir
                         
-                        window.actualizarCantidad(this.id, this.value)
+                        window.actualizarCantidad(this.dataset.itemId, this.value)
                         .then(data => {
                             if (data.status == 'success'){
                                 actualizarTotal(data.total);

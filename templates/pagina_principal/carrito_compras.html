@@ -54,7 +54,7 @@
                                 value="{{item.cantidad}}"
                                 min="1" 
                                 max="{{item.producto_id.cantidad}}"
-                                data-producto-id="{{item.producto_id.id}}"
+                                data-item-id="{{item.id}}"
                                 style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                             >
                             <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
@@ -164,7 +164,7 @@
                 clearTimeout(timer)
                 timer = setTimeout(() => {
                     // hace la petición solo después de 600ms sin escribir
-                    window.actualizarCantidad(this.dataset.productoId, this.value)
+                    window.actualizarCantidad(this.dataset.itemId, this.value)
                 }, 600)
             })
         });

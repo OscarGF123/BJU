@@ -59,13 +59,13 @@ window.actualizarCantidad = function (item_id, cantidad){
     .then(r => r.json())
 }
 
-window.seleccionarItem = function (producto_id=null, seleccionado=null, seleccionarTodo=null){
+window.seleccionarItem = function (item_id=null, seleccionado=null, seleccionarTodo=null){
     const formData = new FormData();
     if (seleccionarTodo!==null){
         formData.append('seleccionar_todo', seleccionarTodo)
-    } else if (producto_id!==null && seleccionado!==null) {
+    } else if (item_id!==null && seleccionado!==null) {
         formData.append('seleccionado', seleccionado);
-        formData.append('producto_id', producto_id)
+        formData.append('item_id', item_id)
     }
     return fetch('/carrito/seleccionar_item/', {
         'method': 'POST',

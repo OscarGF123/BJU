@@ -94,12 +94,14 @@ class ActualizarItem(ClienteRequiredMixin, View):
     
     def post(self, request, item_id):
         cantidad = int(request.POST.get('cantidad', 1))
-        producto_id = str(producto_id)
+        item_id = str(item_id)
         usuario_id = request.session.get("_auth_user_id")
-        cantidad_producto = Producto.objects.filter(id=producto_id).first().cantidad
+        cantidad_producto = ItemsCarritoCompras.objects.select_related('producto_id').filter(
+                                id=item_id, carrito_compra_id__usuario_id=usuario_id
+                                ).first().producto_id.cantidad
 
         if cantidad > cantidad_producto:
-            item_id = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).first().id
+            item_id = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id).first().id
             return JsonResponse({
                 'status': 'error', 
                 'type': 'invalid_form', 
@@ -107,7 +109,7 @@ class ActualizarItem(ClienteRequiredMixin, View):
                 'id': item_id
                 })
 
-        ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto_id).update(cantidad=cantidad)
+        ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id).update(cantidad=cantidad)
 
         # Valor total de la compra
         total = sum(
@@ -172,15 +174,15 @@ def seleccionar_item(request):
             'status': 'success',
             'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.'
         })
-    producto_id = request.POST.get('producto_id', None)
+    item_id = request.POST.get('item_id', None)
     seleccionado = request.POST.get('seleccionado', None)
 
-    if not request.user.is_authenticated and producto_id is None and seleccionado is None:
+    if not request.user.is_authenticated and item_id is None and seleccionado is None:
         return JsonResponse({'total': 1})
 
     seleccionado = True if seleccionado == "true" else False
 
-    items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, producto_id=producto_id)
+    items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, id=item_id)
 
     if not items.exists():
         return JsonResponse({
