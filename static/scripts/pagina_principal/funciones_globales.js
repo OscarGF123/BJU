@@ -18,6 +18,9 @@ window.handlePermissionError = function(data, defaultRedirect = '/login'){
 
 // Formatear precios en pesos colombianos
 window.formatPrice = function(price) {
+    if (!price){
+        return 0
+    }
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',

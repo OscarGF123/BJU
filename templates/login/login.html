@@ -1,17 +1,14 @@
 {% extends "home.html" %}
 {% load static %}
+
+<!-- Ocultar minicarrito -->
+ {% block minicarrito %}{% endblock %}
+
+<!-- Ocultar boton de login -->
+{% block boton_login %}{% endblock %}
+
 {% block body %}
     <body class="body-login">
-        <!-- ========================================
-            HEADER
-            ======================================== -->
-        <header class="header-login">
-            <nav class="nav-container">
-                <a href="#" class="logo">Box Jeans Urban</a>
-                <a href="/" class="back-btn">← Tienda</a>
-            </nav>
-        </header>
-
         <!-- ========================================
             MAIN CONTENT - LAYOUT RESPONSIVO
             ======================================== -->

@@ -210,7 +210,7 @@ function cargarMiniCarrito() {
             }
 
             container.innerHTML = data.items.map(item => `
-                <div class="cart-item-mini">
+                <div class="cart-item-mini" id="item-${item.id}">
                     <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.producto_id}">
                     <img class="cart-item-img"
                         src="/media/${item.imagen}"
@@ -235,6 +235,7 @@ function cargarMiniCarrito() {
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>
+                            <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </div>
                         <!-- 👇 Contenedor del error -->
                         <div class="item-error" id="error-${item.id}"></div>
@@ -298,6 +299,37 @@ function cargarMiniCarrito() {
 
 let  actualizarTotal = (total) => {
     document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`
+}
+
+// Funcion para eliminar item del minicarrito
+let eliminarItem = (id, nombre)=>{
+        if (confirm('¿Estas seguro de eliminar este producto del carrito de compras?')) {
+            fetch(`eliminar_item/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(r => r.json())
+            .then(data =>{
+                if(data.status === "success"){
+                    let item = document.getElementById(`item-${id}`);
+                    item.style.animation = 'fadeOut 0.3s ease';
+                    item.remove();
+                    actualizarTotal();
+                    const container = document.getElementById('miniCartItems').innerHTML = `
+                            <p class="cart-empty">Tu carrito está vacío</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: `Ocurrio un error inesperado ${error}`,
+                });
+            })
+        }
 }
 
 document.addEventListener('DOMContentLoaded', function() {

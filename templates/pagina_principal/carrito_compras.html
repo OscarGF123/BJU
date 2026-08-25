@@ -3,9 +3,10 @@
 {% load custom_tags %}
 {% load humanize %}
 
+<!-- Quita el minicarrito -->
+{% comment %}{% block minicarrito %}{% endblock %}{% endcomment %}
+
 {% block body %}
-    
-    {% include "pagina_principal/navbar.html" %}
 
     <div class="cart-container">
         <!-- Título de la página -->
@@ -227,8 +228,6 @@
            Recalcula subtotal y total
            ======================================== */
         function updateTotal() {
-            // En un proyecto real, aquí calcularías basado en precios reales
-            // Este es un ejemplo simplificado
             const items = document.querySelectorAll('.cart-item');
             let itemCount = 0;
             
