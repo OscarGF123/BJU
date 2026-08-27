@@ -28,7 +28,7 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
         usuario_id = self.request.session.get("_auth_user_id")
         return ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id).select_related("producto_id").prefetch_related("producto_id__imagen_set").order_by('producto_id__nombre__valor')
 
-class AgregarItem(ClienteRequiredMixin, View):
+class AgregarItem(View):
     def post(self, request, slug):
 
         talla = request.POST.get('talla', None)
@@ -43,11 +43,10 @@ class AgregarItem(ClienteRequiredMixin, View):
                 'message': 'No se ha seleccionado la talla del producto'
             }
             return JsonResponse(response)
-        
-        usuario_id = Usuario.objects.filter(id=request.session.get("_auth_user_id")).first()
-        producto_nombre = Producto.objects.filter(slug=slug)
 
         # Verificar si el producto existe
+        producto_nombre = Producto.objects.filter(slug=slug)
+
         if producto_nombre.exists():
             producto_nombre = producto_nombre.first().nombre
         else:
@@ -56,38 +55,63 @@ class AgregarItem(ClienteRequiredMixin, View):
                 'type_error': "product_unavailable",
                 'message': f"El producto seleccionado no existe"
             }
-            JsonResponse(response)
+            return JsonResponse(response)
 
         producto = Producto.objects.filter(nombre=producto_nombre, talla=talla).first()
 
-        # verificar si hay por lo menos hay un producto en stock
+        # Verificar si hay por lo menos hay un producto en stock
         if not (producto.cantidad > 0):
-            response = {
+            return JsonResponse({
                 'status': 'error',
                 'type_error': 'out_of_stock',
                 'message': 'Este producto esta fuera de stock'
-            }
+            })
 
-        # verifica si el item seleccionado ya existe en el carrito de compras, y si es así entonces, incrementar el producto en 1
-        verificar_item = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto)
-        if verificar_item.exists() and (verificar_item.first().cantidad + 1) < producto.cantidad:
+        # Verificar si el usuario esta logueado
+        if not request.user.is_authenticated:
+            # Se crea un carrito vacio si no existe
+            if 'carrito' not in request.session:
+                request.session['carrito'] = []
 
-            verificar_item = verificar_item.first()
-            verificar_item.cantidad += 1
-            verificar_item.save()
+            carrito_session = request.session['carrito']
 
-            response = {
-                'status': 'success', 
-                'message': f'cantidad del producto {verificar_item.producto_id.nombre.valor} talla {verificar_item.producto_id.talla.valor} incrementada en 1'
-            }
-            return JsonResponse()
-        elif verificar_item.exists() and (verificar_item.first().cantidad + 1) > producto.cantidad:
-            return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
+            verificar_item_session = list(filter(lambda e: e['id'] == producto.id, carrito_session))
 
-        carrito = CarritoCompras.objects.get(usuario_id=usuario_id)
-        item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
+            # Verifica si se puede agregar un producto mas
+            if verificar_item_session and (verificar_item_session['cantidad'] + 1) > producto.cantidad:
 
-        return JsonResponse({'status': "success", "message": item.id})
+                return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
+
+            if any(verificar_item_session):
+                
+                    index = next((i for i, item in enumerate(carrito_session) if item['id'] == verificar_item_session[0]['id']), None)
+                    carrito_session[index]['cantidad'] += 1
+
+
+            
+        else:
+            usuario_id = Usuario.objects.filter(id=request.session.get("_auth_user_id")).first()
+
+            # verifica si el item seleccionado ya existe en el carrito de compras, y si es así entonces, incrementar el producto en 1
+            verificar_item = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, producto_id=producto)
+            if verificar_item.exists() and (verificar_item.first().cantidad + 1) < producto.cantidad:
+
+                verificar_item = verificar_item.first()
+                verificar_item.cantidad += 1
+                verificar_item.save()
+
+                response = {
+                    'status': 'success', 
+                    'message': f'cantidad del producto {verificar_item.producto_id.nombre.valor} talla {verificar_item.producto_id.talla.valor} incrementada en 1'
+                }
+                return JsonResponse(response)
+            elif verificar_item.exists() and (verificar_item.first().cantidad + 1) > producto.cantidad:
+                return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
+
+            carrito = CarritoCompras.objects.get(usuario_id=usuario_id)
+            item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
+
+            return JsonResponse({'status': "success", "message": request.session})
         
 # Con usuario logueado
 class ActualizarItem(ClienteRequiredMixin, View):

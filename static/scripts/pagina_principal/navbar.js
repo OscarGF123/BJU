@@ -307,7 +307,8 @@ let eliminarItem = (id, nombre)=>{
             fetch(`eliminar_item/${id}`, {
                 method: 'DELETE',
                 headers: {
-                    'X-CSRFToken': csrftoken
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest',
                 }
             })
             .then(r => r.json())

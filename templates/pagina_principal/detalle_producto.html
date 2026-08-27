@@ -231,6 +231,7 @@
                 return;
             }
             let slug = window.location.pathname.split('/').at(-1);
+            const btn = document.querySelector('.add-to-cart-btn');
             const formData = new FormData();
             formData.append('talla', tallaSeleccionada.textContent);
             fetch(`/carrito/agregar_item/${slug}`, {
@@ -242,13 +243,13 @@
             })
             .then(r => r.json())
             .then(data => {
-                console.log(data)
+                console.log(data);
+                // Animación del botón
+                btn.textContent = '✓ Agregado al Carrito';
+                btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
             });
 
-            // Animación del botón
-            const btn = document.querySelector('.add-to-cart-btn');
-            btn.textContent = '✓ Agregado al Carrito';
-            btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+
             
             setTimeout(() => {
                 btn.textContent = 'Añadir al carrito de compras';
