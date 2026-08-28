@@ -35,7 +35,7 @@ ALLOWED_HOSTS = ['*', "bju-production.up.railway.app"]
 
 # No se como funciona o por que esta aqui, pero hay que averiguar >:v
 CSRF_TRUSTED_ORIGINS = ["https://bju-production.up.railway.app"]
-
+CSRF_COOKIE_AGE = 31449600
 # Application definition
 
 # # Agregar la carpeta applications al Python path
