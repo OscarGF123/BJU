@@ -2,7 +2,7 @@
 {% load custom_tags %}
 
 {% block body %}
-
+{% csrf_token %}
 <body>
     <!-- ========================================
          HEADER - Barra de navegación
@@ -198,10 +198,6 @@
          JAVASCRIPT - Funcionalidad interactiva
          ======================================== -->
     <script>
-        const csrftoken = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
         /* ========================================
            FUNCIÓN: Seleccionar talla
            Parámetro: button - botón de talla clickeado
@@ -243,10 +239,57 @@
             })
             .then(r => r.json())
             .then(data => {
-                console.log(data);
-                // Animación del botón
-                btn.textContent = '✓ Agregado al Carrito';
-                btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                if (data.status === "success"){
+                    console.log(data.item);
+                    let producto_id = Object.keys(data.item);
+                    let item = data.item[producto_id];
+                    
+
+                    // Animación del botón
+                    let carritoHtml = document.getElementById('miniCartItems');
+                    carritoHtml.innerHTML = `
+                        <div class="cart-item-mini" id="item-${producto_id}">
+                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${producto_id}">
+                            <img class="cart-item-img"
+                                src="/media/${item.imagen}"
+                                onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
+                                alt="${item.nombre}">
+                            <div class="cart-item-info">
+                                <div class="cart-item-name">${item.nombre}</div>
+                                <div class="cart-item-meta">Talla: ${item.talla || 'N/A'}</div>
+                                <div class="cart-item-price" data-precio='${item.precio}'>${window.formatPrice(item.precio)}</div>
+                                <div class="cart-item-qty">
+                                    <div class="quantity-controls">
+                                        <span class="qty-label">Qty</span>
+                                        <input 
+                                            type="number" 
+                                            class="qty-number" 
+                                            id="qty-${item.id}"
+                                            
+                                            value="${item.cantidad}"
+                                            min="1" 
+                                            max="${item.cant_max}"
+                                            data-item-id="${item.id}"
+                                            style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
+                                        >
+                                    </div>
+                                    <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                </div>
+                                <div class="item-error" id="error-${item.id}"></div>
+                            </div>
+                        </div>
+                `
+                    btn.textContent = '✓ Agregado al Carrito';
+                    btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                }
+
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: '¡Error!',
+                    icon: 'error',
+                    text: `Ha ocurrido un error inesperado ${error}`
+                })
             });
 
 

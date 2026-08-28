@@ -4,7 +4,7 @@ from django.views.generic import ListView, View
 
 from applications.common.views import VistaBaseEliminar
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
-from applications.productos.models import Imagen, Producto, Talla
+from applications.productos.models import Imagen, Producto, Talla, Imagen
 from applications.common.mixins import ClienteRequiredMixin
 from applications.usuarios.models import Usuario
 
@@ -71,22 +71,44 @@ class AgregarItem(View):
         if not request.user.is_authenticated:
             # Se crea un carrito vacio si no existe
             if 'carrito' not in request.session:
-                request.session['carrito'] = []
+                request.session['carrito'] = {}
+            print(request.session)
+            carrito_session: dict = request.session['carrito']
 
-            carrito_session = request.session['carrito']
-
-            verificar_item_session = list(filter(lambda e: e['id'] == producto.id, carrito_session))
+            verificar_item_session = carrito_session.get(str(producto.id), None)
 
             # Verifica si se puede agregar un producto mas
             if verificar_item_session and (verificar_item_session['cantidad'] + 1) > producto.cantidad:
 
                 return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
+            print(f'carritont {carrito_session}')
+            producto_id: str = str(producto.id)
 
-            if any(verificar_item_session):
-                
-                    index = next((i for i, item in enumerate(carrito_session) if item['id'] == verificar_item_session[0]['id']), None)
-                    carrito_session[index]['cantidad'] += 1
+            item = {}
+            # Verificar si el producto ya esta en el carrito
+            if verificar_item_session:
+                carrito_session[producto_id]['cantidad'] += 1
+                item[producto_id] = carrito_session[producto_id]
+            else:
+                imagen = Imagen.objects.filter(producto_id=producto, portada="Si")
+                item = {
+                    producto_id: {
+                        'cantidad': 1,
+                        'seleccionado': True,
+                        'nombre': producto_nombre.__str__(),
+                        'imagen': str(imagen.first().link_imagen) if imagen else None,
+                        'talla': talla.valor,
+                        'precio': str(producto.precio_unitario),
+                        'cant_max': int(producto.cantidad)
+                    }
+                }
+                carrito_session.update(item)
 
+
+            # Avisar que la sesion fue modificada
+            request.session.modified = True
+
+            return JsonResponse({'status': 'success', 'item': item})
 
             
         else:

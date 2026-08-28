@@ -237,7 +237,6 @@ function cargarMiniCarrito() {
                             </div>
                             <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </div>
-                        <!-- 👇 Contenedor del error -->
                         <div class="item-error" id="error-${item.id}"></div>
                     </div>
                 </div>

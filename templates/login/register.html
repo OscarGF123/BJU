@@ -1,6 +1,7 @@
 {% extends 'login/login.html' %}
 {% load static %}
 {% block login_main %}
+{% csrf_token %}
     <style>
         .main-container{
             flex: 1;
