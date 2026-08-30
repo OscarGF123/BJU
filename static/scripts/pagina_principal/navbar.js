@@ -231,7 +231,7 @@ function cargarMiniCarrito() {
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
-                                    data-item-id="${item.id}"
+                                    data-item-id="${item.producto_id}"
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>

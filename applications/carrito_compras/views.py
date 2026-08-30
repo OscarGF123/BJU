@@ -30,7 +30,7 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
 
 class AgregarItem(View):
     def post(self, request, slug):
-
+        
         talla = request.POST.get('talla', None)
 
         # Verificar si se ha enviado la talla del producto
@@ -58,7 +58,9 @@ class AgregarItem(View):
             return JsonResponse(response)
 
         producto = Producto.objects.filter(nombre=producto_nombre, talla=talla).first()
-
+        producto_id: str = str(producto.id)
+        imagen = Imagen.objects.filter(producto_id__nombre__valor=producto_nombre.valor, portada="Si")
+        
         # Verificar si hay por lo menos hay un producto en stock
         if not (producto.cantidad > 0):
             return JsonResponse({
@@ -72,7 +74,6 @@ class AgregarItem(View):
             # Se crea un carrito vacio si no existe
             if 'carrito' not in request.session:
                 request.session['carrito'] = {}
-            print(request.session)
             carrito_session: dict = request.session['carrito']
 
             verificar_item_session = carrito_session.get(str(producto.id), None)
@@ -81,16 +82,17 @@ class AgregarItem(View):
             if verificar_item_session and (verificar_item_session['cantidad'] + 1) > producto.cantidad:
 
                 return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
-            print(f'carritont {carrito_session}')
-            producto_id: str = str(producto.id)
-
             item = {}
             # Verificar si el producto ya esta en el carrito
             if verificar_item_session:
                 carrito_session[producto_id]['cantidad'] += 1
                 item[producto_id] = carrito_session[producto_id]
+
+                request.session.modified = True
+                return JsonResponse({'status': 'success', 'type': 'increase_quantity', 'item': producto_id})
             else:
-                imagen = Imagen.objects.filter(producto_id=producto, portada="Si")
+                
+
                 item = {
                     producto_id: {
                         'cantidad': 1,
@@ -103,12 +105,8 @@ class AgregarItem(View):
                     }
                 }
                 carrito_session.update(item)
-
-
-            # Avisar que la sesion fue modificada
-            request.session.modified = True
-
-            return JsonResponse({'status': 'success', 'item': item})
+                request.session.modified = True
+                return JsonResponse({'status': 'success', 'type': 'new_item', 'item': item})    
 
             
         else:
@@ -122,8 +120,22 @@ class AgregarItem(View):
                 verificar_item.cantidad += 1
                 verificar_item.save()
 
+                item = {
+                    producto.id: {
+                        'cantidad': 1,
+                        'seleccionado': True,
+                        'nombre': producto_nombre.__str__(),
+                        'imagen': str(imagen.first().link_imagen) if imagen else None,
+                        'talla': talla.valor,
+                        'precio': str(producto.precio_unitario),
+                        'cant_max': int(producto.cantidad)
+                    }
+                }
+
                 response = {
-                    'status': 'success', 
+                    'status': 'success',
+                    'type': 'increase_quantity',
+                    'item': item,
                     'message': f'cantidad del producto {verificar_item.producto_id.nombre.valor} talla {verificar_item.producto_id.talla.valor} incrementada en 1'
                 }
                 return JsonResponse(response)

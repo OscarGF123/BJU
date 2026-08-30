@@ -108,7 +108,7 @@
 
             <!-- Botón agregar al carrito -->
             <div class="add-to-cart-section">
-                <button class="add-to-cart-btn" onclick="addToCart()">
+                <button class="add-to-cart-btn">
                     Añadir al carrito de compras
                 </button>
                 <button class="favorite-btn" onclick="toggleFavorite(this)">
@@ -216,38 +216,42 @@
         /* ========================================
            FUNCIÓN: Agregar al carrito
            ======================================== */
-        function addToCart() {
+        addToCartBtn = document.querySelector('.add-to-cart-btn');
+        addToCartBtn.addEventListener('click', function () {
+            // Si el botón ya está deshabilitado, no hacer nada (evita el spam)
+            if (addToCartBtn.disabled) return;
+
             const tallaSeleccionada = document.querySelector('.size-button.selected');
             if (!tallaSeleccionada) {
                 Swal.fire({
                     title: '¡Atención!',
                     icon: 'warning',
                     text: 'Debes elegir una talla para añadir este producto al carrito de compras'
-                })
+                });
                 return;
             }
+
+            // Deshabilitamos el botón INMEDIATAMENTE, antes de esperar la respuesta del servidor
+            addToCartBtn.disabled = true;
+            addToCartBtn.textContent = 'Agregando...';
+
             let slug = window.location.pathname.split('/').at(-1);
-            const btn = document.querySelector('.add-to-cart-btn');
             const formData = new FormData();
             formData.append('talla', tallaSeleccionada.textContent);
+
             fetch(`/carrito/agregar_item/${slug}`, {
-                'method': 'POST',
-                'headers': {
-                    'X-CSRFToken': csrftoken,
-                },
-                'body': formData,
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                body: formData,
             })
             .then(r => r.json())
             .then(data => {
-                if (data.status === "success"){
+                if (data.status === "success" && data.type === 'new_item'){
                     console.log(data.item);
                     let producto_id = Object.keys(data.item);
                     let item = data.item[producto_id];
-                    
-
-                    // Animación del botón
                     let carritoHtml = document.getElementById('miniCartItems');
-                    carritoHtml.innerHTML = `
+                    let itemHtml = `
                         <div class="cart-item-mini" id="item-${producto_id}">
                             <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${producto_id}">
                             <img class="cart-item-img"
@@ -264,42 +268,65 @@
                                         <input 
                                             type="number" 
                                             class="qty-number" 
-                                            id="qty-${item.id}"
+                                            id="qty-${producto_id}"
                                             
                                             value="${item.cantidad}"
                                             min="1" 
                                             max="${item.cant_max}"
-                                            data-item-id="${item.id}"
+                                            data-item-id="${producto_id}"
                                             style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                         >
                                     </div>
-                                    <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                    <button class="remove-btn" onclick="eliminarItem('${producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 </div>
-                                <div class="item-error" id="error-${item.id}"></div>
+                                <div class="item-error" id="error-${producto_id}"></div>
                             </div>
                         </div>
-                `
+                    `
+
+                    // verifica si el carrito esta vacio para remplazar el aviso de carrito vacio
+                    if (document.getElementsByClassName('cart-empty').length > 0){
+                        carritoHtml.innerHTML = itemHtml;
+                    } else {
+                        carritoHtml.insertAdjacentHTML('beforeend', itemHtml);  
+                    }
+                    
                     btn.textContent = '✓ Agregado al Carrito';
                     btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                    
+                    setTimeout(() => {
+                        btn.textContent = 'Añadir al carrito de compras';
+                        btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+                    }, 2000);
+                } else if(data.status === 'success' && data.type === 'increase_quantity'){
+
+                    let producto_id = String(Object.keys(data.item)[0]);
+                    console.log(producto_id)
+                    let itemInput = document.getElementById(`qty-${producto_id}`);
+
+                    itemInput.value = parseInt(itemInput.value, 10) + 1;
+                } else if (data.status === 'error'){
+                    Swal.fire({ title: '¡Error!', icon: 'error', text: data.message});
                 }
+
+                addToCartBtn.textContent = '✓ Agregado al Carrito';
+                addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
 
             })
             .catch(error => {
-                Swal.fire({
-                    title: '¡Error!',
-                    icon: 'error',
-                    text: `Ha ocurrido un error inesperado ${error}`
-                })
+                Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
+            })
+            .finally(() => {
+                // Volvemos a habilitar el botón pase lo que pase (éxito o error),
+                // después de un breve momento para que el usuario vea la confirmación
+                setTimeout(() => {
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.textContent = 'Añadir al carrito de compras';
+                    addToCartBtn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+                }, 1500);
             });
+        });
 
-
-            
-            setTimeout(() => {
-                btn.textContent = 'Añadir al carrito de compras';
-                btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
-            }, 2000);
-            
-        }
 
         /* ========================================
            FUNCIÓN: Toggle favorito (corazón)
