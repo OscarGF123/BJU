@@ -30,7 +30,7 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
 
 class AgregarItem(View):
     def post(self, request, slug):
-        
+        request.session['carrito'] = {}
         talla = request.POST.get('talla', None)
 
         # Verificar si se ha enviado la talla del producto
@@ -94,15 +94,15 @@ class AgregarItem(View):
                 
 
                 item = {
-                    producto_id: {
-                        'cantidad': 1,
-                        'seleccionado': True,
-                        'nombre': producto_nombre.__str__(),
-                        'imagen': str(imagen.first().link_imagen) if imagen else None,
-                        'talla': talla.valor,
-                        'precio': str(producto.precio_unitario),
-                        'cant_max': int(producto.cantidad)
-                    }
+                    'cantidad': 1,
+                    'seleccionado': True,
+                    'nombre': producto_nombre.__str__(),
+                    'imagen': str(imagen.first().link_imagen) if imagen else None,
+                    'talla': talla.valor,
+                    'precio': str(producto.precio_unitario),
+                    'cant_max': int(producto.cantidad),
+                    'logueado': False,
+                    'producto_id': producto.id
                 }
                 carrito_session.update(item)
                 request.session.modified = True
@@ -121,15 +121,16 @@ class AgregarItem(View):
                 verificar_item.save()
 
                 item = {
-                    producto.id: {
-                        'cantidad': 1,
-                        'seleccionado': True,
-                        'nombre': producto_nombre.__str__(),
-                        'imagen': str(imagen.first().link_imagen) if imagen else None,
-                        'talla': talla.valor,
-                        'precio': str(producto.precio_unitario),
-                        'cant_max': int(producto.cantidad)
-                    }
+                    'cantidad': verificar_item.cantidad,
+                    'seleccionado': True,
+                    'nombre': producto_nombre.__str__(),
+                    'imagen': str(imagen.first().link_imagen) if imagen else None,
+                    'talla': talla.valor,
+                    'precio': str(producto.precio_unitario),
+                    'cant_max': int(producto.cantidad),
+                    'logueado': True,
+                    'id': verificar_item.id,
+                    'producto_id': producto.id
                 }
 
                 response = {
@@ -143,9 +144,23 @@ class AgregarItem(View):
                 return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
 
             carrito = CarritoCompras.objects.get(usuario_id=usuario_id)
-            item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
+            new_item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
 
-            return JsonResponse({'status': "success", "message": request.session})
+            item = {
+
+                'cantidad': new_item.cantidad,
+                'seleccionado': True,
+                'nombre': producto_nombre.__str__(),
+                'imagen': str(imagen.first().link_imagen) if imagen else None,
+                'talla': talla.valor,
+                'precio': str(producto.precio_unitario),
+                'cant_max': int(producto.cantidad),
+                'logueado': True,
+                'id': new_item.id,
+                'producto_id': producto.id
+            }
+
+            return JsonResponse({'status': "success", "type": 'new_item', 'item': item})
         
 # Con usuario logueado
 class ActualizarItem(ClienteRequiredMixin, View):
@@ -167,8 +182,8 @@ class ActualizarItem(ClienteRequiredMixin, View):
                 'id': item_id
                 })
 
-        ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id).update(cantidad=cantidad)
-
+        item = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id)
+        item.update(cantidad=cantidad)
         # Valor total de la compra
         total = sum(
             i.cantidad * i.producto_id.precio_unitario
@@ -177,7 +192,8 @@ class ActualizarItem(ClienteRequiredMixin, View):
         return JsonResponse({
             'status': 'success', 
             'mesagge': 'Se ha actualizado la cantidad correctamente',
-            'total': total
+            'total': total,
+            'cantidad': item.first().cantidad
             })
 
 class EliminarItem(VistaBaseEliminar):
@@ -199,6 +215,7 @@ def mini_carrito(request):
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first()).select_related('producto_id')
 
     data = []
+    total = 0
     for item in items:
         imagen = Imagen.objects.filter(producto_id__nombre=item.producto_id.nombre, portada="Si")
         imagen = imagen.first() if imagen.exists() else ""
@@ -230,7 +247,14 @@ def seleccionar_item(request):
             ).update(seleccionado=True if seleccionar_todo == 'true' else False)
         return JsonResponse({
             'status': 'success',
-            'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.'
+            'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.',
+            'total': sum(
+            i.cantidad * i.producto_id.precio_unitario
+            for i in ItemsCarritoCompras.objects.filter(
+                    carrito_compra_id__usuario_id=request.session.get('_auth_user_id'),
+                    seleccionado=True
+                ).select_related('producto_id')
+        )
         })
     item_id = request.POST.get('item_id', None)
     seleccionado = request.POST.get('seleccionado', None)
@@ -241,7 +265,7 @@ def seleccionar_item(request):
     seleccionado = True if seleccionado == "true" else False
 
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, id=item_id)
-
+    print(f'item id {item_id}')
     if not items.exists():
         return JsonResponse({
             'status': 'error', 
@@ -253,10 +277,6 @@ def seleccionar_item(request):
 
     items_seleccionados = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user, seleccionado=True).select_related('producto_id')
 
-    for i in items_seleccionados:
-
-        print(i.producto_id.nombre.valor)
-
     total = sum([i.cantidad * i.producto_id.precio_unitario for i in items_seleccionados])
 
-    return JsonResponse({'total': total})
+    return JsonResponse({'status': 'success', 'total': total})

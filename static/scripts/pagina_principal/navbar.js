@@ -211,7 +211,7 @@ function cargarMiniCarrito() {
 
             container.innerHTML = data.items.map(item => `
                 <div class="cart-item-mini" id="item-${item.id}">
-                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.producto_id}">
+                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.id}">
                     <img class="cart-item-img"
                         src="/media/${item.imagen}"
                         onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -231,7 +231,7 @@ function cargarMiniCarrito() {
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
-                                    data-item-id="${item.producto_id}"
+                                    data-item-id="${item.id}"
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>
@@ -250,12 +250,34 @@ function cargarMiniCarrito() {
                 
                 clearTimeout(timer);
                 timer = setTimeout(() => {
-                    window.seleccionarItem(null, null, this.checked);
-                    actualizarTotal();
+                    window.seleccionarItem(null, null, this.checked)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            actualizarTotal(data.total);
+                        }
+                    });
                 }, 600)
             });
-            // Funcion para guardar la cantidad de un producto cada cierto tiempo
 
+            // Funcion para seleccionar lo productos que seran comprados
+            document.querySelectorAll('.item-check').forEach(check => {
+                check.addEventListener('change', function(e) {
+
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+
+                    window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            actualizarTotal(data.total);
+                        }
+                    });
+                        
+                    }, 600)
+                })
+            });
+
+            // Funcion para guardar la cantidad de un producto cada cierto tiempo
             document.querySelectorAll('.qty-number').forEach(input => {
                 input.addEventListener('input', function() {
                     clearTimeout(timer);
@@ -266,6 +288,7 @@ function cargarMiniCarrito() {
                         .then(data => {
                             if (data.status == 'success'){
                                 actualizarTotal(data.total);
+                                this.value = data.cantidad;
                             } else if (data.status = 'error'){
                                 mostrarErrorItem(data.id, data.message);
                             }   
@@ -274,20 +297,7 @@ function cargarMiniCarrito() {
                     }, 600)
                 })
             });
-
-            // Funcion para seleccionar lo productos que seran comprados
-            document.querySelectorAll('.item-check').forEach(check => {
-                check.addEventListener('change', function(e) {
-
-                    clearTimeout(timer);
-                    timer = setTimeout(() => {
-
-                        window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
-                        actualizarTotal()
-                    }, 600)
-                })
-            });
-        })
+        });
         // .catch(() => {
         //     document.getElementById('miniCartItems').innerHTML =
         //         '<p class="cart-empty">Error al cargar el carrito</p>';
@@ -303,7 +313,7 @@ let  actualizarTotal = (total) => {
 // Funcion para eliminar item del minicarrito
 let eliminarItem = (id, nombre)=>{
         if (confirm('¿Estas seguro de eliminar este producto del carrito de compras?')) {
-            fetch(`eliminar_item/${id}`, {
+            fetch(`/carrito/eliminar_item/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'X-CSRFToken': csrftoken,
@@ -317,9 +327,13 @@ let eliminarItem = (id, nombre)=>{
                     item.style.animation = 'fadeOut 0.3s ease';
                     item.remove();
                     actualizarTotal();
-                    const container = document.getElementById('miniCartItems').innerHTML = `
-                            <p class="cart-empty">Tu carrito está vacío</p>
-                    `;
+                    // Se verifica si no hay mas items en el carrito para colocar el aviso de que el carrito esta vacio
+                    if (document.querySelector('#miniCartItems').children.length == 0){
+                        const container = document.getElementById('miniCartItems').innerHTML = `
+                                <p class="cart-empty">Tu carrito está vacío</p>
+                        `;
+                    }
+
                 }
             })
             .catch(error => {

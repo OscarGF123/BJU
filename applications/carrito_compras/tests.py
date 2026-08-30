@@ -6,6 +6,6 @@ from applications.usuarios.models import Usuario
 
 # ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, cantidad=1, producto_id=producto)
 
-print(Imagen.objects.filter(producto_id__nombre__valor='Jean Baggy Beige', portada="Si").first().link_imagen)
+print(ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=1, producto_id=2).first().seleccionado)
 
 # ItemsCarritoCompras.objects.filter(producto_id__talla__valor=28).delete()

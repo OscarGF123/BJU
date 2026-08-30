@@ -248,12 +248,12 @@
             .then(data => {
                 if (data.status === "success" && data.type === 'new_item'){
                     console.log(data.item);
-                    let producto_id = Object.keys(data.item);
-                    let item = data.item[producto_id];
+                    let producto_id = data.item.producto_id;
+                    let item = data.item;
                     let carritoHtml = document.getElementById('miniCartItems');
                     let itemHtml = `
-                        <div class="cart-item-mini" id="item-${producto_id}">
-                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${producto_id}">
+                        <div class="cart-item-mini" id="item-${item.logueado?item.id:producto_id}">
+                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.logueado?item.id:producto_id}">
                             <img class="cart-item-img"
                                 src="/media/${item.imagen}"
                                 onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -268,16 +268,16 @@
                                         <input 
                                             type="number" 
                                             class="qty-number" 
-                                            id="qty-${producto_id}"
+                                            id="qty-${item.logueado?item.id:producto_id}"
                                             
                                             value="${item.cantidad}"
                                             min="1" 
                                             max="${item.cant_max}"
-                                            data-item-id="${producto_id}"
+                                            data-item-id="${item.logueado?item.id:producto_id}"
                                             style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                         >
                                     </div>
-                                    <button class="remove-btn" onclick="eliminarItem('${producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                    <button class="remove-btn" onclick="eliminarItem('${item.logueado?item.id:producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 </div>
                                 <div class="item-error" id="error-${producto_id}"></div>
                             </div>
@@ -291,18 +291,17 @@
                         carritoHtml.insertAdjacentHTML('beforeend', itemHtml);  
                     }
                     
-                    btn.textContent = '✓ Agregado al Carrito';
-                    btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                    addToCartBtn.textContent = '✓ Agregado al Carrito';
+                    addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
                     
                     setTimeout(() => {
-                        btn.textContent = 'Añadir al carrito de compras';
-                        btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+                        addToCartBtn.textContent = 'Añadir al carrito de compras';
+                        addToCartBtn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
                     }, 2000);
                 } else if(data.status === 'success' && data.type === 'increase_quantity'){
 
-                    let producto_id = String(Object.keys(data.item)[0]);
-                    console.log(producto_id)
-                    let itemInput = document.getElementById(`qty-${producto_id}`);
+                    let producto_id = String(data.item.producto_id);
+                    let itemInput = document.getElementById(`qty-${data.item.logueado?data.item.id:producto_id}`);
 
                     itemInput.value = parseInt(itemInput.value, 10) + 1;
                 } else if (data.status === 'error'){
@@ -313,9 +312,9 @@
                 addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
 
             })
-            .catch(error => {
-                Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
-            })
+            // .catch(error => {
+            //     Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
+            // })
             .finally(() => {
                 // Volvemos a habilitar el botón pase lo que pase (éxito o error),
                 // después de un breve momento para que el usuario vea la confirmación

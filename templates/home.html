@@ -108,7 +108,11 @@
                                     <div class="mini-cart-footer">
                                         <div class="mini-cart-total">
                                             <span>Total:</span>
-                                            <span class="total-price" id="miniCartTotal">$0</span>
+                                            {% if total %}
+                                                <span class="total-price" id="miniCartTotal">${{total}}</span>
+                                            {% else %}
+                                                <span class="total-price" id="miniCartTotal">0</span>
+                                            {% endif %}
                                         </div>
                                         <button class="ver-carrito-btn" onclick="window.location.href='/carrito/'">
                                             VER CARRITO (<span id="miniCartCount">0</span>)

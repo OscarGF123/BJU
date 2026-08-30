@@ -50,7 +50,7 @@ const csrftoken = document.cookie
 // Para actualizar la cantidad de un producto en el carrito de compras
 window.actualizarCantidad = function (item_id, cantidad){
     const formData = new FormData();
-    formData.append('cantidad', cantidad);
+    formData.append('cantidad', cantidad===''?1:cantidad);
 
     return fetch(`/carrito/actualizar_cantidad_producto/${item_id}`,{
         'method': 'POST',
