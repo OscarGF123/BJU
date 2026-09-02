@@ -253,7 +253,7 @@ function cargarMiniCarrito() {
                     window.seleccionarItem(null, null, this.checked)
                     .then(data => {
                         if (data.status === 'success'){
-                            actualizarTotal(data.total);
+                            window.actualizarTotal(data.total);
                         }
                     });
                 }, 600)
@@ -269,7 +269,7 @@ function cargarMiniCarrito() {
                     window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
                     .then(data => {
                         if (data.status === 'success'){
-                            actualizarTotal(data.total);
+                            window.actualizarTotal(data.total);
                         }
                     });
                         
@@ -287,7 +287,7 @@ function cargarMiniCarrito() {
                         window.actualizarCantidad(this.dataset.itemId, this.value)
                         .then(data => {
                             if (data.status == 'success'){
-                                actualizarTotal(data.total);
+                                window.actualizarTotal(data.total);
                                 this.value = data.cantidad;
                             } else if (data.status = 'error'){
                                 mostrarErrorItem(data.id, data.message);
@@ -306,9 +306,7 @@ function cargarMiniCarrito() {
 
 // Actualizar Total del MiniCarito
 
-let  actualizarTotal = (total) => {
-    document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`
-}
+
 
 // Funcion para eliminar item del minicarrito
 let eliminarItem = (id, nombre)=>{
@@ -326,14 +324,15 @@ let eliminarItem = (id, nombre)=>{
                     let item = document.getElementById(`item-${id}`);
                     item.style.animation = 'fadeOut 0.3s ease';
                     item.remove();
-                    actualizarTotal();
+                    window.actualizarTotal();
                     // Se verifica si no hay mas items en el carrito para colocar el aviso de que el carrito esta vacio
                     if (document.querySelector('#miniCartItems').children.length == 0){
                         const container = document.getElementById('miniCartItems').innerHTML = `
                                 <p class="cart-empty">Tu carrito está vacío</p>
                         `;
                     }
-
+                    // Actualizar la cantidad de items en el carrito
+                    document.querySelector('#miniCartCount').textContent = document.querySelectorAll('.cart-item-mini').length
                 }
             })
             .catch(error => {

@@ -20,7 +20,6 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
         imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
         context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
         context['login'] = True if self.request.user.is_authenticated else False
-        context['cantidad_items'] = items.count()
         context['cantidad_productos_seleccionados'] = sum([i.cantidad for i in items.filter(seleccionado=True)])
         return context
 

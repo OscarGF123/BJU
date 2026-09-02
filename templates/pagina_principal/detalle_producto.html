@@ -291,6 +291,11 @@
                         carritoHtml.insertAdjacentHTML('beforeend', itemHtml);  
                     }
                     
+                    window.actualizarTotal();
+                    
+                    // Actualizar la cantidad de items en el carrito
+                    document.querySelector('#miniCartCount').textContent = document.querySelectorAll('.cart-item-mini').length
+
                     addToCartBtn.textContent = '✓ Agregado al Carrito';
                     addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
                     
@@ -304,6 +309,7 @@
                     let itemInput = document.getElementById(`qty-${data.item.logueado?data.item.id:producto_id}`);
 
                     itemInput.value = parseInt(itemInput.value, 10) + 1;
+                    window.actualizarTotal();
                 } else if (data.status === 'error'){
                     Swal.fire({ title: '¡Error!', icon: 'error', text: data.message});
                 }
@@ -312,9 +318,9 @@
                 addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
 
             })
-            // .catch(error => {
-            //     Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
-            // })
+            .catch(error => {
+                Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
+            })
             .finally(() => {
                 // Volvemos a habilitar el botón pase lo que pase (éxito o error),
                 // después de un breve momento para que el usuario vea la confirmación
@@ -325,7 +331,6 @@
                 }, 1500);
             });
         });
-
 
         /* ========================================
            FUNCIÓN: Toggle favorito (corazón)
