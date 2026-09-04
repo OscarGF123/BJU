@@ -51,15 +51,6 @@
             <!-- Título -->
             <h1 class="product-title">{{producto.nombre}}</h1>
 
-            <!-- SKU y valoraciones -->
-            <div class="product-meta">
-                <span class="sku">SKU: sm2506232240482828</span>
-                <div class="rating">
-                    <span class="stars">★★★★★</span>
-                    <a href="#reviews" class="reviews">(109+ Comentarios)</a>
-                </div>
-            </div>
-
             <!-- Precio -->
             <div class="price-section">
                 <div class="price-main">${{producto.precio_unitario}}</div>
@@ -110,9 +101,6 @@
             <div class="add-to-cart-section">
                 <button class="add-to-cart-btn">
                     Añadir al carrito de compras
-                </button>
-                <button class="favorite-btn" onclick="toggleFavorite(this)">
-                    ♡
                 </button>
             </div>
 
@@ -177,19 +165,6 @@
                         </ul>
                     </div>
                 </div>
-
-                <!-- Sobre La Tienda -->
-                <div class="collapsible-section">
-                    <div class="section-header" onclick="toggleSection(this)">
-                        <h3>Sobre La Tienda</h3>
-                        <span class="icon">−</span>
-                    </div>
-                    <div class="section-content">
-                        <p><strong>Life Filter</strong></p>
-                        <p>97,5 % pagó a tiempo | 3K+ vendido recientemente</p>
-                        <p>Tienda especializada en moda urbana y ropa asiática de alta calidad. Más de 5 años de experiencia brindando productos únicos y auténticos.</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -216,8 +191,19 @@
         /* ========================================
            FUNCIÓN: Agregar al carrito
            ======================================== */
+
+        // esta variable esta para no cargar varias veces el minicarrito de manera innecesaria
+        let carritoYaCargado = false;
+
+        let minicarrito = document.getElementById('miniCart')
         addToCartBtn = document.querySelector('.add-to-cart-btn');
         addToCartBtn.addEventListener('click', function () {
+            
+            if (!carritoYaCargado){
+                window.cargarMiniCarrito();
+                carritoYaCargado = true;
+            }
+
             // Si el botón ya está deshabilitado, no hacer nada (evita el spam)
             if (addToCartBtn.disabled) return;
 
@@ -247,13 +233,14 @@
             .then(r => r.json())
             .then(data => {
                 if (data.status === "success" && data.type === 'new_item'){
-                    console.log(data.item);
+                    
+
                     let producto_id = data.item.producto_id;
                     let item = data.item;
                     let carritoHtml = document.getElementById('miniCartItems');
                     let itemHtml = `
-                        <div class="cart-item-mini" id="item-${item.logueado?item.id:producto_id}">
-                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.logueado?item.id:producto_id}">
+                        <div class="cart-item-mini" id="item-${item.id}">
+                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.id}">
                             <img class="cart-item-img"
                                 src="/media/${item.imagen}"
                                 onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -268,18 +255,18 @@
                                         <input 
                                             type="number" 
                                             class="qty-number" 
-                                            id="qty-${item.logueado?item.id:producto_id}"
+                                            id="qty-${item.id}"
                                             
                                             value="${item.cantidad}"
                                             min="1" 
                                             max="${item.cant_max}"
-                                            data-item-id="${item.logueado?item.id:producto_id}"
+                                            data-item-id="${item.id}"
                                             style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                         >
                                     </div>
-                                    <button class="remove-btn" onclick="eliminarItem('${item.logueado?item.id:producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                                    <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                                 </div>
-                                <div class="item-error" id="error-${producto_id}"></div>
+                                <div class="item-error" id="error-${item.id}"></div>
                             </div>
                         </div>
                     `
@@ -293,6 +280,8 @@
                     
                     window.actualizarTotal();
                     
+                    minicarrito.classList.add('visible');
+                    
                     // Actualizar la cantidad de items en el carrito
                     document.querySelector('#miniCartCount').textContent = document.querySelectorAll('.cart-item-mini').length
 
@@ -304,12 +293,16 @@
                         addToCartBtn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
                     }, 2000);
                 } else if(data.status === 'success' && data.type === 'increase_quantity'){
-
+                    
                     let producto_id = String(data.item.producto_id);
+                    
                     let itemInput = document.getElementById(`qty-${data.item.logueado?data.item.id:producto_id}`);
 
                     itemInput.value = parseInt(itemInput.value, 10) + 1;
                     window.actualizarTotal();
+
+                    minicarrito.classList.add('visible');
+                    
                 } else if (data.status === 'error'){
                     Swal.fire({ title: '¡Error!', icon: 'error', text: data.message});
                 }

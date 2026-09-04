@@ -4,7 +4,7 @@
 {% load humanize %}
 {% csrf_token %}
 <!-- Quita el minicarrito -->
-{% comment %}{% block minicarrito %}{% endblock %}{% endcomment %}
+{% block minicarrito %}{% endblock %}
 
 {% block body %}
 
@@ -35,13 +35,23 @@
                         >
                     </div>
                     <div class="item-image">
-                        {% obtener_valor imagenes item.producto_id.nombre as imagen %}
+                        {% if login %}
+                            {% obtener_valor imagenes item.producto_id.nombre as imagen %}
+                        {% else %}
+                            {% obtener_valor imagenes item.nombre as imagen %}
+                        {% endif %}
                         <img src="{% media imagen %}" alt="Producto">
                     </div>
                     <div class="item-info">
-                        <h3 class="item-name">{{item.producto_id.nombre}}</h3>
-                        <p class="item-size">Talla {{item.producto_id.talla}}</p>
-                        <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
+                        {% if login %}
+                            <h3 class="item-name">{{item.producto_id.nombre}}</h3>
+                            <p class="item-size">Talla {{item.producto_id.talla}}</p>
+                            <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
+                        {% else %}
+                            <h3 class="item-name">{{item.nombre}}</h3>
+                            <p class="item-size">Talla {{item.talla}}</p>
+                            <p class="item-price">${{item.precio | intcomma}}</p>
+                        {% endif %}
                     </div>
                     <div class="item-controls">
                         <div class="quantity-controls">
@@ -52,11 +62,15 @@
                                 id="qty-{{item.id}}" 
                                 value="{{item.cantidad}}"
                                 min="1" 
-                                max="{{item.producto_id.cantidad}}"
+                                max="{% if login %}{{item.producto_id.cantidad}}{% else %}{{item.cant_max}}{% endif %}"
                                 data-item-id="{{item.id}}"
                                 style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                             >
-                            <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
+                            {% if login %}
+                                <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
+                            {% else %}
+                                <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.cant_max}}')">+</button>
+                            {% endif %}
                         </div>
                         <button class="remove-btn" onclick="removeItem('{{item.id}}')">Eliminar</button>
                     </div>
@@ -73,7 +87,7 @@
             <!-- Subtotal -->
             <div class="summary-row">
                 <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
-                <span class="summary-value" id="subtotal">$419.407</span>
+                <span class="summary-value" id="subtotal">${{ subtotal|intcomma }}</span>
             </div>
             
             <!-- Envío -->
@@ -132,6 +146,13 @@
                 timer = setTimeout(() => {
                     // hace la petición solo después de 600ms sin escribir
                     window.seleccionarItem(null, null, this.checked)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            updateTotal(data.total)
+                        } else if (data.status === 'error'){
+                            console.log(`Ha ocurrido un error ${data.message}`)
+                        }
+                    });
                 }, 600)
             });
 
@@ -141,7 +162,14 @@
                 clearTimeout(timer)
                     timer = setTimeout(() => {
                         // hace la petición solo después de 600ms sin escribir
-                        window.seleccionarItem(this.dataset.itemId, e.target.checked);
+                        window.seleccionarItem(this.dataset.itemId, e.target.checked)
+                        .then(data => {
+                            if (data.status === 'success'){
+                                updateTotal(data.total)
+                            } else if (data.status === 'error'){
+                                console.log(`Ha ocurrido un error ${data.message}`)
+                            }
+                        });
                     }, 600)
                 });
             });
@@ -164,27 +192,32 @@
                 timer = setTimeout(() => {
                     // hace la petición solo después de 600ms sin escribir
                     window.actualizarCantidad(this.dataset.itemId, this.value)
+                    .then(data => {
+                        if (data.status === "success"){
+                            this.value = data.cantidad;
+                            updateTotal(data.total);
+                        }
+                    })
+
                 }, 600)
             })
         });
 
         function increaseQty(itemId, cantidadTotalProducto) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
-            let currentQty = parseInt(qtyElement.value);  // ← .value en vez de .textContent
+            let currentQty = parseInt(qtyElement.value);  
             if (currentQty < parseInt(cantidadTotalProducto)){
-                qtyElement.value = currentQty + 1;  // ← .value
-                updateTotal();
+                qtyElement.value = currentQty + 1;
                 qtyElement.dispatchEvent(new Event('input'))
             }
         }
 
         function decreaseQty(itemId) {
             const qtyElement = document.getElementById(`qty-${itemId}`);
-            let currentQty = parseInt(qtyElement.value);  // ← .value
+            let currentQty = parseInt(qtyElement.value);
             if (currentQty > 1) {
-                qtyElement.value = currentQty - 1;  // ← .value
+                qtyElement.value = currentQty - 1;
                 qtyElement.dispatchEvent(new Event('input'))
-                updateTotal();
             }
         }
 
@@ -209,7 +242,8 @@
                         item.style.animation = 'fadeOut 0.3s ease';
                         setTimeout(() => {
                             item.remove();
-                            updateTotal();
+                            console.log(`total ${data.total}`);
+                            updateTotal(data.total);
                             
                             // Si no quedan productos, muestra mensaje de carrito vacío
                             if (document.querySelectorAll('.cart-item').length === 0) {
@@ -227,18 +261,23 @@
            FUNCIÓN: Actualizar totales del resumen
            Recalcula subtotal y total
            ======================================== */
-        function updateTotal() {
+        function updateTotal(subtotal) {
             const items = document.querySelectorAll('.cart-item');
             let itemCount = 0;
             
             items.forEach(item => {
-                const qty = parseInt(item.querySelector('.qty-number').textContent);
-                itemCount += qty;
+                if (item.querySelector('.item-select').checked){
+                    const qty = item.querySelector('.qty-number').value;            
+                    itemCount += parseInt(qty, 10);
+                }
+
             });
-            
+    
             // Actualiza el texto del subtotal
             document.querySelector('.summary-label').textContent = 
                 `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
+
+            document.querySelector('#subtotal').textContent = `${window.formatPrice(subtotal)}`;
         }
 
         /* ========================================

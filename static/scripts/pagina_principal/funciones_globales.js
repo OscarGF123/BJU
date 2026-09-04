@@ -44,7 +44,6 @@ window.toggleTheme = function () {
 
 window.actualizarTotal = function (total=null) {
     if (total === null){
-        console.log('actualizar total');
 
         let precioTotal = 0;
 

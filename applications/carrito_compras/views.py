@@ -16,20 +16,30 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id')
-        imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
-        context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
+        if self.request.user.is_authenticated:
+            items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id')
+            imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
+            context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
+            context['cantidad_productos_seleccionados'] = sum([i.cantidad for i in items.filter(seleccionado=True)])
+            context['subtotal'] = sum(i.producto_id.precio_unitario * i.cantidad for i in items if i.seleccionado)
+        else :
+            items = self.request.session.get('carrito', [])
+            context['imagenes'] = {item['nombre']: item['imagen'] for item in items}
+            context['cantidad_productos_seleccionados'] = sum([i['cantidad'] for i in items if i['seleccionado']])
+            context['subtotal'] = sum(int(i['precio']) * int(i['cantidad']) for i in items if i['seleccionado'])
+        
         context['login'] = True if self.request.user.is_authenticated else False
-        context['cantidad_productos_seleccionados'] = sum([i.cantidad for i in items.filter(seleccionado=True)])
+        
         return context
 
     def get_queryset(self):
-        usuario_id = self.request.session.get("_auth_user_id")
-        return ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id).select_related("producto_id").prefetch_related("producto_id__imagen_set").order_by('producto_id__nombre__valor')
-
+        if self.request.user.is_authenticated:
+            usuario_id = self.request.session.get("_auth_user_id")
+            return ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id).select_related("producto_id").prefetch_related("producto_id__imagen_set").order_by('producto_id__nombre__valor')
+        else:
+            return self.request.session.get('carrito', [])
 class AgregarItem(View):
     def post(self, request, slug):
-        request.session['carrito'] = {}
         talla = request.POST.get('talla', None)
 
         # Verificar si se ha enviado la talla del producto
@@ -70,25 +80,39 @@ class AgregarItem(View):
 
         # Verificar si el usuario esta logueado
         if not request.user.is_authenticated:
+            # request.session['carrito'] = []
+            # request.session.modified = True
+            # return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
             # Se crea un carrito vacio si no existe
             if 'carrito' not in request.session:
-                request.session['carrito'] = {}
+                request.session['carrito'] = []
             carrito_session: dict = request.session['carrito']
 
-            verificar_item_session = carrito_session.get(str(producto.id), None)
+            # Verificar si el producto ya esta en el carrito
+            try:
 
-            # Verifica si se puede agregar un producto mas
+                verificar_item_session = list(filter(lambda e: e['producto_id'] == producto_id, carrito_session))[0]
+            
+            except IndexError as e:
+
+                verificar_item_session = None
+
+            # Verifica si se puede agregar un producto mas al carrito
             if verificar_item_session and (verificar_item_session['cantidad'] + 1) > producto.cantidad:
 
                 return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
             item = {}
-            # Verificar si el producto ya esta en el carrito
+
+            # Si el producto ya esta en el carrito entonces incrementar la cantidad en 1
             if verificar_item_session:
-                carrito_session[producto_id]['cantidad'] += 1
-                item[producto_id] = carrito_session[producto_id]
+
+                for i, v in enumerate(carrito_session):
+                    if v['producto_id'] == producto_id:
+                        carrito_session[i]['cantidad'] += 1
+                        item = carrito_session[i]
 
                 request.session.modified = True
-                return JsonResponse({'status': 'success', 'type': 'increase_quantity', 'item': producto_id})
+                return JsonResponse({'status': 'success', 'type': 'increase_quantity', 'item': item})
             else:
                 
 
@@ -101,9 +125,10 @@ class AgregarItem(View):
                     'precio': str(producto.precio_unitario),
                     'cant_max': int(producto.cantidad),
                     'logueado': False,
-                    'producto_id': producto.id
+                    'id': producto_id,
+                    'producto_id': producto_id  # Esto para evitar errores
                 }
-                carrito_session.update(item)
+                carrito_session.append(item)
                 request.session.modified = True
                 return JsonResponse({'status': 'success', 'type': 'new_item', 'item': item})    
 
@@ -162,12 +187,47 @@ class AgregarItem(View):
             return JsonResponse({'status': "success", "type": 'new_item', 'item': item})
         
 # Con usuario logueado
-class ActualizarItem(ClienteRequiredMixin, View):
+class ActualizarItem(View):
     
     def post(self, request, item_id):
         cantidad = int(request.POST.get('cantidad', 1))
         item_id = str(item_id)
+
+        if not request.user.is_authenticated:
+            producto = Producto.objects.filter(id=item_id)
+            carrito_compras_session = request.session.get('carrito', None)
+
+            if not carrito_compras_session:
+                return JsonResponse({'status': 'error', 'type': 'cart_not_found'})
+            if not producto.exists():
+                return JsonResponse({'status': 'error', 'type': 'product_not_found', 'message': 'El producto seleccionado no ha sido encontrado.'})
+
+            # Verificar si la cantidad ingresada es superior al limite de la cantidad de productos
+            if cantidad > producto.first().cantidad:
+                
+                return JsonResponse({
+                    'status': 'error', 
+                    'type': 'invalid_form', 
+                    'message': f"Solo quedan {producto.first().cantidad} productos disponibles",
+                    'id': item_id
+                    })
+
+            for i, v in enumerate(carrito_compras_session):
+
+                if v['producto_id'] == item_id:
+                    carrito_compras_session[i]['cantidad'] = cantidad
+
+            request.session.modified = True
+
+            total = sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session)
+            return JsonResponse({
+                'status': 'success', 
+                'mesagge': 'Se ha actualizado la cantidad correctamente',
+                'total': total,
+                'cantidad': cantidad
+                })
         usuario_id = request.session.get("_auth_user_id")
+        
         cantidad_producto = ItemsCarritoCompras.objects.select_related('producto_id').filter(
                                 id=item_id, carrito_compra_id__usuario_id=usuario_id
                                 ).first().producto_id.cantidad
@@ -199,17 +259,63 @@ class EliminarItem(VistaBaseEliminar):
 
     model = ItemsCarritoCompras
 
+    def get_object(self, queryset=None):
+        # Si no está logueado, no busca en la BD
+        if not self.request.user.is_authenticated:
+            return None
+        return super().get_object(queryset)
+
+    def delete(self, request, *args, **kwargs):
+
+        if not request.user.is_authenticated:
+            
+            id = str(kwargs.get('pk'))
+            print(f'el id: {id}')
+            carrito_compras_session = request.session.get('carrito', None)
+
+            if not carrito_compras_session:
+                return JsonResponse({'status': 'error', 'type': 'cart_not_found'})
+
+            for i, v in enumerate(carrito_compras_session):
+                if v['producto_id'] == id:
+                    del carrito_compras_session[i]
+                total = sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
+            request.session.modified = True
+            return JsonResponse({"status": "success", "id": id, 'total': total})
+        else:
+
+                self.object = self.get_object()
+                id = self.object.id
+                self.object.delete()
+                total = sum(i.cantidad * i.producto_id.precio_unitario
+                    for i in ItemsCarritoCompras.objects.filter(
+                        carrito_compra_id__usuario_id=request.user,
+                        seleccionado=True
+                    ).select_related('producto_id'))
+                print(f'total eliminar {total}')
+                return JsonResponse({"status": "success", "id": id, 'total': total})
+
+
 def mini_carrito(request):
     """
         Carga todos los items seleccionados por el usuario al minicarrito de compras
     """
-    if not request.user.is_authenticated:
-        return JsonResponse({'status': 'error', 'type_error': 'is_not_authenticated', 'message': 'El usuario no se ha autenticado'})
 
+    if not request.user.is_authenticated:
+
+        items = request.session.get('carrito', None)
+
+        if not items:
+            return JsonResponse({'status': 'success', 'type': 'empty_cart', 'items': []})
+
+        total = sum(int(i['precio']) * i['cantidad'] for i in items if i['seleccionado'])
+
+        return JsonResponse({'items': items, 'total': total})
+    
     carrito = CarritoCompras.objects.filter(usuario_id=request.user)
 
     if not carrito.exists():
-        return JsonResponse({'status': 'error', 'type_error': 'cart_not_found'})
+        return JsonResponse({'status': 'error', 'type_error': 'cart_not_found', 'items': []})
 
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first()).select_related('producto_id')
 
@@ -227,7 +333,8 @@ def mini_carrito(request):
             'imagen': str(imagen.link_imagen),
             'cant_max': item.producto_id.cantidad,
             'producto_id': item.producto_id.id,
-            'seleccionado': item.seleccionado
+            'seleccionado': item.seleccionado,
+            'logueado': True
         })
 
         total = sum(
@@ -240,6 +347,44 @@ def mini_carrito(request):
 def seleccionar_item(request):
 
     seleccionar_todo = request.POST.get('seleccionar_todo', None)
+    item_id = request.POST.get('item_id', None)
+    seleccionado = request.POST.get('seleccionado', None)
+
+    seleccionado = True if seleccionado == "true" else False
+    
+    if not request.user.is_authenticated:
+        
+        carrito_compras_session = request.session.get('carrito', None)
+
+        if not carrito_compras_session:
+            return JsonResponse({'status': 'error', 'type': 'cart_not_found'})
+
+        if seleccionar_todo:
+
+            for i, _ in enumerate(carrito_compras_session):
+                carrito_compras_session[i]['seleccionado'] = True if seleccionar_todo == 'true' else False
+                print(f'esta seleccionado {carrito_compras_session[i]['seleccionado']}')
+
+            request.session.modified = True
+            return JsonResponse({
+                'status': 'success',
+                'total': sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
+            })
+
+        if item_id is None and seleccionado is None:
+
+            return JsonResponse({'status': 'error', 'type': 'arguments_not_found'})
+
+        for i, v in enumerate(carrito_compras_session):
+            if v['producto_id'] == item_id:
+                carrito_compras_session[i]['seleccionado'] = seleccionado
+
+        request.session.modified = True
+        return JsonResponse({
+                'status': 'success',
+                'total': sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
+            })
+
     if seleccionar_todo:
         ItemsCarritoCompras.objects.filter(
             carrito_compra_id__usuario_id=request.user.id
@@ -255,16 +400,13 @@ def seleccionar_item(request):
                 ).select_related('producto_id')
         )
         })
-    item_id = request.POST.get('item_id', None)
-    seleccionado = request.POST.get('seleccionado', None)
 
-    if not request.user.is_authenticated and item_id is None and seleccionado is None:
-        return JsonResponse({'total': 1})
-
-    seleccionado = True if seleccionado == "true" else False
+    if item_id is None and seleccionado is None:
+        
+        return JsonResponse({'status': 'error', 'type': 'arguments_not_found'})
 
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, id=item_id)
-    print(f'item id {item_id}')
+
     if not items.exists():
         return JsonResponse({
             'status': 'error', 

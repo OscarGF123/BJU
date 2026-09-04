@@ -11,17 +11,15 @@ class ProductoDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        producto: Producto = Producto.objects.filter(slug=self.kwargs.get('slug')).first()
+        producto: Producto = self.object
+        items_seleccionados = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id'),seleccionado=True).select_related('producto_id')
+        context['cantidad_items'] = items_seleccionados.count()
         context['tallas'] = {i.talla: True if i.cantidad != 0 else False for i in Producto.objects.filter(nombre=producto.nombre)}
         context['login'] = True if self.request.user.is_authenticated else False
         precio_total_items = sum(
             i.cantidad * i.producto_id.precio_unitario
-            for i in ItemsCarritoCompras.objects.filter(
-                    carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id'),
-                    seleccionado=True
-                ).select_related('producto_id')
+            for i in items_seleccionados
         )
-        print(f'precio total {precio_total_items}')
         context['total'] = precio_total_items
         context['productos_relacionados'] = Producto.objects.filter(
             categoria=producto.categoria, 

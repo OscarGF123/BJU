@@ -190,7 +190,7 @@ let showCart = () => {
 // ========================================
 
 
-function cargarMiniCarrito() {
+window.cargarMiniCarrito = function cargarMiniCarrito() {
     
     fetch('/carrito/json/')
         .then(r => r.json())
@@ -210,8 +210,8 @@ function cargarMiniCarrito() {
             }
 
             container.innerHTML = data.items.map(item => `
-                <div class="cart-item-mini" id="item-${item.id}">
-                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.id}">
+                <div class="cart-item-mini" id="item-${item.logueado?item.id:item.producto_id}">
+                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.logueado?item.id:item.producto_id}">
                     <img class="cart-item-img"
                         src="/media/${item.imagen}"
                         onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -226,18 +226,18 @@ function cargarMiniCarrito() {
                                 <input 
                                     type="number" 
                                     class="qty-number" 
-                                    id="qty-${item.id}"
+                                    id="qty-${item.logueado?item.id:item.producto_id}"
                                     
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
-                                    data-item-id="${item.id}"
+                                    data-item-id="${item.logueado?item.id:item.producto_id}"
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>
-                            <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
+                            <button class="remove-btn" onclick="eliminarItem('${item.logueado?item.id:item.producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </div>
-                        <div class="item-error" id="error-${item.id}"></div>
+                        <div class="item-error" id="error-${item.logueado?item.id:item.producto_id}"></div>
                     </div>
                 </div>
             `).join('');
@@ -297,11 +297,11 @@ function cargarMiniCarrito() {
                     }, 600)
                 })
             });
+        })
+        .catch(() => {
+            document.getElementById('miniCartItems').innerHTML =
+                '<p class="cart-empty">Error al cargar el carrito</p>';
         });
-        // .catch(() => {
-        //     document.getElementById('miniCartItems').innerHTML =
-        //         '<p class="cart-empty">Error al cargar el carrito</p>';
-        // });
 }
 
 // Actualizar Total del MiniCarito
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
         miniCart.classList.toggle('visible');
 
         if (!carritoYaCargado) {
-            cargarMiniCarrito();
+            window.cargarMiniCarrito();
             carritoYaCargado = true;
         }
     });

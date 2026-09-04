@@ -14,7 +14,7 @@ class PaginaPrincipal(ListView):
         context = super().get_context_data(**kwargs)
         context['login'] = True if self.request.user.is_authenticated else False
         context['imagen_producto'] = Imagen.objects.all()
-        context['cantidad_items'] = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id')).select_related('producto_id').count()
+        context['cantidad_items'] = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=self.request.session.get('_auth_user_id'), seleccionado=True).select_related('producto_id').count()
         return context
     
     def get_queryset(self):
