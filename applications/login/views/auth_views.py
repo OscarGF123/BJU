@@ -7,8 +7,9 @@ from django.shortcuts import redirect
 from django.http import JsonResponse
 
 from applications.login.forms import ReenviarVerificacionForm
-from applications.carrito_compras.models import CarritoCompras
+from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.login.services import NotificationService, EmailService
+from applications.productos.models import Producto
 from applications.usuarios.models import Usuario, TipoIdentificacion
 from applications.login.forms import LoginForm, RegistroForm
 from applications.login.services import default_email_service
@@ -47,7 +48,30 @@ class LoginView(FormView):
                     }, status=200)
             # AGREGAR: Hacer login del usuario
             login(self.request, user)
-            
+
+            # Migrar el carrito de la sesion
+            carrito_temporal = self.request.session.get('carrito', [])
+            carrito_usuario, _ = CarritoCompras.objects.get_or_create(usuario_id=user)
+
+            if carrito_temporal:
+                for i in carrito_temporal:
+                    producto = Producto.objects.filter(id=i['producto_id'])
+
+                    if producto.exists():
+                        item, creado = ItemsCarritoCompras.objects.get_or_create(
+                            carrito_compra_id=carrito_usuario,
+                            producto_id=producto.first(),
+                            seleccionado=i['seleccionado'],
+                            cantidad=i['cantidad']
+                        )
+
+                        if not creado:
+                            item.cantidad += i['cantidad']
+                            item.save()
+
+                del self.request.session['carrito']
+                self.request.session.modified = True
+
             # Respuesta AJAX exitosa
             if self.request.headers.get('X-Requested-With') == "XMLHttpRequest":
                 return JsonResponse({
@@ -205,7 +229,7 @@ class VerificarEmailView(TemplateView):
                 usuario.save()
                 
                 # Se crea carrito de compras para el usuario
-                CarritoCompras.objects.create(usuario_id=usuario)
+                CarritoCompras.objects.get_or_create(usuario_id=usuario)
 
                 context = {
                     'verificacion_exitosa': True,
