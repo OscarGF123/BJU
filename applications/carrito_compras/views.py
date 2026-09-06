@@ -21,13 +21,13 @@ class CarritoComprasListView(ListView, ClienteRequiredMixin):
             imagenes_items = Imagen.objects.filter(producto_id__nombre__valor__in=[i.producto_id.nombre.valor for i in items], portada="Si").select_related('producto_id')
             context['imagenes'] = {imagen.producto_id.nombre.valor: str(imagen.link_imagen) for imagen in imagenes_items}
             context['cantidad_productos_seleccionados'] = sum([i.cantidad for i in items.filter(seleccionado=True)])
-            context['subtotal'] = sum(i.producto_id.precio_unitario * i.cantidad for i in items if i.seleccionado)
+            
         else :
             items = self.request.session.get('carrito', [])
             context['imagenes'] = {item['nombre']: item['imagen'] for item in items}
             context['cantidad_productos_seleccionados'] = sum([i['cantidad'] for i in items if i['seleccionado']])
-            context['subtotal'] = sum(int(i['precio']) * int(i['cantidad']) for i in items if i['seleccionado'])
-        
+
+        context['calcular_venta'] = calcular_venta(self.request)
         context['login'] = True if self.request.user.is_authenticated else False
         
         return context
@@ -123,6 +123,7 @@ class AgregarItem(View):
                     'imagen': str(imagen.first().link_imagen) if imagen else None,
                     'talla': talla.valor,
                     'precio': str(producto.precio_unitario),
+                    'precio_mayorista':  producto.precio_mayorista,
                     'cant_max': int(producto.cantidad),
                     'logueado': False,
                     'id': producto_id,
@@ -337,12 +338,7 @@ def mini_carrito(request):
             'logueado': True
         })
 
-        total = sum(
-            int(i['precio']) * i['cantidad']
-            for i in data if i['seleccionado']
-        )
-
-    return JsonResponse({'items': data, 'total': total})
+    return JsonResponse({'items': data, 'calcular_compra': calcular_venta(request)})
 
 def seleccionar_item(request):
 
@@ -421,3 +417,42 @@ def seleccionar_item(request):
     total = sum([i.cantidad * i.producto_id.precio_unitario for i in items_seleccionados])
 
     return JsonResponse({'status': 'success', 'total': total})
+
+def calcular_venta(request):
+
+    """ Este metodo se encarga de calcular el subtotal, total y descuento.
+        Cuando hayan mas de 6 productos en el carrito de compras entonces se dejara 
+        el precio mayorista de los productos.
+        
+        Args: request
+        Return: retorna un diccionario con el subtotal, total y descuento
+        {"subtotal": 0, "total": 0, "descuento": 0} """
+
+    if request.user.is_authenticated:
+
+        items = list(ItemsCarritoCompras.objects.filter(
+            carrito_compra_id__usuario_id=request.user,
+            seleccionado=True
+        ).select_related('producto_id'))
+
+        subtotal = sum(i.cantidad * i.producto_id.precio_unitario for i in items)
+        print(f'primer subtotal {subtotal}')
+
+        cant_productos = sum(i.cantidad for i in items) 
+
+        descuento = 0
+
+        if cant_productos >= 6:
+            total = sum(i.cantidad * i.producto_id.precio_mayorista for i in items)
+            descuento = subtotal - total
+        else:
+            total = subtotal
+
+        print(f'subtotal: {subtotal}, descuento: {descuento}, total: {total}')
+        return {'subtotal': subtotal, 'total': total, 'descuento': descuento}
+
+    else:
+
+        items = request.session.get('carrito', [])
+
+        return sum(i['cantidad'] * int(i['precio']) for i in items if i['seleccioando'])

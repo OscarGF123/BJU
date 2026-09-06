@@ -34,7 +34,8 @@ class ProductoForm(ModelForm):
             "nombre", 
             "descripcion", 
             "cantidad", 
-            "precio_unitario", 
+            "precio_unitario",
+            "precio_mayorista",
             "categoria", 
             "tipo", 
             "talla", 
@@ -76,11 +77,21 @@ class ProductoForm(ModelForm):
             "precio_unitario": NumberInput(
                 attrs={
                     'class': "bj-form-control",
-                    'placeholder': "0.00",
+                    'placeholder': "0",
                     'min': "0",
-                    'step': "0.01"
+                    'step': "1"
                 }
             ),
+
+            "precio_mayorista": NumberInput(
+                attrs={
+                    'class': "bj-form-control",
+                    'placeholder': "0",
+                    'min': "0",
+                    'step': "1"
+                }
+            ),
+
             "categoria": Select(
                 attrs={
                     'class': "bj-form-select",
@@ -113,6 +124,7 @@ class ProductoForm(ModelForm):
             'descripcion': 'Descripción',
             'cantidad': 'Cantidad en Stock',
             'precio_unitario': 'Precio Unitario ($)',
+            'precio_mayorista': 'Precio Mayorista',
             'categoria': 'Categoría',
             'talla': 'Talla',
             'marca': 'Marca',

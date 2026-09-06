@@ -87,7 +87,7 @@
             <!-- Subtotal -->
             <div class="summary-row">
                 <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
-                <span class="summary-value" id="subtotal">${{ subtotal|intcomma }}</span>
+                <span class="summary-value" id="subtotal">${{ calcular_venta.subtotal|intcomma }}</span>
             </div>
             
             <!-- Envío -->
@@ -99,13 +99,13 @@
             <!-- Descuento (opcional) -->
             <div class="summary-row">
                 <span class="summary-label">Descuento</span>
-                <span class="summary-value" style="color: #4CAF50;">-$20.000</span>
+                <span class="summary-value" style="color: #4CAF50;">-${{ calcular_venta.descuento|intcomma }}</span>
             </div>
             
             <!-- Total -->
             <div class="summary-row">
                 <span class="summary-label">Total</span>
-                <span class="summary-value" id="total">$399.407</span>
+                <span class="summary-value" id="total">${{ calcular_venta.total|intcomma }}</span>
             </div>
             
             <!-- Botón de pagar -->
@@ -113,14 +113,6 @@
             
             <!-- Información adicional -->
             <div class="info-badges">
-                <div class="info-badge">
-                    <span class="info-badge-icon">✓</span>
-                    <span>Envío gratis en compras superiores a $50.000</span>
-                </div>
-                <div class="info-badge">
-                    <span class="info-badge-icon">✓</span>
-                    <span>Devolución gratis en 30 días</span>
-                </div>
                 <div class="info-badge">
                     <span class="info-badge-icon">✓</span>
                     <span>Pago seguro y protegido</span>
