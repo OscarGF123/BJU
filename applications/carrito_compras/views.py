@@ -168,7 +168,7 @@ class AgregarItem(View):
             elif verificar_item.exists() and (verificar_item.first().cantidad + 1) > producto.cantidad:
                 return JsonResponse({'status': 'error', 'type_error': 'out_of_stock', 'message': 'Este producto en la talla seleccionada esta fuera de stock'})
 
-            carrito = CarritoCompras.objects.get(usuario_id=usuario_id)
+            carrito, _ = CarritoCompras.objects.get_or_create(usuario_id=usuario_id)
             new_item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
 
             item = {
