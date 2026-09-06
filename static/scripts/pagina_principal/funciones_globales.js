@@ -42,30 +42,14 @@ window.toggleTheme = function () {
 }
 
 
-window.actualizarTotal = function (total=null) {
-    if (total === null){
+window.actualizarTotal = function (subtotal, descuento, total) {
+    let dTotal = document.querySelector('#miniCartTotal');
+    let dDescuento = document.querySelector('#miniCartDescuento');
+    let dSubtotal = document.querySelector('#miniCartSubtotal');
 
-        let precioTotal = 0;
-
-        document.querySelectorAll('.cart-item-price').forEach(e => {
-            // Buscamos el contenedor "padre" de este item específico
-            const itemContainer = e.closest('.cart-item-mini');
-            
-            // Dentro de ese contenedor, buscamos el input de cantidad
-            const qtyInput = itemContainer.querySelector('.qty-number');
-            
-            // Convertimos ambos valores a número
-            const precio = parseInt(e.dataset.precio, 10);
-            const cantidad = parseInt(qtyInput.value, 10);
-            
-            // Sumamos precio * cantidad al total
-            precioTotal += precio * cantidad;
-        });
-        document.querySelector('.total-price').textContent = `${window.formatPrice(precioTotal)}`;
-    } else {
-        document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`;
-    }
-    
+    dTotal.textContent = window.formatPrice(total);
+    dDescuento.textContent = `-${window.formatPrice(descuento)}`;
+    dSubtotal.textContent = window.formatPrice(subtotal);
 }
 
 const csrftoken = document.cookie

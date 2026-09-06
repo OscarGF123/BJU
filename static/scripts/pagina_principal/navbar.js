@@ -198,11 +198,15 @@ window.cargarMiniCarrito = function cargarMiniCarrito() {
             const container = document.getElementById('miniCartItems');
             const badge     = document.getElementById('cartBadge');
             const total     = document.getElementById('miniCartTotal');
+            const descuento     = document.getElementById('miniCartDescuento');
+            const subtotal     = document.getElementById('miniCartSubtotal');
             const count     = document.getElementById('miniCartCount');
 
             badge.textContent = data.items.length;
             count.textContent = data.items.length;
-            total.textContent = window.formatPrice(data.total);
+            total.textContent = window.formatPrice(data.calcular_venta.total);
+            subtotal.textContent = window.formatPrice(data.calcular_venta.subtotal);
+            descuento.textContent = window.formatPrice(data.calcular_venta.descuento);
 
             if (data.items.length === 0) {
                 container.innerHTML = '<p class="cart-empty">Tu carrito está vacío</p>';
@@ -253,7 +257,7 @@ window.cargarMiniCarrito = function cargarMiniCarrito() {
                     window.seleccionarItem(null, null, this.checked)
                     .then(data => {
                         if (data.status === 'success'){
-                            window.actualizarTotal(data.total);
+                            window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
                         }
                     });
                 }, 600)
@@ -269,7 +273,7 @@ window.cargarMiniCarrito = function cargarMiniCarrito() {
                     window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
                     .then(data => {
                         if (data.status === 'success'){
-                            window.actualizarTotal(data.total);
+                            window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
                         }
                     });
                         
@@ -287,7 +291,7 @@ window.cargarMiniCarrito = function cargarMiniCarrito() {
                         window.actualizarCantidad(this.dataset.itemId, this.value)
                         .then(data => {
                             if (data.status == 'success'){
-                                window.actualizarTotal(data.total);
+                                window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
                                 this.value = data.cantidad;
                             } else if (data.status = 'error'){
                                 mostrarErrorItem(data.id, data.message);
@@ -324,7 +328,7 @@ let eliminarItem = (id, nombre)=>{
                     let item = document.getElementById(`item-${id}`);
                     item.style.animation = 'fadeOut 0.3s ease';
                     item.remove();
-                    window.actualizarTotal();
+                    window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
                     // Se verifica si no hay mas items en el carrito para colocar el aviso de que el carrito esta vacio
                     if (document.querySelector('#miniCartItems').children.length == 0){
                         const container = document.getElementById('miniCartItems').innerHTML = `

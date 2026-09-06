@@ -112,7 +112,7 @@ class AgregarItem(View):
                         item = carrito_session[i]
 
                 request.session.modified = True
-                return JsonResponse({'status': 'success', 'type': 'increase_quantity', 'item': item})
+                return JsonResponse({'status': 'success', 'type': 'increase_quantity', 'item': item, 'calcular_venta': calcular_venta(request)})
             else:
                 
 
@@ -131,7 +131,7 @@ class AgregarItem(View):
                 }
                 carrito_session.append(item)
                 request.session.modified = True
-                return JsonResponse({'status': 'success', 'type': 'new_item', 'item': item})    
+                return JsonResponse({'status': 'success', 'type': 'new_item', 'item': item, 'calcular_venta': calcular_venta(request)})    
 
             
         else:
@@ -162,6 +162,7 @@ class AgregarItem(View):
                     'status': 'success',
                     'type': 'increase_quantity',
                     'item': item,
+                    'calcular_venta': calcular_venta(request),
                     'message': f'cantidad del producto {verificar_item.producto_id.nombre.valor} talla {verificar_item.producto_id.talla.valor} incrementada en 1'
                 }
                 return JsonResponse(response)
@@ -185,7 +186,7 @@ class AgregarItem(View):
                 'producto_id': producto.id
             }
 
-            return JsonResponse({'status': "success", "type": 'new_item', 'item': item})
+            return JsonResponse({'status': "success", "type": 'new_item', 'item': item, 'calcular_venta': calcular_venta(request)})
         
 # Con usuario logueado
 class ActualizarItem(View):
@@ -220,11 +221,10 @@ class ActualizarItem(View):
 
             request.session.modified = True
 
-            total = sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session)
             return JsonResponse({
                 'status': 'success', 
                 'mesagge': 'Se ha actualizado la cantidad correctamente',
-                'total': total,
+                'calcular_venta': calcular_venta(request),
                 'cantidad': cantidad
                 })
         usuario_id = request.session.get("_auth_user_id")
@@ -245,14 +245,10 @@ class ActualizarItem(View):
         item = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id)
         item.update(cantidad=cantidad)
         # Valor total de la compra
-        total = sum(
-            i.cantidad * i.producto_id.precio_unitario
-            for i in ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, seleccionado=True).select_related('producto_id')
-        )
         return JsonResponse({
             'status': 'success', 
             'mesagge': 'Se ha actualizado la cantidad correctamente',
-            'total': total,
+            'calcular_venta': calcular_venta(request),
             'cantidad': item.first().cantidad
             })
 
@@ -282,19 +278,14 @@ class EliminarItem(VistaBaseEliminar):
                     del carrito_compras_session[i]
                 total = sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
             request.session.modified = True
-            return JsonResponse({"status": "success", "id": id, 'total': total})
+            return JsonResponse({"status": "success", "id": id, 'calcular_venta': calcular_venta(request)})
         else:
 
-                self.object = self.get_object()
-                id = self.object.id
-                self.object.delete()
-                total = sum(i.cantidad * i.producto_id.precio_unitario
-                    for i in ItemsCarritoCompras.objects.filter(
-                        carrito_compra_id__usuario_id=request.user,
-                        seleccionado=True
-                    ).select_related('producto_id'))
-                print(f'total eliminar {total}')
-                return JsonResponse({"status": "success", "id": id, 'total': total})
+            self.object = self.get_object()
+            id = self.object.id
+            self.object.delete()
+
+            return JsonResponse({"status": "success", "id": id, 'calcular_venta': calcular_venta(request)})
 
 
 def mini_carrito(request):
@@ -309,9 +300,7 @@ def mini_carrito(request):
         if not items:
             return JsonResponse({'status': 'success', 'type': 'empty_cart', 'items': []})
 
-        total = sum(int(i['precio']) * i['cantidad'] for i in items if i['seleccionado'])
-
-        return JsonResponse({'items': items, 'total': total})
+        return JsonResponse({'items': items, 'calcular_venta': calcular_venta(request)})
     
     carrito = CarritoCompras.objects.filter(usuario_id=request.user)
 
@@ -338,7 +327,7 @@ def mini_carrito(request):
             'logueado': True
         })
 
-    return JsonResponse({'items': data, 'calcular_compra': calcular_venta(request)})
+    return JsonResponse({'items': data, 'calcular_venta': calcular_venta(request)})
 
 def seleccionar_item(request):
 
@@ -364,7 +353,7 @@ def seleccionar_item(request):
             request.session.modified = True
             return JsonResponse({
                 'status': 'success',
-                'total': sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
+                'calcular_venta': calcular_venta(request)
             })
 
         if item_id is None and seleccionado is None:
@@ -378,7 +367,7 @@ def seleccionar_item(request):
         request.session.modified = True
         return JsonResponse({
                 'status': 'success',
-                'total': sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
+                'calcular_venta': calcular_venta(request)
             })
 
     if seleccionar_todo:
@@ -388,13 +377,7 @@ def seleccionar_item(request):
         return JsonResponse({
             'status': 'success',
             'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.',
-            'total': sum(
-            i.cantidad * i.producto_id.precio_unitario
-            for i in ItemsCarritoCompras.objects.filter(
-                    carrito_compra_id__usuario_id=request.session.get('_auth_user_id'),
-                    seleccionado=True
-                ).select_related('producto_id')
-        )
+            'calcular_venta': calcular_venta(request)
         })
 
     if item_id is None and seleccionado is None:
@@ -412,11 +395,7 @@ def seleccionar_item(request):
 
     items.update(seleccionado=seleccionado)
 
-    items_seleccionados = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user, seleccionado=True).select_related('producto_id')
-
-    total = sum([i.cantidad * i.producto_id.precio_unitario for i in items_seleccionados])
-
-    return JsonResponse({'status': 'success', 'total': total})
+    return JsonResponse({'status': 'success', 'calcular_venta': calcular_venta(request)})
 
 def calcular_venta(request):
 
@@ -454,5 +433,15 @@ def calcular_venta(request):
     else:
 
         items = request.session.get('carrito', [])
+        subtotal = sum(i['cantidad'] * int(i['precio']) for i in items if i['seleccionado'])
 
-        return sum(i['cantidad'] * int(i['precio']) for i in items if i['seleccioando'])
+        cant_productos = sum(i['cantidad'] for i in items)
+        descuento = 0
+
+        if cant_productos >= 6:
+            total = sum(i['cantidad'] * i['precio_mayorista'] for i in items if i['seleccionado'])
+            descuento = subtotal - total
+        else:
+            total = subtotal
+
+        return {'subtotal': subtotal, 'total': total, 'descuento': descuento}

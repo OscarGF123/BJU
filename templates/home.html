@@ -1,4 +1,5 @@
 {% load static %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -107,12 +108,16 @@
 
                                     <div class="mini-cart-footer">
                                         <div class="mini-cart-total">
+                                            <span>Subtotal:</span>
+                                            <span class="total-price" id="miniCartSubtotal">${{ calcular_venta.subtotal|intcomma }}</span>
+                                        </div>
+                                        <div class="mini-cart-total">
+                                            <span>Descuento:</span>
+                                            <span class="total-price" id="miniCartDescuento">${{ calcular_venta.subtotal|intcomma }}</span>
+                                        </div>
+                                        <div class="mini-cart-total">
                                             <span>Total:</span>
-                                            {% if total %}
-                                                <span class="total-price" id="miniCartTotal">${{total}}</span>
-                                            {% else %}
-                                                <span class="total-price" id="miniCartTotal">0</span>
-                                            {% endif %}
+                                            <span class="total-price" id="miniCartTotal">${{ calcular_venta.total|intcomma }}</span>
                                         </div>
                                         <button class="ver-carrito-btn" onclick="window.location.href='/carrito/'">
                                             VER CARRITO (<span id="miniCartCount">0</span>)

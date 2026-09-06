@@ -193,16 +193,10 @@
            ======================================== */
 
         // esta variable esta para no cargar varias veces el minicarrito de manera innecesaria
-        let carritoYaCargado = false;
 
         let minicarrito = document.getElementById('miniCart')
         addToCartBtn = document.querySelector('.add-to-cart-btn');
         addToCartBtn.addEventListener('click', function () {
-            
-            if (!carritoYaCargado){
-                window.cargarMiniCarrito();
-                carritoYaCargado = true;
-            }
 
             // Si el botón ya está deshabilitado, no hacer nada (evita el spam)
             if (addToCartBtn.disabled) return;
@@ -234,51 +228,9 @@
             .then(data => {
                 if (data.status === "success" && data.type === 'new_item'){
                     
-
-                    let producto_id = data.item.producto_id;
-                    let item = data.item;
-                    let carritoHtml = document.getElementById('miniCartItems');
-                    let itemHtml = `
-                        <div class="cart-item-mini" id="item-${item.id}">
-                            <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.id}">
-                            <img class="cart-item-img"
-                                src="/media/${item.imagen}"
-                                onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
-                                alt="${item.nombre}">
-                            <div class="cart-item-info">
-                                <div class="cart-item-name">${item.nombre}</div>
-                                <div class="cart-item-meta">Talla: ${item.talla || 'N/A'}</div>
-                                <div class="cart-item-price" data-precio='${item.precio}'>${window.formatPrice(item.precio)}</div>
-                                <div class="cart-item-qty">
-                                    <div class="quantity-controls">
-                                        <span class="qty-label">Qty</span>
-                                        <input 
-                                            type="number" 
-                                            class="qty-number" 
-                                            id="qty-${item.id}"
-                                            
-                                            value="${item.cantidad}"
-                                            min="1" 
-                                            max="${item.cant_max}"
-                                            data-item-id="${item.id}"
-                                            style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
-                                        >
-                                    </div>
-                                    <button class="remove-btn" onclick="eliminarItem('${item.id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
-                                </div>
-                                <div class="item-error" id="error-${item.id}"></div>
-                            </div>
-                        </div>
-                    `
-
-                    // verifica si el carrito esta vacio para remplazar el aviso de carrito vacio
-                    if (document.getElementsByClassName('cart-empty').length > 0){
-                        carritoHtml.innerHTML = itemHtml;
-                    } else {
-                        carritoHtml.insertAdjacentHTML('beforeend', itemHtml);  
-                    }
+                    window.cargarMiniCarrito()
                     
-                    window.actualizarTotal();
+                    window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
                     
                     minicarrito.classList.add('visible');
                     
@@ -297,11 +249,13 @@
                     let producto_id = String(data.item.producto_id);
                     
                     let itemInput = document.getElementById(`qty-${data.item.logueado?data.item.id:producto_id}`);
+                    if (itemInput) {
+                        itemInput.value = parseInt(itemInput.value, 10) + 1;
+                        window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
 
-                    itemInput.value = parseInt(itemInput.value, 10) + 1;
-                    window.actualizarTotal();
+                        minicarrito.classList.add('visible');
+                    }
 
-                    minicarrito.classList.add('visible');
                     
                 } else if (data.status === 'error'){
                     Swal.fire({ title: '¡Error!', icon: 'error', text: data.message});
@@ -311,9 +265,9 @@
                 addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
 
             })
-            .catch(error => {
-                Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
-            })
+            // .catch(error => {
+            //     Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
+            // })
             .finally(() => {
                 // Volvemos a habilitar el botón pase lo que pase (éxito o error),
                 // después de un breve momento para que el usuario vea la confirmación
