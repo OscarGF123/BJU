@@ -46,10 +46,12 @@
                         {% if login %}
                             <h3 class="item-name">{{item.producto_id.nombre}}</h3>
                             <p class="item-size">Talla {{item.producto_id.talla}}</p>
+                            <div class="item-error" id="error-{{item.id}}"></div>
                             <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
                         {% else %}
                             <h3 class="item-name">{{item.nombre}}</h3>
                             <p class="item-size">Talla {{item.talla}}</p>
+                            <div class="item-error" id="error-{{item.id}}"></div>
                             <p class="item-price">${{item.precio | intcomma}}</p>
                         {% endif %}
                     </div>
@@ -74,6 +76,7 @@
                         </div>
                         <button class="remove-btn" onclick="removeItem('{{item.id}}')">Eliminar</button>
                     </div>
+                    
                 </div>
             {% endfor %}    
         </div>
@@ -87,7 +90,7 @@
             <!-- Subtotal -->
             <div class="summary-row">
                 <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
-                <span class="summary-value" id="subtotal">${{ calcular_venta.subtotal|intcomma }}</span>
+                <span class="summary-value" id="subtotal">$ {{ calcular_venta.subtotal|intcomma }}</span>
             </div>
             
             <!-- Envío -->
@@ -96,16 +99,16 @@
                 <span class="summary-value" style="color: #4CAF50;">GRATIS</span>
             </div>
             
-            <!-- Descuento (opcional) -->
+            <!-- Descuento -->
             <div class="summary-row">
                 <span class="summary-label">Descuento</span>
-                <span class="summary-value" style="color: #4CAF50;">-${{ calcular_venta.descuento|intcomma }}</span>
+                <span class="summary-value" id="descuento" style="color: #4CAF50;">-$ {{ calcular_venta.descuento|intcomma }}</span>
             </div>
             
             <!-- Total -->
             <div class="summary-row">
                 <span class="summary-label">Total</span>
-                <span class="summary-value" id="total">${{ calcular_venta.total|intcomma }}</span>
+                <span class="summary-value" id="total">$ {{ calcular_venta.total|intcomma }}</span>
             </div>
             
             <!-- Botón de pagar -->
@@ -140,7 +143,7 @@
                     window.seleccionarItem(null, null, this.checked)
                     .then(data => {
                         if (data.status === 'success'){
-                            updateTotal(data.total)
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
                         } else if (data.status === 'error'){
                             console.log(`Ha ocurrido un error ${data.message}`)
                         }
@@ -157,7 +160,7 @@
                         window.seleccionarItem(this.dataset.itemId, e.target.checked)
                         .then(data => {
                             if (data.status === 'success'){
-                                updateTotal(data.total)
+                                updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
                             } else if (data.status === 'error'){
                                 console.log(`Ha ocurrido un error ${data.message}`)
                             }
@@ -181,13 +184,37 @@
         document.querySelectorAll('.qty-number').forEach(input => {
             input.addEventListener('input', function() {
                 clearTimeout(timer)
+                const itemId = this.dataset.itemId;
                 timer = setTimeout(() => {
                     // hace la petición solo después de 600ms sin escribir
                     window.actualizarCantidad(this.dataset.itemId, this.value)
                     .then(data => {
                         if (data.status === "success"){
                             this.value = data.cantidad;
-                            updateTotal(data.total);
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
+
+                        // Limpiar error si había uno
+                        const errorDiv = document.getElementById(`error-${itemId}`);
+                        if (errorDiv) {
+                            errorDiv.classList.remove('visible');
+                            errorDiv.textContent = '';
+                        }
+
+                        } else if (data.status === "error"){
+
+                        // ✅ Mostrar error junto al producto
+                        const errorDiv = document.getElementById(`error-${itemId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = data.message;
+                            errorDiv.classList.add('visible');
+
+                            // Se oculta automáticamente en 3 segundos
+                            setTimeout(() => {
+                                errorDiv.classList.remove('visible');
+                                errorDiv.textContent = '';
+                            }, 10000);
+                        }
+
                         }
                     })
 
@@ -235,7 +262,7 @@
                         setTimeout(() => {
                             item.remove();
                             console.log(`total ${data.total}`);
-                            updateTotal(data.total);
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
                             
                             // Si no quedan productos, muestra mensaje de carrito vacío
                             if (document.querySelectorAll('.cart-item').length === 0) {
@@ -253,7 +280,7 @@
            FUNCIÓN: Actualizar totales del resumen
            Recalcula subtotal y total
            ======================================== */
-        function updateTotal(subtotal) {
+        function updateTotal(subtotal, descuento, total) {
             const items = document.querySelectorAll('.cart-item');
             let itemCount = 0;
             
@@ -270,6 +297,9 @@
                 `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
 
             document.querySelector('#subtotal').textContent = `${window.formatPrice(subtotal)}`;
+            document.querySelector('#descuento').textContent = `-${window.formatPrice(descuento)}`;
+            document.querySelector('#total').textContent = `${window.formatPrice(total)}`;
+
         }
 
         /* ========================================

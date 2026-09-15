@@ -358,7 +358,7 @@ def seleccionar_item(request):
 
         if item_id is None and seleccionado is None:
 
-            return JsonResponse({'status': 'error', 'type': 'arguments_not_found'})
+            return JsonResponse({'status': 'error', 'type': 'arguments_not_found', 'message': "No se ha seleccioando ningun producto"})
 
         for i, v in enumerate(carrito_compras_session):
             if v['producto_id'] == item_id:
@@ -382,7 +382,7 @@ def seleccionar_item(request):
 
     if item_id is None and seleccionado is None:
         
-        return JsonResponse({'status': 'error', 'type': 'arguments_not_found'})
+        return JsonResponse({'status': 'error', 'type': 'arguments_not_found', 'message': "No se ha seleccionado ningun producto."})
 
     items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=request.user.id, id=item_id)
 
@@ -415,7 +415,6 @@ def calcular_venta(request):
         ).select_related('producto_id'))
 
         subtotal = sum(i.cantidad * i.producto_id.precio_unitario for i in items)
-        print(f'primer subtotal {subtotal}')
 
         cant_productos = sum(i.cantidad for i in items) 
 
@@ -426,8 +425,7 @@ def calcular_venta(request):
             descuento = subtotal - total
         else:
             total = subtotal
-
-        print(f'subtotal: {subtotal}, descuento: {descuento}, total: {total}')
+            
         return {'subtotal': subtotal, 'total': total, 'descuento': descuento}
 
     else:

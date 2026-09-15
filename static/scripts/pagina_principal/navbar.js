@@ -352,31 +352,64 @@ let eliminarItem = (id, nombre)=>{
 document.addEventListener('DOMContentLoaded', function() {
 
     let carritoYaCargado = false;
-
     const cartWrapper = document.getElementById('cartWrapper');
     const miniCart    = document.getElementById('miniCart');
     const cartBtn     = document.getElementById('cartBtn');
 
     if (!cartWrapper || !miniCart) return;
 
-    // Click al botón — abre o cierra
+    function posicionarMiniCarrito() {
+        const rect = cartBtn.getBoundingClientRect();
+        const viewportWidth  = document.documentElement.clientWidth;
+        const viewportHeight = document.documentElement.clientHeight;
+        const margen = 10;
+        const cartWidth = Math.min(340, viewportWidth - margen * 2);
+
+        let left = rect.right - cartWidth;
+        if (left < margen) left = margen;
+        if (left + cartWidth > viewportWidth - margen) {
+            left = viewportWidth - cartWidth - margen;
+        }
+        if (left < margen) left = margen;
+
+        // ✅ Altura máxima para no salirse por abajo
+        const topPos = rect.bottom + 8;
+        const alturaMaxima = viewportHeight - topPos - margen;
+
+        miniCart.style.top       = topPos + 'px';
+        miniCart.style.left      = left + 'px';
+        miniCart.style.right     = 'auto';
+        miniCart.style.width     = cartWidth + 'px';
+        miniCart.style.maxHeight = alturaMaxima + 'px'; // ✅ nunca sobrepasa la pantalla
+        miniCart.style.overflowY = 'auto';              // ✅ scroll si el contenido es largo
+    }
+
     cartBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         miniCart.classList.toggle('visible');
 
+        if (miniCart.classList.contains('visible')) {
+            posicionarMiniCarrito();
+        }
+
         if (!carritoYaCargado) {
-            window.cargarMiniCarrito();
+            cargarMiniCarrito();
             carritoYaCargado = true;
         }
     });
 
-    // Click afuera — cierra
+    // Reposicionar si cambia el tamaño de la ventana
+    window.addEventListener('resize', function() {
+        if (miniCart.classList.contains('visible')) {
+            posicionarMiniCarrito();
+        }
+    });
+
     document.addEventListener('click', function(e) {
         if (!cartWrapper.contains(e.target)) {
             miniCart.classList.remove('visible');
         }
     });
-
 });
 
 function mostrarErrorItem(itemId, mensaje) {
