@@ -8,12 +8,12 @@ class CarritoComprasConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'applications.carrito_compras'
 
-    # def ready(self):
-    #     import sys
+    def ready(self):
+        import sys
 
-    #     if "runserver" in sys.argv or "gunicorn" in sys.argv[0]:
-    #         thread = threading.Thread(target=esperar_contenedor_ngrok, daemon=True)
-    #         thread.start()
+        if "runserver" in sys.argv or "gunicorn" in sys.argv[0]:
+            thread = threading.Thread(target=esperar_contenedor_ngrok, daemon=True)
+            thread.start()
 
 
 def esperar_contenedor_ngrok(tiempo_max=120, intervalo=2):

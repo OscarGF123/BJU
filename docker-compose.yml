@@ -76,18 +76,20 @@ services:
     networks:
       - red_bju
 
-  # ngrok:
-  #   image: ngrok/ngrok:latest
-  #   depends_on:
-  #     web:
-  #       condition: service_healthy
-  #   ports:
-  #     - 4040:4040 # puerto para ingresar al dashboard
-  #   environment:
-  #     NGROK_AUTHTOKEN: ${NGROK_AUTHTOKEN}
-  #   command: 
-  #     - "http"
-  #     - "http://host.docker.internal:8000"
+  ngrok:
+    image: ngrok/ngrok:latest
+    depends_on:
+      web:
+        condition: service_healthy
+    ports:
+      - "4040:4040"
+    environment:
+      - NGROK_AUTHTOKEN=${NGROK_AUTHTOKEN}
+    command:
+      - "http"
+      - "web:8000"
+    networks:
+      - red_bju
     
 
 volumes:
