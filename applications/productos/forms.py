@@ -1,4 +1,4 @@
-from django.forms import TextInput, Textarea, Select, ModelForm, FileInput, ValidationError, IntegerField
+from django.forms import NumberInput, TextInput, Textarea, Select, ModelForm, FileInput, ValidationError, IntegerField
 from django.utils.safestring import mark_safe
 
 from applications.productos.models import Producto, Categoria, Talla, Marca, Color, Imagen, Tipo, Nombre
