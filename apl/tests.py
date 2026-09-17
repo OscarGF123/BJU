@@ -118,6 +118,7 @@ class ServicioEpayco():
             "typeSell": "1",
             "tax": "0",
             "email": "oscarhappy456@gmail.com",
+            "onePayment": True, # Sera de un solo cobro
             "urlResponse": f'{url_ngrok}/pse_response/',
             "urlConfirmation": f'{url_ngrok}/pse_response/',
             "methodConfirmation": "POST"
