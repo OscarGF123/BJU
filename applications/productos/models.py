@@ -94,6 +94,7 @@ class Producto(models.Model):
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
     cantidad = models.IntegerField(verbose_name="Cantidad")
     precio_unitario = models.PositiveIntegerField(verbose_name="Precio")
+    precio_mayorista = models.PositiveIntegerField(verbose_name='Precio_Mayorista')
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
     tipo = models.ForeignKey(Tipo, on_delete=models.SET_NULL, null=True)
     talla = models.ForeignKey(Talla, on_delete=models.SET_NULL, null=True)

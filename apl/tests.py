@@ -96,14 +96,16 @@ class ServicioEpayco():
             return response.json()["token"]
         except Exception as e:
             print(f"Hubo un error al crear el token: \n{e}")
-    
+
+    # Usar este metodo solo cuando el contenedor de ngrok este activo
     def crear_link_cobro(self):
         url = f"{self.url_apify}/collection/link/create"
         headers = {
             "Content-Type": "Application/json",
             "Authorization": F"Bearer {self.token}"
         }
-        url_ngrok = requests.request("GET", url="http://localhost:8000/url_ngrok/").json()
+        response = requests.request("GET", url="http://ngrok:4040/api/tunnels")
+        url_ngrok = [i["public_url"] for i in response.json()["tunnels"] if i["public_url"]][0]
 
         payload = json.dumps({
             "quantity": 1,
@@ -116,8 +118,8 @@ class ServicioEpayco():
             "typeSell": "1",
             "tax": "0",
             "email": "oscarhappy456@gmail.com",
-            "urlResponse": f"{url_ngrok.get("url", "https://localhost:8000/")}/pse_response/",
-            "urlConfirmation": f"{url_ngrok.get("url", "https://localhost:8000/")}/pse_response/",
+            "urlResponse": f'{url_ngrok}/pse_response/',
+            "urlConfirmation": f'{url_ngrok}/pse_response/',
             "methodConfirmation": "POST"
         })
 
@@ -286,8 +288,8 @@ class ServicioTrack123():
         return requests.request("POST", url=url, headers=self.headers, json=data).json()
 
 # print(requests.request("DELETE", url="http://localhost:8000/eliminar_persona/126").text)
-# print(ServicioEpayco().crear_link_cobro()
-print(ServicioTrack123().rastrear_envio("700175614787", "inter-rapidisimo-inter-rapidsimo"))
+print(ServicioEpayco().crear_link_cobro())
+# print(ServicioTrack123().rastrear_envio("700175614787", "inter-rapidisimo-inter-rapidsimo"))
 
 # Listar informacion de interapidisimo en la API Track123|
 # with open("transportadores.txt", "w") as archivo:

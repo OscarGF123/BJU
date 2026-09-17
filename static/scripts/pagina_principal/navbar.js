@@ -190,7 +190,7 @@ let showCart = () => {
 // ========================================
 
 
-function cargarMiniCarrito() {
+window.cargarMiniCarrito = function cargarMiniCarrito() {
     
     fetch('/carrito/json/')
         .then(r => r.json())
@@ -198,11 +198,15 @@ function cargarMiniCarrito() {
             const container = document.getElementById('miniCartItems');
             const badge     = document.getElementById('cartBadge');
             const total     = document.getElementById('miniCartTotal');
+            const descuento     = document.getElementById('miniCartDescuento');
+            const subtotal     = document.getElementById('miniCartSubtotal');
             const count     = document.getElementById('miniCartCount');
 
             badge.textContent = data.items.length;
             count.textContent = data.items.length;
-            total.textContent = window.formatPrice(data.total);
+            total.textContent = window.formatPrice(data.calcular_venta.total);
+            subtotal.textContent = window.formatPrice(data.calcular_venta.subtotal);
+            descuento.textContent = window.formatPrice(data.calcular_venta.descuento);
 
             if (data.items.length === 0) {
                 container.innerHTML = '<p class="cart-empty">Tu carrito está vacío</p>';
@@ -210,8 +214,8 @@ function cargarMiniCarrito() {
             }
 
             container.innerHTML = data.items.map(item => `
-                <div class="cart-item-mini">
-                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.producto_id}">
+                <div class="cart-item-mini" id="item-${item.logueado?item.id:item.producto_id}">
+                    <input type="checkbox" class="item-check" ${item.seleccionado?'checked':''} data-producto-id="${item.logueado?item.id:item.producto_id}">
                     <img class="cart-item-img"
                         src="/media/${item.imagen}"
                         onerror="this.src='/static/img/Imagen_no_encontrada.svg'"
@@ -226,18 +230,18 @@ function cargarMiniCarrito() {
                                 <input 
                                     type="number" 
                                     class="qty-number" 
-                                    id="qty-${item.id}"
+                                    id="qty-${item.logueado?item.id:item.producto_id}"
                                     
                                     value="${item.cantidad}"
                                     min="1" 
                                     max="${item.cant_max}"
-                                    data-producto-id="${item.producto_id}"
+                                    data-item-id="${item.logueado?item.id:item.producto_id}"
                                     style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
                                 >
                             </div>
+                            <button class="remove-btn" onclick="eliminarItem('${item.logueado?item.id:item.producto_id}', '${item.nombre}')" title="Eliminar"><i class="fas fa-trash"></i></button>
                         </div>
-                        <!-- 👇 Contenedor del error -->
-                        <div class="item-error" id="error-${item.id}"></div>
+                        <div class="item-error" id="error-${item.logueado?item.id:item.producto_id}"></div>
                     </div>
                 </div>
             `).join('');
@@ -250,29 +254,13 @@ function cargarMiniCarrito() {
                 
                 clearTimeout(timer);
                 timer = setTimeout(() => {
-                    window.seleccionarItem(null, null, this.checked);
-                    actualizarTotal();
+                    window.seleccionarItem(null, null, this.checked)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+                        }
+                    });
                 }, 600)
-            });
-            // Funcion para guardar la cantidad de un producto cada cierto tiempo
-
-            document.querySelectorAll('.qty-number').forEach(input => {
-                input.addEventListener('input', function() {
-                    clearTimeout(timer);
-                    timer = setTimeout(() => {
-                        // hace la petición solo después de 600ms sin escribir
-                        
-                        window.actualizarCantidad(this.id, this.value)
-                        .then(data => {
-                            if (data.status == 'success'){
-                                actualizarTotal(data.total);
-                            } else if (data.status = 'error'){
-                                mostrarErrorItem(data.id, data.message);
-                            }   
-                        });
-                        
-                    }, 600)
-                })
             });
 
             // Funcion para seleccionar lo productos que seran comprados
@@ -282,38 +270,127 @@ function cargarMiniCarrito() {
                     clearTimeout(timer);
                     timer = setTimeout(() => {
 
-                        window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
-                        actualizarTotal()
+                    window.seleccionarItem(this.dataset.productoId, e.target.checked?true:false)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
+                        }
+                    });
+                        
+                    }, 600)
+                })
+            });
+
+            // Funcion para guardar la cantidad de un producto cada cierto tiempo
+            document.querySelectorAll('.qty-number').forEach(input => {
+                input.addEventListener('input', function() {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+                        // hace la petición solo después de 600ms sin escribir
+                        
+                        window.actualizarCantidad(this.dataset.itemId, this.value)
+                        .then(data => {
+                            if (data.status == 'success'){
+                                window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
+                                this.value = data.cantidad;
+                            } else if (data.status = 'error'){
+                                mostrarErrorItem(data.id, data.message);
+                            }   
+                        });
+                        
                     }, 600)
                 })
             });
         })
-        // .catch(() => {
-        //     document.getElementById('miniCartItems').innerHTML =
-        //         '<p class="cart-empty">Error al cargar el carrito</p>';
-        // });
+        .catch(() => {
+            document.getElementById('miniCartItems').innerHTML =
+                '<p class="cart-empty">Error al cargar el carrito</p>';
+        });
 }
 
 // Actualizar Total del MiniCarito
 
-let  actualizarTotal = (total) => {
-    document.querySelector('.total-price').textContent = `${window.formatPrice(total)}`
+
+
+// Funcion para eliminar item del minicarrito
+let eliminarItem = (id, nombre)=>{
+        if (confirm('¿Estas seguro de eliminar este producto del carrito de compras?')) {
+            fetch(`/carrito/eliminar_item/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+            .then(r => r.json())
+            .then(data =>{
+                if(data.status === "success"){
+                    let item = document.getElementById(`item-${id}`);
+                    item.style.animation = 'fadeOut 0.3s ease';
+                    item.remove();
+                    window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+                    // Se verifica si no hay mas items en el carrito para colocar el aviso de que el carrito esta vacio
+                    if (document.querySelector('#miniCartItems').children.length == 0){
+                        const container = document.getElementById('miniCartItems').innerHTML = `
+                                <p class="cart-empty">Tu carrito está vacío</p>
+                        `;
+                    }
+                    // Actualizar la cantidad de items en el carrito
+                    document.querySelector('#miniCartCount').textContent = document.querySelectorAll('.cart-item-mini').length
+                }
+            })
+            .catch(error => {
+                Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: `Ocurrio un error inesperado ${error}`,
+                });
+            })
+        }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
 
     let carritoYaCargado = false;
-
     const cartWrapper = document.getElementById('cartWrapper');
     const miniCart    = document.getElementById('miniCart');
     const cartBtn     = document.getElementById('cartBtn');
 
     if (!cartWrapper || !miniCart) return;
 
-    // Click al botón — abre o cierra
+    function posicionarMiniCarrito() {
+        const rect = cartBtn.getBoundingClientRect();
+        const viewportWidth  = document.documentElement.clientWidth;
+        const viewportHeight = document.documentElement.clientHeight;
+        const margen = 10;
+        const cartWidth = Math.min(340, viewportWidth - margen * 2);
+
+        let left = rect.right - cartWidth;
+        if (left < margen) left = margen;
+        if (left + cartWidth > viewportWidth - margen) {
+            left = viewportWidth - cartWidth - margen;
+        }
+        if (left < margen) left = margen;
+
+        // ✅ Altura máxima para no salirse por abajo
+        const topPos = rect.bottom + 8;
+        const alturaMaxima = viewportHeight - topPos - margen;
+
+        miniCart.style.top       = topPos + 'px';
+        miniCart.style.left      = left + 'px';
+        miniCart.style.right     = 'auto';
+        miniCart.style.width     = cartWidth + 'px';
+        miniCart.style.maxHeight = alturaMaxima + 'px'; // ✅ nunca sobrepasa la pantalla
+        miniCart.style.overflowY = 'auto';              // ✅ scroll si el contenido es largo
+    }
+
     cartBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         miniCart.classList.toggle('visible');
+
+        if (miniCart.classList.contains('visible')) {
+            posicionarMiniCarrito();
+        }
 
         if (!carritoYaCargado) {
             cargarMiniCarrito();
@@ -321,13 +398,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Click afuera — cierra
+    // Reposicionar si cambia el tamaño de la ventana
+    window.addEventListener('resize', function() {
+        if (miniCart.classList.contains('visible')) {
+            posicionarMiniCarrito();
+        }
+    });
+
     document.addEventListener('click', function(e) {
         if (!cartWrapper.contains(e.target)) {
             miniCart.classList.remove('visible');
         }
     });
-
 });
 
 function mostrarErrorItem(itemId, mensaje) {

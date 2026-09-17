@@ -2,12 +2,11 @@
 {% load custom_tags %}
 
 {% block body %}
-
+{% csrf_token %}
 <body>
     <!-- ========================================
          HEADER - Barra de navegación
          ======================================== -->
-    {% include 'pagina_principal/navbar.html' %}
 
     <!-- ========================================
          BREADCRUMB - Navegación de ruta
@@ -51,15 +50,6 @@
         <div class="product-info">
             <!-- Título -->
             <h1 class="product-title">{{producto.nombre}}</h1>
-
-            <!-- SKU y valoraciones -->
-            <div class="product-meta">
-                <span class="sku">SKU: sm2506232240482828</span>
-                <div class="rating">
-                    <span class="stars">★★★★★</span>
-                    <a href="#reviews" class="reviews">(109+ Comentarios)</a>
-                </div>
-            </div>
 
             <!-- Precio -->
             <div class="price-section">
@@ -109,11 +99,8 @@
 
             <!-- Botón agregar al carrito -->
             <div class="add-to-cart-section">
-                <button class="add-to-cart-btn" onclick="addToCart()">
+                <button class="add-to-cart-btn">
                     Añadir al carrito de compras
-                </button>
-                <button class="favorite-btn" onclick="toggleFavorite(this)">
-                    ♡
                 </button>
             </div>
 
@@ -178,19 +165,6 @@
                         </ul>
                     </div>
                 </div>
-
-                <!-- Sobre La Tienda -->
-                <div class="collapsible-section">
-                    <div class="section-header" onclick="toggleSection(this)">
-                        <h3>Sobre La Tienda</h3>
-                        <span class="icon">−</span>
-                    </div>
-                    <div class="section-content">
-                        <p><strong>Life Filter</strong></p>
-                        <p>97,5 % pagó a tiempo | 3K+ vendido recientemente</p>
-                        <p>Tienda especializada en moda urbana y ropa asiática de alta calidad. Más de 5 años de experiencia brindando productos únicos y auténticos.</p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -199,10 +173,6 @@
          JAVASCRIPT - Funcionalidad interactiva
          ======================================== -->
     <script>
-        const csrftoken = document.cookie
-            .split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
         /* ========================================
            FUNCIÓN: Seleccionar talla
            Parámetro: button - botón de talla clickeado
@@ -221,42 +191,93 @@
         /* ========================================
            FUNCIÓN: Agregar al carrito
            ======================================== */
-        function addToCart() {
+
+        // esta variable esta para no cargar varias veces el minicarrito de manera innecesaria
+
+        let minicarrito = document.getElementById('miniCart')
+        addToCartBtn = document.querySelector('.add-to-cart-btn');
+        addToCartBtn.addEventListener('click', function () {
+
+            // Si el botón ya está deshabilitado, no hacer nada (evita el spam)
+            if (addToCartBtn.disabled) return;
+
             const tallaSeleccionada = document.querySelector('.size-button.selected');
             if (!tallaSeleccionada) {
                 Swal.fire({
                     title: '¡Atención!',
                     icon: 'warning',
                     text: 'Debes elegir una talla para añadir este producto al carrito de compras'
-                })
+                });
                 return;
             }
+
+            // Deshabilitamos el botón INMEDIATAMENTE, antes de esperar la respuesta del servidor
+            addToCartBtn.disabled = true;
+            addToCartBtn.textContent = 'Agregando...';
+
             let slug = window.location.pathname.split('/').at(-1);
             const formData = new FormData();
             formData.append('talla', tallaSeleccionada.textContent);
+
             fetch(`/carrito/agregar_item/${slug}`, {
-                'method': 'POST',
-                'headers': {
-                    'X-CSRFToken': csrftoken,
-                },
-                'body': formData,
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken },
+                body: formData,
             })
             .then(r => r.json())
             .then(data => {
-                console.log(data)
-            });
+                if (data.status === "success" && data.type === 'new_item'){
+                    
+                    window.cargarMiniCarrito()
+                    
+                    window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+                    
+                    minicarrito.classList.add('visible');
+                    
+                    // Actualizar la cantidad de items en el carrito
+                    document.querySelector('#miniCartCount').textContent = document.querySelectorAll('.cart-item-mini').length
 
-            // Animación del botón
-            const btn = document.querySelector('.add-to-cart-btn');
-            btn.textContent = '✓ Agregado al Carrito';
-            btn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
-            
-            setTimeout(() => {
-                btn.textContent = 'Añadir al carrito de compras';
-                btn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
-            }, 2000);
-            
-        }
+                    addToCartBtn.textContent = '✓ Agregado al Carrito';
+                    addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+                    
+                    setTimeout(() => {
+                        addToCartBtn.textContent = 'Añadir al carrito de compras';
+                        addToCartBtn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+                    }, 2000);
+                } else if(data.status === 'success' && data.type === 'increase_quantity'){
+                    
+                    let producto_id = String(data.item.producto_id);
+                    
+                    let itemInput = document.getElementById(`qty-${data.item.logueado?data.item.id:producto_id}`);
+                    if (itemInput) {
+                        itemInput.value = parseInt(itemInput.value, 10) + 1;
+                        window.actualizarTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+
+                        minicarrito.classList.add('visible');
+                    }
+
+                    
+                } else if (data.status === 'error'){
+                    Swal.fire({ title: '¡Error!', icon: 'error', text: data.message});
+                }
+
+                addToCartBtn.textContent = '✓ Agregado al Carrito';
+                addToCartBtn.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+
+            })
+            // .catch(error => {
+            //     Swal.fire({ title: '¡Error!', icon: 'error', text: `Ha ocurrido un error inesperado ${error}` });
+            // })
+            .finally(() => {
+                // Volvemos a habilitar el botón pase lo que pase (éxito o error),
+                // después de un breve momento para que el usuario vea la confirmación
+                setTimeout(() => {
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.textContent = 'Añadir al carrito de compras';
+                    addToCartBtn.style.background = 'linear-gradient(45deg, var(--primary-red), var(--primary-red-dark))';
+                }, 1500);
+            });
+        });
 
         /* ========================================
            FUNCIÓN: Toggle favorito (corazón)

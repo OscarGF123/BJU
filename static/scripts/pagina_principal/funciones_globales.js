@@ -18,6 +18,9 @@ window.handlePermissionError = function(data, defaultRedirect = '/login'){
 
 // Formatear precios en pesos colombianos
 window.formatPrice = function(price) {
+    if (!price){
+        return 0
+    }
     return new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',
@@ -39,6 +42,16 @@ window.toggleTheme = function () {
 }
 
 
+window.actualizarTotal = function (subtotal, descuento, total) {
+    let dTotal = document.querySelector('#miniCartTotal');
+    let dDescuento = document.querySelector('#miniCartDescuento');
+    let dSubtotal = document.querySelector('#miniCartSubtotal');
+
+    dTotal.textContent = window.formatPrice(total);
+    dDescuento.textContent = `-${window.formatPrice(descuento)}`;
+    dSubtotal.textContent = window.formatPrice(subtotal);
+}
+
 const csrftoken = document.cookie
     .split('; ')
     .find(row => row.startsWith('csrftoken='))
@@ -47,7 +60,7 @@ const csrftoken = document.cookie
 // Para actualizar la cantidad de un producto en el carrito de compras
 window.actualizarCantidad = function (item_id, cantidad){
     const formData = new FormData();
-    formData.append('cantidad', cantidad);
+    formData.append('cantidad', cantidad===''?1:cantidad);
 
     return fetch(`/carrito/actualizar_cantidad_producto/${item_id}`,{
         'method': 'POST',
@@ -59,13 +72,13 @@ window.actualizarCantidad = function (item_id, cantidad){
     .then(r => r.json())
 }
 
-window.seleccionarItem = function (producto_id=null, seleccionado=null, seleccionarTodo=null){
+window.seleccionarItem = function (item_id=null, seleccionado=null, seleccionarTodo=null){
     const formData = new FormData();
     if (seleccionarTodo!==null){
         formData.append('seleccionar_todo', seleccionarTodo)
-    } else if (producto_id!==null && seleccionado!==null) {
+    } else if (item_id!==null && seleccionado!==null) {
         formData.append('seleccionado', seleccionado);
-        formData.append('producto_id', producto_id)
+        formData.append('item_id', item_id)
     }
     return fetch('/carrito/seleccionar_item/', {
         'method': 'POST',

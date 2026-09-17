@@ -50,5 +50,5 @@ def media(url):
 
 @register.simple_tag()
 def obtener_valor(diccionario: dict, llave):
-
+    print(f'imagen {llave}')
     return diccionario.get(str(llave))
