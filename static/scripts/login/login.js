@@ -21,7 +21,6 @@ if (document.cookie && document.cookie !== '') {
 return cookieValue;
 }
 
-const csrftoken = getCookie('csrftoken');
 let currentSlide = 0;
 const totalSlides = 4;
 let slideInterval;
@@ -39,7 +38,7 @@ document.getElementById("loginForm").addEventListener('submit', function(e) {
     e.preventDefault();
     fetch(urlLogin, {
         headers: {
-            'X-CSRFToken': csrftoken,
+            'X-CSRFToken': getCookie('csrftoken'),
             'X-Requested-With': 'XMLHttpRequest',
         },
         method: "POST",

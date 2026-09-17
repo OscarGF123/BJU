@@ -43,12 +43,12 @@ class ClienteRequiredMixin(LoginRequiredMixin):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
         
-        if not request.user.es_cliente():
-            messages.error(request, 'Esta sección es solo para clientes')
-            return redirect('tienda:pagina_principaL')
+        # if not request.user.es_cliente():
+        #     messages.error(request, 'Esta sección es solo para clientes')
+        #     return redirect('tienda:pagina_principal')
         
         # Verificar que esté activo
-        if not request.user.activo:
+        if not request.user.is_verified:
             messages.error(request, 'Tu cuenta está desactivada')
             return redirect('usuarios:login')
         

@@ -99,6 +99,7 @@ class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
     form_class = ProductoForm
 
     def form_valid(self, form):
+        from django.core.exceptions import ValidationError
         self.object = form.save(commit=False)
         
         imagen_formset = ImagenFormSet(
@@ -115,15 +116,24 @@ class CrearProducto(AdminRequiredMixin, VistaBaseCrear):
                         'Cargar Imagen': ['Para publicar este producto a la pagina principal debe relacionarse por lo menos una imagen al mismo.']
                     }
                 }, status=400)
+        
+        # Valida que si no hay otros productos del mismo nombre con una portada y se quiere publicar el producto sin portada, entonces de error
+        if self.object.pagina_principal == "Si" and self.request.POST.get("imagen_set-0-portada") == "No" and not any(map(lambda e: Imagen.objects.filter(producto_id=e.id, portada="Si").exists(), Producto.objects.filter(nombre=self.object.nombre))):
+            return JsonResponse({
+                    'status': 'error',
+                    'type': 'form_invalid',
+                    'errors': {
+                        'Portada imagen': ['No existe ninguna portada para esta imagen del producto. Elije la opción "Si" para el <b>campo portada</b>.']
+                    }
+                }, status=400)
 
         if imagen_formset.is_valid():
             instancias = imagen_formset.save(commit=False)
             for instancia in instancias:
                 # Si no subió imagen nueva, conserva la que ya tenía
-                if not instancia.link_imagen:
+                if not instancia.link_imagen and instancia.pk:
                     imagen_original = Imagen.objects.get(pk=instancia.pk)
                     instancia.link_imagen = imagen_original.link_imagen
-                
                 if self.request.FILES and self.object.pagina_principal == "Si":
                     self.object = form.save()
                     instancia.save()

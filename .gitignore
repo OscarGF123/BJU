@@ -15,3 +15,5 @@ prueba.js
 
 # Ignora archivo para la configuración de la extensión code spell checker
 cspell.json
+
+.vscode

@@ -1,0 +1,346 @@
+{% extends "home.html" %}
+{% load static %}
+{% load custom_tags %}
+{% load humanize %}
+{% csrf_token %}
+<!-- Quita el minicarrito -->
+{% block minicarrito %}{% endblock %}
+
+{% block body %}
+
+    <div class="cart-container">
+        <!-- Título de la página -->
+        <div class="title-row">
+        <h1 class="page-title">Mi Carrito</h1>
+            <div class="select-all-container">
+                <input type="checkbox" id="select-all">
+                <label for="select-all">Seleccionar todo</label>
+            </div>
+        </div>
+
+        <!-- ========================================
+             LISTA DE PRODUCTOS EN EL CARRITO
+             ======================================== -->
+        <div class="cart-items">
+            <!-- Productos -->
+            {% for item in items %}
+                <div class="cart-item" id="item-{{item.id}}">
+                    <div class="item-checkbox">
+                        <input 
+                            type="checkbox"
+                            class="item-select" 
+                            id="check-{{item.id}}" 
+                            data-item-id="{{item.id}}"
+                            {% if item.seleccionado %} checked {% endif %}
+                        >
+                    </div>
+                    <div class="item-image">
+                        {% if login %}
+                            {% obtener_valor imagenes item.producto_id.nombre as imagen %}
+                        {% else %}
+                            {% obtener_valor imagenes item.nombre as imagen %}
+                        {% endif %}
+                        <img src="{% media imagen %}" alt="Producto">
+                    </div>
+                    <div class="item-info">
+                        {% if login %}
+                            <h3 class="item-name">{{item.producto_id.nombre}}</h3>
+                            <p class="item-size">Talla {{item.producto_id.talla}}</p>
+                            <div class="item-error" id="error-{{item.id}}"></div>
+                            <p class="item-price">${{item.producto_id.precio_unitario | intcomma}}</p>
+                        {% else %}
+                            <h3 class="item-name">{{item.nombre}}</h3>
+                            <p class="item-size">Talla {{item.talla}}</p>
+                            <div class="item-error" id="error-{{item.id}}"></div>
+                            <p class="item-price">${{item.precio | intcomma}}</p>
+                        {% endif %}
+                    </div>
+                    <div class="item-controls">
+                        <div class="quantity-controls">
+                            <button class="qty-btn" onclick="decreaseQty('{{item.id}}')">−</button>
+                            <input 
+                                type="number" 
+                                class="qty-number" 
+                                id="qty-{{item.id}}" 
+                                value="{{item.cantidad}}"
+                                min="1" 
+                                max="{% if login %}{{item.producto_id.cantidad}}{% else %}{{item.cant_max}}{% endif %}"
+                                data-item-id="{{item.id}}"
+                                style="width:60px; text-align:center; background:transparent; border:none; color:inherit; font-size:inherit; font-weight:inherit;"
+                            >
+                            {% if login %}
+                                <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.producto_id.cantidad}}')">+</button>
+                            {% else %}
+                                <button class="qty-btn" onclick="increaseQty('{{item.id}}', '{{item.cant_max}}')">+</button>
+                            {% endif %}
+                        </div>
+                        <button class="remove-btn" onclick="removeItem('{{item.id}}')">Eliminar</button>
+                    </div>
+                    
+                </div>
+            {% endfor %}    
+        </div>
+
+        <!-- ========================================
+             PANEL DE RESUMEN (SIDEBAR DERECHO)
+             ======================================== -->
+        <div class="cart-summary">
+            <h2 class="summary-title">Resumen del Pedido</h2>
+            
+            <!-- Subtotal -->
+            <div class="summary-row">
+                <span class="summary-label">Subtotal ({{cantidad_productos_seleccionados}} productos)</span>
+                <span class="summary-value" id="subtotal">$ {{ calcular_venta.subtotal|intcomma }}</span>
+            </div>
+            
+            <!-- Envío -->
+            <div class="summary-row">
+                <span class="summary-label">Envío</span>
+                <span class="summary-value" style="color: #4CAF50;">GRATIS</span>
+            </div>
+            
+            <!-- Descuento -->
+            <div class="summary-row">
+                <span class="summary-label">Descuento (a partir de 6 unids)</span>
+                <span class="summary-value" id="descuento" style="color: #4CAF50;">-$ {{ calcular_venta.descuento|intcomma }}</span>
+            </div>
+            
+            <!-- Total -->
+            <div class="summary-row">
+                <span class="summary-label">Total</span>
+                <span class="summary-value" id="total">$ {{ calcular_venta.total|intcomma }}</span>
+            </div>
+            
+            <!-- Botón de pagar -->
+            <button class="checkout-btn" onclick="checkout()">Proceder al Pago</button>
+            
+            <!-- Información adicional -->
+            <div class="info-badges">
+                <div class="info-badge">
+                    <span class="info-badge-icon">✓</span>
+                    <span>Pago seguro y protegido</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT - Funcionalidad del carrito
+         ======================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // Si no quedan productos, muestra mensaje de carrito vacío
+            if (document.querySelectorAll('.cart-item').length === 0) {
+                showEmptyCart();
+            }
+
+            // Seleccionar todo
+            document.getElementById('select-all').addEventListener('change', function() {
+                document.querySelectorAll('.item-select').forEach(cb => cb.checked = this.checked);
+                clearTimeout(timer)
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    window.seleccionarItem(null, null, this.checked)
+                    .then(data => {
+                        if (data.status === 'success'){
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+                        } else if (data.status === 'error'){
+                            console.log(`Ha ocurrido un error ${data.message}`)
+                        }
+                    });
+                }, 600)
+            });
+
+            // Seleccionar un producto
+            document.querySelectorAll('.item-select').forEach(check => {
+                check.addEventListener('change', function(e){
+                clearTimeout(timer)
+                    timer = setTimeout(() => {
+                        // hace la petición solo después de 600ms sin escribir
+                        window.seleccionarItem(this.dataset.itemId, e.target.checked)
+                        .then(data => {
+                            if (data.status === 'success'){
+                                updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);
+                            } else if (data.status === 'error'){
+                                console.log(`Ha ocurrido un error ${data.message}`)
+                            }
+                        });
+                    }, 600)
+                });
+            });
+
+            // Cuando se desmarca uno individual, desactiva el "seleccionar todo"
+            document.querySelectorAll('.item-select').forEach(cb => {
+                
+                cb.addEventListener('change', function() {
+                    const total = document.querySelectorAll('.item-select').length;
+                    const marcados = document.querySelectorAll('.item-select:checked').length;
+                    document.getElementById('select-all').checked = total === marcados;
+                });
+            });
+        });
+
+        // Funcion para guardar la cantidad de un producto cada cierto tiempo
+        document.querySelectorAll('.qty-number').forEach(input => {
+            input.addEventListener('input', function() {
+                clearTimeout(timer)
+                const itemId = this.dataset.itemId;
+                timer = setTimeout(() => {
+                    // hace la petición solo después de 600ms sin escribir
+                    window.actualizarCantidad(this.dataset.itemId, this.value)
+                    .then(data => {
+                        if (data.status === "success"){
+                            this.value = data.cantidad;
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
+
+                        // Limpiar error si había uno
+                        const errorDiv = document.getElementById(`error-${itemId}`);
+                        if (errorDiv) {
+                            errorDiv.classList.remove('visible');
+                            errorDiv.textContent = '';
+                        }
+
+                        } else if (data.status === "error"){
+
+                        // ✅ Mostrar error junto al producto
+                        const errorDiv = document.getElementById(`error-${itemId}`);
+                        if (errorDiv) {
+                            errorDiv.textContent = data.message;
+                            errorDiv.classList.add('visible');
+
+                            // Se oculta automáticamente en 3 segundos
+                            setTimeout(() => {
+                                errorDiv.classList.remove('visible');
+                                errorDiv.textContent = '';
+                            }, 10000);
+                        }
+
+                        }
+                    })
+
+                }, 600)
+            })
+        });
+
+        function increaseQty(itemId, cantidadTotalProducto) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.value);  
+            if (currentQty < parseInt(cantidadTotalProducto)){
+                qtyElement.value = currentQty + 1;
+                qtyElement.dispatchEvent(new Event('input'))
+            }
+        }
+
+        function decreaseQty(itemId) {
+            const qtyElement = document.getElementById(`qty-${itemId}`);
+            let currentQty = parseInt(qtyElement.value);
+            if (currentQty > 1) {
+                qtyElement.value = currentQty - 1;
+                qtyElement.dispatchEvent(new Event('input'))
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Eliminar un producto del carrito
+           Parámetro: id del producto
+           ======================================== */
+        function removeItem(itemId) {
+            if (confirm('¿Estás seguro de eliminar este producto?')) {
+                // Encuentra el elemento del carrito y lo elimina
+                const item = document.getElementById(`item-${itemId}`);
+                fetch(`eliminar_item/${itemId}`,{
+                    'method': 'DELETE',
+                    'headers': {
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status == "success"){
+                        item.style.animation = 'fadeOut 0.3s ease';
+                        setTimeout(() => {
+                            item.remove();
+                            console.log(`total ${data.total}`);
+                            updateTotal(data.calcular_venta.subtotal, data.calcular_venta.descuento, data.calcular_venta.total);;
+                            
+                            // Si no quedan productos, muestra mensaje de carrito vacío
+                            if (document.querySelectorAll('.cart-item').length === 0) {
+                                showEmptyCart();
+                            }
+                        }, 300);
+                    } else if (data.status == "error") {
+                        console.log(data.error);
+                    }
+                });
+            }
+        }
+
+        /* ========================================
+           FUNCIÓN: Actualizar totales del resumen
+           Recalcula subtotal y total
+           ======================================== */
+        function updateTotal(subtotal, descuento, total) {
+            const items = document.querySelectorAll('.cart-item');
+            let itemCount = 0;
+            
+            items.forEach(item => {
+                if (item.querySelector('.item-select').checked){
+                    const qty = item.querySelector('.qty-number').value;            
+                    itemCount += parseInt(qty, 10);
+                }
+
+            });
+    
+            // Actualiza el texto del subtotal
+            document.querySelector('.summary-label').textContent = 
+                `Subtotal (${itemCount} producto${itemCount !== 1 ? 's' : ''})`;
+
+            document.querySelector('#subtotal').textContent = `${window.formatPrice(subtotal)}`;
+            document.querySelector('#descuento').textContent = `-${window.formatPrice(descuento)}`;
+            document.querySelector('#total').textContent = `${window.formatPrice(total)}`;
+
+        }
+
+        /* ========================================
+           FUNCIÓN: Mostrar carrito vacío
+           ======================================== */
+        function showEmptyCart() {
+            const container = document.querySelector('.cart-container');
+            container.innerHTML = `
+                <div class="empty-cart">
+                    <div class="empty-cart-icon">🛒</div>
+                    <p class="empty-cart-text">Tu carrito está vacío</p>
+                    <a href="/" class="back-btn">Ir a Comprar</a>
+                </div>
+            `;
+        }
+
+        /* ========================================
+           FUNCIÓN: Proceder al pago
+           ======================================== */
+        function checkout() {
+            alert('Redirigiendo a la página de pago...\n\nEn un proyecto real, aquí se procesaría el pago.');
+            // En tu proyecto real, aquí redirigirías a la página de checkout
+            // window.location.href = '/checkout';
+        }
+
+        /* ========================================
+           ANIMACIÓN DE FADE OUT PARA ELIMINAR
+           ======================================== */
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(-50px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+{% endblock %}
