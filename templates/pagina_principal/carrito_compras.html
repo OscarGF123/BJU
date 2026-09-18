@@ -112,7 +112,7 @@
             </div>
             
             <!-- Botón de pagar -->
-            <button class="checkout-btn" onclick="checkout()">Proceder al Pago</button>
+            <button class="checkout-btn">Proceder al Pago</button>
             
             <!-- Información adicional -->
             <div class="info-badges">
@@ -319,11 +319,30 @@
         /* ========================================
            FUNCIÓN: Proceder al pago
            ======================================== */
-        function checkout() {
-            alert('Redirigiendo a la página de pago...\n\nEn un proyecto real, aquí se procesaría el pago.');
-            // En tu proyecto real, aquí redirigirías a la página de checkout
-            // window.location.href = '/checkout';
-        }
+
+        document.querySelector('.checkout-btn').addEventListener('click', function(e){
+            // Deshabilitar el boton para evitar sobrecarga de peticiones
+            this.disabled = true;
+            this.textContent = "Redirigiendo...";
+
+            // Iniciar el proceso de pago
+            fetch('{% url "epayco:iniciar_pago" %}', {
+                'method': 'POST',
+                'headers': {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status == "success"){
+                    console.log("pass");
+                }
+            })
+            .catch(error => {
+                console.log(`Ha ocurrido un error inesperado ${error}`);
+            })
+        });
 
         /* ========================================
            ANIMACIÓN DE FADE OUT PARA ELIMINAR

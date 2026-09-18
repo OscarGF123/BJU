@@ -17,6 +17,7 @@ urlpatterns = [
     path('', include('applications.login.urls')),
     path('', include('applications.tienda.urls')),
     path('carrito/', include('applications.carrito_compras.urls')),
+    path('pago/', include('applications.epayco.urls')),
 
     # URLs de prueba
     path('persona/', PersonaListView.as_view(), name='listar_persona'),
