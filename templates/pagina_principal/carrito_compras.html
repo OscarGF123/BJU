@@ -101,8 +101,8 @@
             
             <!-- Descuento -->
             <div class="summary-row">
-                <span class="summary-label">Descuento (a partir de 6 unids)</span>
-                <span class="summary-value" id="descuento" style="color: #4CAF50;">-$ {{ calcular_venta.descuento|intcomma }}</span>
+                <span class="summary-label">Descuento (despues de 6 unids)</span>
+                <span class="summary-value" id="descuento" style="color: #4CAF50;">-${{ calcular_venta.descuento|intcomma }}</span>
             </div>
             
             <!-- Total -->
@@ -336,7 +336,12 @@
             .then(r => r.json())
             .then(data => {
                 if (data.status == "success"){
-                    console.log("pass");
+                    if (data.link_cobro){
+                        window.location.href = data.link_cobro;
+                    } else {
+                        console.log("No se genero el link de cobro");
+                    }
+                    
                 }
             })
             .catch(error => {

@@ -74,7 +74,7 @@ class AgregarItem(View):
         if not (producto.cantidad > 0):
             return JsonResponse({
                 'status': 'error',
-                'type_error': 'out_of_stock',
+                'type_error': 'of_stock',
                 'message': 'Este producto esta fuera de stock'
             })
 

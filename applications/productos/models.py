@@ -123,6 +123,10 @@ class Producto(models.Model):
 
         return super().save(*args, **kwargs)
 
+    @property
+    def cantidad_disponible(self):
+        return self.cantidad - self.cantidad_reservada
+
     class Meta:
         verbose_name = "Producto"
         verbose_name_plural = "Productos"

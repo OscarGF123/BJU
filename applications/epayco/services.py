@@ -34,6 +34,10 @@ class EpaycoService:
             print(f"Hubo un error al crear el token: \n{e}")
 
     def generar_link_cobro(self, email, precio, id_compra=0, descripcion='Cobro de productos'):
+        """
+            Genera un link de cobro consumiendo la api de Epayco
+        """
+        # HAY KE ACTUALIZAR LA URL DE CONFIRMACION Y RESPUESTA UNA VEZ EL PROYECTO ESTE EN PRODUCCION
         url = f"{self.url_apify}/collection/link/create"
         headers = {
             "Content-Type": "Application/json",
@@ -53,16 +57,16 @@ class EpaycoService:
             "typeSell": "1", # Cobro por email
             "email": email,
             "onePayment": True, # Sera de un solo cobro
-            "urlResponse": f'{url_ngrok}/pse_response/',
-            "urlConfirmation": f'{url_ngrok}/pse_response/',
+            "urlResponse": f'{url_ngrok}/carrito/',
+            "urlConfirmation": f'{url_ngrok}pago/confirmacion/',
             "methodConfirmation": "POST"
         })
 
         response = requests.request("POST", url=url, headers=headers, data=payload)
 
         if response.status_code == 200:
-            return {'status': 'success', 'link_cobro': response.json()['routeLink']}
+            return response.json()['routeLink']
         else:
-            return {'status': 'error', 'response': response.json()}
+            return None
 
 

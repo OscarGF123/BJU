@@ -16,6 +16,8 @@ class Ventas(models.Model):
     estado_pago = models.CharField(max_length=150, verbose_name="Estado de pago")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
+    # Si el pago tiene el estado pendiente entonces se dara una fecha de expiracion
+    fecha_reserva = models.DateTimeField()
     class Meta:
         verbose_name = "Venta"
         verbose_name_plural = "Ventas"

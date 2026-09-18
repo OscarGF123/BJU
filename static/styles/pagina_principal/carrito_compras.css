@@ -87,7 +87,7 @@ body {
     margin: 2rem auto;
     padding: 0 2rem;
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 440px;
     gap: 2rem;
 }
 
@@ -303,6 +303,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #ffffff;
+    text-align: center;
 }
 
 /* ========================================
@@ -311,6 +312,8 @@ body {
 .summary-row {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* 👈 Alinea verticalmente los textos */
+    gap: 1rem;
     padding: 1rem 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -330,6 +333,7 @@ body {
 .summary-value {
     font-weight: bold;
     color: #ffffff;
+    white-space: nowrap;
 }
 
 .summary-row:last-child .summary-label {
@@ -592,7 +596,7 @@ body {
 .title-row {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 440px;
     align-items: center;
     margin-bottom: 1rem;
 }
