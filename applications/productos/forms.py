@@ -66,7 +66,7 @@ class ProductoForm(ModelForm):
                     'rows': 4
                 }
             ),
-            "cantidad": IntegerField(
+            "cantidad": NumberInput(
                 attrs={
                     'class': "bj-form-control",
                     'placeholder': "0",
@@ -74,7 +74,7 @@ class ProductoForm(ModelForm):
                     'step': "1"
                 }
             ),
-            "precio_unitario": IntegerField(
+            "precio_unitario": NumberInput(
                 attrs={
                     'class': "bj-form-control",
                     'placeholder': "0",
