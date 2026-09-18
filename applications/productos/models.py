@@ -92,7 +92,9 @@ class Producto(models.Model):
 
     nombre = models.ForeignKey(Nombre, on_delete=models.SET_NULL, null=True)
     descripcion = models.TextField(max_length=200, verbose_name="Descripción", blank=True)
-    cantidad = models.IntegerField(verbose_name="Cantidad")
+    cantidad = models.PositiveIntegerField(verbose_name="Cantidad")
+    # La cantidad reservada para evitar overselling
+    cantidad_reservada = models.PositiveIntegerField(default=0, verbose_name='Cantidad_Reservada')
     precio_unitario = models.DecimalField(max_digits=12, decimal_places=2,verbose_name="Precio")
     precio_mayorista = models.DecimalField(max_digits=12, decimal_places=2, verbose_name='Precio_Mayorista')
     categoria = models.ForeignKey(Categoria, on_delete=models.PROTECT)
