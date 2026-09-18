@@ -358,7 +358,7 @@ def seleccionar_item(request):
 
         if item_id is None and seleccionado is None:
 
-            return JsonResponse({'status': 'error', 'type': 'arguments_not_found', 'message': "No se ha seleccioando ningun producto"})
+            return JsonResponse({'status': 'error', 'type': 'arguments_not_found', 'message': "No se ha seleccionado ningun producto"})
 
         for i, v in enumerate(carrito_compras_session):
             if v['producto_id'] == item_id:
@@ -376,7 +376,7 @@ def seleccionar_item(request):
             ).update(seleccionado=True if seleccionar_todo == 'true' else False)
         return JsonResponse({
             'status': 'success',
-            'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccioandos.',
+            'message': 'todos lo productos fueron seleccionados.' if seleccionar_todo == 'true' else 'todos los productos fueron deseleccionados.',
             'calcular_venta': calcular_venta(request)
         })
 
