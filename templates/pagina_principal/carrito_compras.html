@@ -335,13 +335,18 @@
             })
             .then(r => r.json())
             .then(data => {
-                if (data.status == "success"){
+                console.log(data.status);
+                if (data.status === "success"){
+                    console.log('hola')
                     if (data.link_cobro){
+                        console.log("funciono aui")
                         window.location.href = data.link_cobro;
                     } else {
                         console.log("No se genero el link de cobro");
                     }
                     
+                } else if (data.status === "error"){
+                    console.log(data.message);
                 }
             })
             .catch(error => {

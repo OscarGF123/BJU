@@ -6,9 +6,10 @@ from django.db import transaction
 from applications.carrito_compras.models import ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
 from applications.carrito_compras.views import calcular_venta
-from applications.epayco.models import Ventas
+from applications.epayco.models import ItemsVentas, Ventas
 from applications.epayco.services import EpaycoService
 from applications.productos.models import Producto
+from applications.usuarios.models import Usuario
 
 # Create your views here.
 class ConfirmacionPago(View):
@@ -25,9 +26,8 @@ class IniciarPago(View, ClienteRequiredMixin):
     def post(self, request):
         
         # Validar si hay por lo menos un producto seleccionado antes de pagar
-        usuario_id = request.user.id
-        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, seleccionado=True)
-        venta, _ = Ventas.objects.get_or_create(usuario=request.user)
+        usuario = request.user
+        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario.id, seleccionado=True).select_related('producto_id')
 
         if not items.exists():
 
@@ -37,30 +37,61 @@ class IniciarPago(View, ClienteRequiredMixin):
                 'message': "No existe ningun item seleccionado, por favor, seleccione por lo menos 1"
                 })
 
-        monto_total = calcular_venta(request).get('total')
+        cobro = calcular_venta(request)
 
         # Reservar los productos seleccionados:
         # Se usa la transaccion atomica para evitar reservas de varios usuarios al mismo tiempo para 1 solo producto
         with transaction.atomic():
-            for item in items:
-                producto = Producto.objects.select_for_update().get(
-                    id=item.producto_id
+
+            # Crear Venta
+
+            verificar_venta = Ventas.objects.filter(usuario=usuario.id, estado_venta__in=['creada', 'en_proceso'])
+
+            if verificar_venta.exists():
+
+                venta = verificar_venta
+            else:
+                venta = Ventas.objects.create(
+                    usuario=usuario,
+                    subtotal=cobro.get('subtotal'),
+                    total=cobro.get('total'),
+                    descuento=cobro.get('descuento'),
+                    estado_venta='creada'
                 )
 
-                if producto.cantidad_disponible > item.cantidad:
-                    return JsonResponse({
-                        'status': 'error',
-                        'type': 'out_of_stock',
-                        'message': f'Stock insuficiente para {producto.nombre}'
-                    })
+                for item in items:
 
-                # Reservar
-                producto.cantidad_reservada =+ item.cantidad
-                producto.save
+
+                    # Agregar item a la venta
+                    precio_unitario = item.producto_id.precio_mayorista if cobro.get('descuento') != 0 else item.producto_id.precio_unitario
+                        
+                    ItemsVentas.objects.create(
+                        venta=venta,
+                        producto=item.producto_id,
+                        cantidad=item.cantidad,
+                        precio_unitario=precio_unitario,
+                        precio_total=precio_unitario * item.cantidad
+                    )
+
+                    # Reservar producto
+                    producto = Producto.objects.select_for_update().get(
+                        id=item.producto_id.id
+                    )
+
+                    if producto.cantidad_disponible < item.cantidad:
+                        return JsonResponse({
+                            'status': 'error',
+                            'type': 'out_of_stock',
+                            'message': f'Stock insuficiente para {producto.nombre}'
+                        })
+
+                    producto.cantidad_reservada =+ item.cantidad
+                    producto.save
 
         # Crear el link de cobro
+        
         epayco = EpaycoService()
-        link_cobro = epayco.generar_link_cobro(precio=monto_total)
+        link_cobro = epayco.generar_link_cobro(precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
 
 
         return JsonResponse({'status': "success", 'link_cobro': link_cobro})
