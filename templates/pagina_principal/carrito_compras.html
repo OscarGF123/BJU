@@ -335,22 +335,40 @@
             })
             .then(r => r.json())
             .then(data => {
-                console.log(data.status);
+                console.log(data.link_cobro);
                 if (data.status === "success"){
-                    console.log('hola')
                     if (data.link_cobro){
-                        console.log("funciono aui")
                         window.location.href = data.link_cobro;
-                    } else {
-                        console.log("No se genero el link de cobro");
+                    } else if (data.status === "error"){
+                        Swal.fire({
+                            title: data.type,
+                            icon: 'error',
+                            text: data.message,
+                            confirmButtonText: 'Entendido'
+                        })
                     }
                     
                 } else if (data.status === "error"){
-                    console.log(data.message);
+                    Swal.fire({
+                        title: data.type,
+                        icon: 'error',
+                        text: data.message,
+                        confirmButtonText: 'Entendido'
+                    })
                 }
             })
             .catch(error => {
-                console.log(`Ha ocurrido un error inesperado ${error}`);
+                Swal.fire({
+                    title: "Error",
+                    icon: 'error',
+                    text: `Ha ocurrido un error inesperado ${error}`,
+                    confirmButtonText: 'Entendido'
+                })
+
+            })
+            .finally(() => {
+                this.disabled = false;
+                this.textContent = "PROCEDER AL PAGO";
             })
         });
 

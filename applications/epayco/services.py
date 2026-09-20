@@ -11,27 +11,28 @@ class EpaycoService:
         self.url_apify = "https://apify.epayco.co"
         self.public_key = os.getenv("PUBLIC_KEY")
         self.private_key = os.getenv("PRIVATE_KEY")
+        self.token = self._obtener_token()
 
-        # Armar token
+    def _obtener_token(self):
+        """Hace login en Apify y devuelve el JWT (o None si falla)."""
+        credenciales = f"{self.public_key}:{self.private_key}"
+        basic = base64.b64encode(credenciales.encode("utf-8")).decode("utf-8")
+
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "type": "sdk-jwt",
+            "Authorization": f"Basic {basic}",
+        }
+
         try:
-            url = f"{self.url_apify}/login"
-
-            headers = {
-                'Content-Type': 'application/json',
-                'type': 'sdk-jwt',
-                'Accept': 'application/json'
-            }
-            text = f"{self.public_key}:{self.private_key}"
-            encode = base64.b64encode(text.encode("utf-8"))
-            token = str(encode, "utf-8")
-            headers['Authorization'] = f"Basic {token}"
-            
-            response = requests.request("POST", url, headers=headers)
-
-            self.token = response.json()["token"] if response.status_code == 200 else None
-
-        except Exception as e:
-            print(f"Hubo un error al crear el token: \n{e}")
+            response = requests.post(f"{self.url_apify}/login", headers=headers, timeout=15)
+            if response.status_code == 200:
+                return response.json().get("token")
+            print(f"Login Epayco falló [{response.status_code}]: {response.text}")
+        except requests.RequestException as e:
+            print(f"Error de conexión al crear el token: {e}")
+        return None
 
     def generar_link_cobro(self, email, precio, id_compra=0, descripcion='Cobro de productos'):
         """
@@ -47,26 +48,30 @@ class EpaycoService:
         url_ngrok = [i["public_url"] for i in response.json()["tunnels"] if i["public_url"]][0]
 
         payload = json.dumps({
-            "quantity": 1, # cantidad de veces que el link de cobro estara disponible
+            "quantity": 1,
             "onePayment":True,
-            "amount": precio,
+            "amount": str(precio),
             "currency": "COP",
-            "id": id_compra,
+            "id": 0,
+            "reference": id_compra,
             "description": descripcion,
-            "title": 'Cobro de productos',
-            "typeSell": "1", # Cobro por email
+            "title": "Cobro de productos Box Jeans",
+            "typeSell": "1",
+            "tax": "0",
             "email": email,
-            "onePayment": True, # Sera de un solo cobro
             "urlResponse": f'{url_ngrok}/carrito/',
-            "urlConfirmation": f'{url_ngrok}pago/confirmacion/',
+            "urlConfirmation": f'{url_ngrok}/pago/confirmacion/',
             "methodConfirmation": "POST"
         })
 
-        response = requests.request("POST", url=url, headers=headers, data=payload)
-
-        if response.status_code == 200:
-            return response.json()['routeLink']
-        else:
-            return None
+        response = requests.request("POST", url=url, headers=headers, data=payload).json()
+        print(response)
+        if response.get('success') == True:
+            return {'status': "success", 'link_cobro': response['data'].get('routeLink')}
+        
+        elif response.get('success') == False: 
+            print(f'Respuesta Epayco {response}')
+            return {'status': "error", 'type': 'Error interno (Epayco)', 'message': response.get('textResponse')}
+            
 
 

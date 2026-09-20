@@ -17,7 +17,7 @@ class ConfirmacionPago(View):
     def post(self, request):
 
         datos = dict(request.GET.items())
-        print(datos.get('x_signature'))
+        print(f"signature {datos.get('x_signature')}")
 
         # Validar firma
 
@@ -49,7 +49,7 @@ class IniciarPago(View, ClienteRequiredMixin):
 
             if verificar_venta.exists():
 
-                venta = verificar_venta
+                venta = verificar_venta.first()
             else:
                 venta = Ventas.objects.create(
                     usuario=usuario,
@@ -89,9 +89,14 @@ class IniciarPago(View, ClienteRequiredMixin):
                     producto.save
 
         # Crear el link de cobro
+
+        print(f"la hp venta de shi {venta}")
         
         epayco = EpaycoService()
-        link_cobro = epayco.generar_link_cobro(precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
+        generar_link = epayco.generar_link_cobro(precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
+        print(f"generar_link {generar_link}")
+        if generar_link.get('status') == "success":
+            return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
+        elif generar_link.get('status') == "error":
 
-
-        return JsonResponse({'status': "success", 'link_cobro': link_cobro})
+            return JsonResponse(generar_link)
