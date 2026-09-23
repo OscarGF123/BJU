@@ -1,25 +1,58 @@
-from django.http import JsonResponse
+from hashlib import sha256
+import os
+from dotenv import load_dotenv
+
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views import View
 from django.db import transaction
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.core.handlers.wsgi import WSGIRequest
 
 from applications.carrito_compras.models import ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
 from applications.carrito_compras.views import calcular_venta
 from applications.epayco.models import ItemsVentas, Ventas
 from applications.epayco.services import EpaycoService
+from applications.epayco.tasks import procesar_pago
 from applications.productos.models import Producto
-from applications.usuarios.models import Usuario
 
-# Create your views here.
+load_dotenv()
+
+@method_decorator(csrf_exempt, name='dispatch')
 class ConfirmacionPago(View):
 
-    def post(self, request):
+    def post(self, request: WSGIRequest):
 
         datos = dict(request.GET.items())
-        print(f"signature {datos.get('x_signature')}")
+
+        venta = Ventas.objects.filter(usuario=request.user.id, estado_venta__in=['creada', 'en_proceso'])
+        codigo_respuesta = datos.get("x_cod_response")
+        firma_recibida = datos.get('x_signature')
 
         # Validar firma
+        ref_payco = datos.get("x_ref_payco")
+        transaction_id = datos.get("x_transaction_id")
+        monto = datos.get("x_amount")
+        moneda = datos.get("x_currency_code")
+
+        p_cust_id_cliente = os.getenv('P_CUST_ID_CLIENTE')
+        p_key = os.getenv('P_KEY')
+
+        cadena = f'{p_cust_id_cliente}^{p_key}^{ref_payco}^{transaction_id}^{monto}^{moneda}'
+        firma_calculada = sha256(cadena.encode('utf-8')).hexdigest()
+
+        if firma_calculada != firma_recibida:
+            for i in venta:
+                i.estado_venta = 'cobro_sin_generar'
+            return HttpResponse(status=400)
+
+        procesar_pago(venta, codigo_respuesta, ref_payco)
+
+        print(f'id_extra1 {datos.get('x_extra1')}')
+        
+        return HttpResponse(status=200)
 
 class IniciarPago(View, ClienteRequiredMixin):
 
@@ -89,13 +122,13 @@ class IniciarPago(View, ClienteRequiredMixin):
                     producto.save
 
         # Crear el link de cobro
-
-        print(f"la hp venta de shi {venta}")
         
         epayco = EpaycoService()
         generar_link = epayco.generar_link_cobro(precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
-        print(f"generar_link {generar_link}")
+
         if generar_link.get('status') == "success":
+            venta.estado_venta = 'en_proceso'
+            venta.save()
             return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
         elif generar_link.get('status') == "error":
 

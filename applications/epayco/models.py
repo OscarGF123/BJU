@@ -18,10 +18,17 @@ class Ventas(models.Model):
         ('rechazado',  'Rechazado'),    # ❌ banco rechazó
         ('fallido',    'Fallido'),      # ❌ error en el proceso
         ('reversado',  'Reversado'),    # 🔄 pago devuelto
-        ('retenido',   'Retenido'),     # 🔒 retenido por ePayco
+        ('retenido',   'Retenido'), 
+        ('iniciada', 'Iniciada'),
+        ('caducada', 'Caducada'),
+        ('abandonada', 'Abandonada'),
+        ('cancelada', 'Cancelada'),
+
+        ('cobro_sin_generar', 'Validacion de confirmacion de epayco fallida'), # Se recibio una signature diferente a la de epayco
 
         # Estado tuyo (posterior)
         ('expirado',   'Expirado'),     # ⌛ no pagó a tiempo
+        ('desconocido', 'Desconocido')
     ]
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     metodo_pago = models.CharField(max_length=150, verbose_name="Metodo de pago", default="por_definir")

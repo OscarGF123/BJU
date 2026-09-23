@@ -61,17 +61,32 @@ class EpaycoService:
             "email": email,
             "urlResponse": f'{url_ngrok}/carrito/',
             "urlConfirmation": f'{url_ngrok}/pago/confirmacion/',
-            "methodConfirmation": "POST"
+            "methodConfirmation": "POST",
+            'extra1': str(id_compra)
         })
 
         response = requests.request("POST", url=url, headers=headers, data=payload).json()
-        print(response)
         if response.get('success') == True:
             return {'status': "success", 'link_cobro': response['data'].get('routeLink')}
         
         elif response.get('success') == False: 
             print(f'Respuesta Epayco {response}')
             return {'status': "error", 'type': 'Error interno (Epayco)', 'message': response.get('textResponse')}
+
+        def consultar_estado(self, ref_payco):
+            """Consulta el estado actual de una transacción por su referencia ePayco."""
+            try:
+                respuesta = requests.get(
+                    f"https://secure.epayco.co/validation/v1/reference/{ref_payco}",
+                    timeout=10,
+                )
+                data = respuesta.json()
+                print(f'estado de la venta pendiente/retenida {data.get("success")}')
+                if data.get("success"):
+                    return data.get("data")
+            except requests.RequestException as e:
+                print(f"Error consultando estado de {ref_payco}: {e}")
+            return None
             
 
 
