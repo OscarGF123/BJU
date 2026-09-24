@@ -4,7 +4,7 @@ from applications.usuarios.models import Usuario
 from applications.productos.models import Producto
 
 class CarritoCompras(models.Model):
-    usuario_id = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    usuario_id = models.OneToOneField(Usuario, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Carrito de Compra"
