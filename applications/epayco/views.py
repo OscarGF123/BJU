@@ -8,7 +8,6 @@ from django.views import View
 from django.db import transaction
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.core.handlers.wsgi import WSGIRequest
 
 from applications.carrito_compras.models import ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
@@ -23,11 +22,12 @@ load_dotenv()
 @method_decorator(csrf_exempt, name='dispatch')
 class ConfirmacionPago(View):
 
-    def post(self, request: WSGIRequest):
+    def post(self, request):
 
         datos = dict(request.GET.items())
 
-        venta = Ventas.objects.filter(usuario=request.user.id, estado_venta__in=['creada', 'en_proceso'])
+        venta = Ventas.objects.filter(usuario=self.request.user.id, estado_venta__in=['creada', 'en_proceso'])
+        print(f'el usuario id {request.user.id}')
         codigo_respuesta = datos.get("x_cod_response")
         firma_recibida = datos.get('x_signature')
 
@@ -48,7 +48,7 @@ class ConfirmacionPago(View):
                 i.estado_venta = 'cobro_sin_generar'
             return HttpResponse(status=400)
 
-        procesar_pago(venta, codigo_respuesta, ref_payco)
+        procesar_pago(venta.first().id, codigo_respuesta, ref_payco)
 
         print(f'id_extra1 {datos.get('x_extra1')}')
         
@@ -130,6 +130,8 @@ class IniciarPago(View, ClienteRequiredMixin):
             venta.estado_venta = 'en_proceso'
             venta.save()
             return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
+        elif generar_link.get('status') == 'success' and generar_link.get('link_cobro') == 'link_ya_existente':
+            return JsonResponse()
         elif generar_link.get('status') == "error":
 
             return JsonResponse(generar_link)

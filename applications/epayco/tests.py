@@ -11,10 +11,10 @@ load_dotenv()
 # Create your tests here.
 
 
-# EpaycoService()
-# Ventas.objects.all().delete()
-for i in Ventas.objects.all():
-    print(f'id: {i.id}')
+epayco = EpaycoService()
+Ventas.objects.all().delete()
+# for i in Ventas.objects.all():
+#     print(f'id: {i.id}')
 
 # Validacion de signature de epayco
 # p_cust_id_cliente = os.getenv('P_CUST_ID_CLIENTE')
@@ -28,3 +28,6 @@ for i in Ventas.objects.all():
 # x_currency_code = 'COP'
 # cadena = f'{p_cust_id_cliente}^{p_key}^{x_ref_payco}^{x_transaction_id}^{x_amount}^{x_currency_code}'
 # print('194f6f4d08ef21b9d87cc5ee136f29a3c279c4fd68dc6e65ade793c987419cba' == sha256(cadena.encode('utf-8')).hexdigest())
+
+ref = 387064082
+epayco.consultar_estado(ref)
