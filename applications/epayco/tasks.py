@@ -32,9 +32,10 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
     if not venta.exists():
         logger.error(f"procesar_pago: no existe la venta {venta_id}")
         return
-    venta.estado_venta = estado_recibido
-    venta.referencia_pago = ref_epayco
-    venta.save()
+    venta_filtrada = venta.first()
+    venta_filtrada.estado_venta = estado_recibido
+    venta_filtrada.referencia_pago = ref_epayco
+    venta_filtrada.save()
 
     items_venta = ItemsVentas.objects.filter(venta=venta_id).select_related('producto')
     match estado_recibido:
@@ -88,6 +89,7 @@ def _confirmar_venta(items_venta):
                 logger.error(f"Producto {item.producto_id} no encontrado")
                 continue
             producto.cantidad -= item.cantidad
+            print(f'producto: {producto.nombre} cantidad : {item.cantidad} cantidad reservada: {producto.cantidad_reservada}')
             producto.cantidad_reservada -= item.cantidad
             producto.save()
 

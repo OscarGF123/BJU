@@ -1,4 +1,5 @@
 import os
+import uuid
 import requests
 import json
 import base64
@@ -38,7 +39,7 @@ class EpaycoService:
             print(f"Error de conexión al crear el token: {e}")
         return None
 
-    def generar_link_cobro(self, email, precio, id_compra=0, descripcion='Cobro de productos'):
+    def generar_link_cobro(self, venta, email, precio, id_compra=0, descripcion='Cobro de productos'):
         """
             Genera un link de cobro consumiendo la api de Epayco
         """
@@ -51,27 +52,28 @@ class EpaycoService:
         response = requests.request("GET", url="http://ngrok:4040/api/tunnels")
         url_ngrok = [i["public_url"] for i in response.json()["tunnels"] if i["public_url"]][0]
 
+        referencia = f"{venta.id}-{uuid.uuid4().hex[:8]}"
+
         payload = json.dumps({
             "quantity": 1,
             "onePayment":True,
             "amount": str(precio),
             "currency": "COP",
             "id": 0,
-            "invoice": str(id_compra),
             "description": descripcion,
             "title": "Cobro de productos Box Jeans",
             "typeSell": "1",
             "tax": "0",
             "email": email,
             "urlResponse": f'{url_ngrok}/carrito/',
-            "urlConfirmation": f'{url_ngrok}/pago/confirmacion/',
+            "urlConfirmation": f'{url_ngrok}/pago/confirmacion/?venta_id={venta.id}',
             "methodConfirmation": "POST",
             'extra1': str(id_compra)
         })
-
+        
         response = requests.request("POST", url=url, headers=headers, data=payload).json()
         if response.get('success') == True:
-            return {'status': "success", 'link_cobro': response['data'].get('routeLink')}
+            return {'status': "success", 'link_cobro': response['data'].get('routeLink'), 'referencia': response['data'].get('id')}
         
         elif response.get('success') == False: 
             print(f'Respuesta Epayco {response}')

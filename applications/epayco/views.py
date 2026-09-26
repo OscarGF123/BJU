@@ -1,5 +1,6 @@
 from hashlib import sha256
 import os
+import re
 from dotenv import load_dotenv
 
 from django.http import HttpResponse, JsonResponse
@@ -26,7 +27,6 @@ class ConfirmacionPago(View):
 
         datos = dict(request.GET.items())
 
-        venta = Ventas.objects.filter(usuario=self.request.user.id, estado_venta__in=['creada', 'en_proceso'])
         print(f'el usuario id {request.user.id}')
         codigo_respuesta = datos.get("x_cod_response")
         firma_recibida = datos.get('x_signature')
@@ -42,6 +42,13 @@ class ConfirmacionPago(View):
 
         cadena = f'{p_cust_id_cliente}^{p_key}^{ref_payco}^{transaction_id}^{monto}^{moneda}'
         firma_calculada = sha256(cadena.encode('utf-8')).hexdigest()
+        venta_id = request.GET.get('venta_id')
+
+        venta = Ventas.objects.filter(id=venta_id, estado_venta__in=['creada', 'en_proceso'])
+
+        if not venta.exists():
+            print(f"[ConfirmacionPago] No se encontró venta con id={venta_id}")
+            return HttpResponse(status=400)
 
         if firma_calculada != firma_recibida:
             for i in venta:
@@ -49,8 +56,6 @@ class ConfirmacionPago(View):
             return HttpResponse(status=400)
 
         procesar_pago(venta.first().id, codigo_respuesta, ref_payco)
-
-        print(f'id_extra1 {datos.get('x_extra1')}')
         
         return HttpResponse(status=200)
 
@@ -119,15 +124,17 @@ class IniciarPago(View, ClienteRequiredMixin):
                         })
 
                     producto.cantidad_reservada =+ item.cantidad
-                    producto.save
+                    producto.save()
 
         # Crear el link de cobro
         
         epayco = EpaycoService()
-        generar_link = epayco.generar_link_cobro(precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
+        generar_link = epayco.generar_link_cobro(venta=venta, precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
 
         if generar_link.get('status') == "success":
             venta.estado_venta = 'en_proceso'
+            venta.referencia_pago = generar_link.get('referencia')
+            print(f'invoice number: {generar_link.get('referencia')}')
             venta.save()
             return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
         elif generar_link.get('status') == 'success' and generar_link.get('link_cobro') == 'link_ya_existente':
@@ -135,3 +142,9 @@ class IniciarPago(View, ClienteRequiredMixin):
         elif generar_link.get('status') == "error":
 
             return JsonResponse(generar_link)
+
+def extraer_link_id(datos_webhook):
+    """Extrae el id del link de cobro desde x_extra9_epayco (formato 'payco_link:12345:1')."""
+    valor = datos_webhook.get("x_extra9_epayco", "")
+    match = re.match(r"payco_link:(\d+):", valor)
+    return match.group(1) if match else None
