@@ -32,10 +32,9 @@ class Ventas(models.Model):
     ]
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     metodo_pago = models.CharField(max_length=150, verbose_name="Metodo de pago", default="por_definir")
-    # Este campo es usado para saber que venta se esta procesando al recibir el webhook
-    invoce_number = models.CharField(max_length=150, verbose_name="Referencia de pago")
     # Este campo es usado para identificar un link de cobro de Epayco 
     referencia_pago = models.CharField(max_length=150, verbose_name="Referencia de pago")
+    link_cobro = models.CharField(max_length=300, verbose_name='Link de Cobro', null=True)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Subtotal", default=0)
     total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Total", default=0)
     descuento = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Total", default=0)

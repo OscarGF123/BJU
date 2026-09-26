@@ -13,9 +13,11 @@ load_dotenv()
 
 
 epayco = EpaycoService()
-Ventas.objects.all().delete()
-# for i in Ventas.objects.all():
-#     print(f'id: {i.id}')
+# Ventas.objects.all().delete()
+for i in Ventas.objects.all():
+    print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
+
+print(Producto.objects.filter(nombre__valor='Jean Baggy Azul Oscuro', talla__valor=30).first().cantidad_reservada)
 
 # producto = Producto.objects.filter(talla__valor=28).first()
 

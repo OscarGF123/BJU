@@ -90,7 +90,7 @@ def _confirmar_venta(items_venta):
                 continue
             producto.cantidad -= item.cantidad
             print(f'producto: {producto.nombre} cantidad : {item.cantidad} cantidad reservada: {producto.cantidad_reservada}')
-            producto.cantidad_reservada -= item.cantidad
+            producto.cantidad_reservada = max(0, producto.cantidad_reservada - item.cantidad)
             producto.save()
 
 
@@ -101,5 +101,5 @@ def _liberar_stock(items_venta):
             producto = Producto.objects.select_for_update().filter(id=item.producto.id).first()
             if producto is None:
                 continue
-            producto.cantidad_reservada -= item.cantidad
+            producto.cantidad_reservada = max(0, producto.cantidad_reservada - item.cantidad)
             producto.save()

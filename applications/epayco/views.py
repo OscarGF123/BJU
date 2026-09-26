@@ -123,8 +123,9 @@ class IniciarPago(View, ClienteRequiredMixin):
                             'message': f'Stock insuficiente para {producto.nombre}'
                         })
 
-                    producto.cantidad_reservada =+ item.cantidad
+                    producto.cantidad_reservada += item.cantidad
                     producto.save()
+                    print(f'cantidad reservada inicio de pago {producto.cantidad_reservada}')
 
         # Crear el link de cobro
         
@@ -134,6 +135,7 @@ class IniciarPago(View, ClienteRequiredMixin):
         if generar_link.get('status') == "success":
             venta.estado_venta = 'en_proceso'
             venta.referencia_pago = generar_link.get('referencia')
+            venta.link_cobro = generar_link.get('link_cobro')
             print(f'invoice number: {generar_link.get('referencia')}')
             venta.save()
             return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
