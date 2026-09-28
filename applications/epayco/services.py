@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 import uuid
 import requests
@@ -52,7 +53,7 @@ class EpaycoService:
         response = requests.request("GET", url="http://ngrok:4040/api/tunnels")
         url_ngrok = [i["public_url"] for i in response.json()["tunnels"] if i["public_url"]][0]
 
-        referencia = f"{venta.id}-{uuid.uuid4().hex[:8]}"
+        fecha_expiracion = _fecha_expiracion(venta)
 
         payload = json.dumps({
             "quantity": 1,
@@ -68,11 +69,12 @@ class EpaycoService:
             "urlResponse": f'{url_ngrok}/carrito/',
             "urlConfirmation": f'{url_ngrok}/pago/confirmacion/?venta_id={venta.id}',
             "methodConfirmation": "POST",
-            'extra1': str(id_compra)
+            'expirationDate': fecha_expiracion
         })
         
         response = requests.request("POST", url=url, headers=headers, data=payload).json()
         if response.get('success') == True:
+            print(response)
             return {'status': "success", 'link_cobro': response['data'].get('routeLink'), 'referencia': response['data'].get('id')}
         
         elif response.get('success') == False: 
@@ -105,3 +107,7 @@ class EpaycoService:
             
 
 
+def _fecha_expiracion(venta):
+    """24 horas después de la fecha de creación de la venta."""
+    fecha_expiracion = venta.fecha_creacion + timedelta(hours=24)
+    return fecha_expiracion.strftime('%Y-%m-%d %H:%M:%S')

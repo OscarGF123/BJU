@@ -145,8 +145,3 @@ class IniciarPago(View, ClienteRequiredMixin):
 
             return JsonResponse(generar_link)
 
-def extraer_link_id(datos_webhook):
-    """Extrae el id del link de cobro desde x_extra9_epayco (formato 'payco_link:12345:1')."""
-    valor = datos_webhook.get("x_extra9_epayco", "")
-    match = re.match(r"payco_link:(\d+):", valor)
-    return match.group(1) if match else None

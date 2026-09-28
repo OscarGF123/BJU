@@ -76,7 +76,11 @@ def revisar_estado_pago(venta_id, ref_epayco, intento):
             revisar_estado_pago.apply_async(args=[venta_id, ref_epayco, intento + 1], countdown=300)
         return
 
-    nuevo_estado = respuesta.get('x_cod_response')
+    print(f'respuesta consultada {respuesta} intentos {intento}')
+    nuevo_estado = respuesta['transaction'].get('codTransactionState')
+
+    print(f'el nuevo estado {nuevo_estado}')
+
     procesar_pago.delay(venta_id, nuevo_estado, ref_epayco, intento)
 
 
