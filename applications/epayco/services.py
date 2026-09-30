@@ -97,16 +97,39 @@ class EpaycoService:
 
             print(f"[consultar_estado] status_code: {respuesta.status_code}")
             data = respuesta.json()
-
+            print(f'data cruda al consultar estado: {data}')
             if data.get("success"):
                 return data.get("data")
             return None
         except requests.RequestException as e:
             print(f"Error consultando estado de {ref_payco}: {e}")
             return None
-            
 
 
+    def listar_link(self, id):
+    
+        try: 
+            payload = {
+                'filter': {
+                    'id': id
+                }
+            }
+            respuesta = requests.post(
+                f"{self.url_apify}/collection/link",
+                timeout=10,
+                json=payload,
+                headers=self.headers
+            )
+
+            print(f"[consultar_estado] status_code: {respuesta.status_code}")
+            data = respuesta.json()
+            print(f'data cruda al consultar estado: {data}')
+            if data.get("success"):
+                return data.get("data")
+            return None
+        except requests.RequestException as e:
+            print(f"Error consultando estado de {id}: {e}")
+            return None
 def _fecha_expiracion(venta):
     """24 horas después de la fecha de creación de la venta."""
     fecha_expiracion = venta.fecha_creacion + timedelta(hours=24)

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 import sys
+from celery.schedules import crontab
 
 from dotenv import load_dotenv
 import dj_database_url
@@ -228,18 +229,12 @@ CELERY_ENABLE_UTC = True if os.getenv("CELERY_ENABLE_UTC").lower() == 'true' els
 # # Configuración de tareas periódicas (opcional)
 # from celery.schedules import crontab
 
-# CELERY_BEAT_SCHEDULE = {
-#     # Tarea que se ejecuta cada día a las 9:00 AM
-#     'enviar-reporte-diario': {
-#         'task': 'inventario.tasks.generar_reporte_diario',
-#         'schedule': crontab(hour=9, minute=0),
-#     },
-#     # Tarea que se ejecuta cada 30 minutos
-#     'limpiar-cache': {
-#         'task': 'core.tasks.limpiar_cache',
-#         'schedule': 30 * 60,  # 30 minutos en segundos
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    'expirar-ventas-pendientes': {
+        'task': 'applications.epayco.tasks.expirar_ventas_pendientes',
+        'schedule': crontab(hour=3, minute=0),   # todos los días a las 3:00 a.m.
+    },
+}
 
 # Configuración general
 SITE_NAME = 'BOX JEANS URBAN'

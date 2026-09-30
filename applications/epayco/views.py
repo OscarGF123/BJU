@@ -27,7 +27,6 @@ class ConfirmacionPago(View):
 
         datos = dict(request.GET.items())
 
-        print(f'el usuario id {request.user.id}')
         codigo_respuesta = datos.get("x_cod_response")
         firma_recibida = datos.get('x_signature')
 
@@ -55,7 +54,7 @@ class ConfirmacionPago(View):
                 i.estado_venta = 'cobro_sin_generar'
             return HttpResponse(status=400)
 
-        procesar_pago(venta.first().id, codigo_respuesta, ref_payco)
+        procesar_pago.delay(venta.first().id, codigo_respuesta, ref_payco)
         
         return HttpResponse(status=200)
 

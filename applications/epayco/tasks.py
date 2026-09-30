@@ -18,7 +18,8 @@ ESTADOS = {
     '8': 'iniciada',
     '9': 'caducada',
     '10': 'abandonada',
-    '11': 'cancelada'
+    '11': 'cancelada',
+    '00': 'expirado'
 }
 MAX_REINTENTOS = 5 
 EPAYCO = EpaycoService()
@@ -27,7 +28,7 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
 
 
 
-    estado_recibido = ESTADOS.get(estado_epayco, 'desconocido')
+    estado_recibido = ESTADOS.get(str(estado_epayco), 'desconocido')
     venta = Ventas.objects.filter(id=venta_id)
     if not venta.exists():
         logger.error(f"procesar_pago: no existe la venta {venta_id}")
@@ -38,6 +39,7 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
     venta_filtrada.save()
 
     items_venta = ItemsVentas.objects.filter(venta=venta_id).select_related('producto')
+    print(f'estado recibido {estado_recibido}')
     match estado_recibido:
         case 'aceptado':
                 _confirmar_venta(items_venta)
@@ -52,12 +54,16 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
                     args=[venta_id, ref_epayco, intento + 1],
                     countdown=300,
                 )
+            else:
+                # Si no cambia 
+                procesar_pago.delay(venta_id=venta_id, estado_epayco='10', ref_epayco=ref_epayco)
         case 'rechazado' | 'fallido' | 'reversado' | 'caducada' | 'abandonada' | 'cancelada':
+                print('algo fallo con la venta')
                 # Actualizar el stock
                 _liberar_stock(items_venta)
             
-        case 'iniciada':
-            pass
+        case 'desconocido':
+            print('no funciono ahora')
 
 
 @shared_task

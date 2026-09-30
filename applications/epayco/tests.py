@@ -17,14 +17,14 @@ epayco = EpaycoService()
 for i in Ventas.objects.all():
     print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
 
-print(Producto.objects.filter(nombre__valor='Jean Baggy Azul Oscuro', talla__valor=30).first().cantidad_reservada)
+# print(Producto.objects.filter(nombre__valor='Jean Baggy Azul Oscuro', talla__valor=30).first().cantidad_reservada)
 
 # producto = Producto.objects.filter(talla__valor=28).first()
 
 # producto.cantidad_reservada = 1
 # producto.save()
 
-
+print(epayco.listar_link('11237447'))
 
 # Validacion de signature de epayco
 # p_cust_id_cliente = os.getenv('P_CUST_ID_CLIENTE')
