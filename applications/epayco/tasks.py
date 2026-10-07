@@ -3,6 +3,7 @@ from celery import shared_task
 from django.db import transaction
 
 
+from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.epayco.models import ItemsVentas, Ventas
 from applications.epayco.services import EpaycoService
 from applications.productos.models import Producto
@@ -22,6 +23,7 @@ ESTADOS = {
     '00': 'expirado'
 }
 MAX_REINTENTOS = 5 
+ESTADOS_FINALES = {'aceptado', 'rechazado', 'fallido', 'reversado', 'caducada', 'abandonada', 'cancelada', 'expirado'}
 EPAYCO = EpaycoService()
 @shared_task
 def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
@@ -29,14 +31,21 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
 
 
     estado_recibido = ESTADOS.get(str(estado_epayco), 'desconocido')
-    venta = Ventas.objects.filter(id=venta_id)
-    if not venta.exists():
-        logger.error(f"procesar_pago: no existe la venta {venta_id}")
-        return
-    venta_filtrada = venta.first()
-    venta_filtrada.estado_venta = estado_recibido
-    venta_filtrada.referencia_pago = ref_epayco
-    venta_filtrada.save()
+    with transaction.atomic():
+        venta = Ventas.objects.select_for_update().filter(id=venta_id)
+
+        if not venta.exists():
+            logger.error(f"procesar_pago: no existe la venta {venta_id}")
+            return f'La venta con el id {venta_id} no existe'
+
+        # Validacion en caso de duplicidad webhooks
+        if venta.estado_venta in ESTADOS_FINALES:
+            print(f"Venta {venta_id} ya está en estado final ({venta.estado_venta}), se ignora")
+            return 
+        venta = venta.first()
+        venta.estado_venta = estado_recibido
+        venta.referencia_pago = ref_epayco
+        venta.save()
 
     items_venta = ItemsVentas.objects.filter(venta=venta_id).select_related('producto')
     print(f'estado recibido {estado_recibido}')
@@ -44,6 +53,7 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
         case 'aceptado':
                 _confirmar_venta(items_venta)
                 print('Estado de pago aceptado')
+                _vaciar_carrito(venta.usuario)
                 # Seguir con la logica de pedidos en este block
                 # Enviar Email
         case 'pendiente' | 'retenido':
@@ -55,13 +65,13 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
                     countdown=300,
                 )
             else:
-                # Si no cambia 
-                procesar_pago.delay(venta_id=venta_id, estado_epayco='10', ref_epayco=ref_epayco)
-        case 'rechazado' | 'fallido' | 'reversado' | 'caducada' | 'abandonada' | 'cancelada':
-                print('algo fallo con la venta')
+                # si la venta no cambia de pendiente/retenido entonces expirar la venta
+                procesar_pago.delay(venta_id=venta_id, estado_epayco='00', ref_epayco=ref_epayco)
+        case 'rechazado' | 'fallido' | 'reversado' | 'caducada' | 'abandonada' | 'cancelada' | 'expirado':
+                print('estado de la venta: {estado_recibido}')
                 # Actualizar el stock
                 _liberar_stock(items_venta)
-            
+
         case 'desconocido':
             print('no funciono ahora')
 
@@ -113,3 +123,9 @@ def _liberar_stock(items_venta):
                 continue
             producto.cantidad_reservada = max(0, producto.cantidad_reservada - item.cantidad)
             producto.save()
+
+def _vaciar_carrito(usuario_id):
+    carrito = CarritoCompras.objects.filter(usuario_id=usuario_id)
+
+    if carrito.exists():
+        ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first().id).delete()
