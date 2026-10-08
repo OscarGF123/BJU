@@ -1,10 +1,12 @@
+from datetime import timedelta
 import logging
 from celery import shared_task
 from django.db import transaction
+from django.utils import timezone
 
 
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
-from applications.epayco.models import ItemsVentas, Ventas
+from applications.epayco.models import DIAS_LIMITE, ItemsVentas, Ventas
 from applications.epayco.services import EpaycoService
 from applications.productos.models import Producto
 
@@ -99,6 +101,35 @@ def revisar_estado_pago(venta_id, ref_epayco, intento):
 
     procesar_pago.delay(venta_id, nuevo_estado, ref_epayco, intento)
 
+@shared_task
+def expirar_ventas_pendientes():
+    """
+    Revisa ventas 'en_proceso' que llevan más de N días sin resolverse
+    (típicamente Efecty/punto físico). Como no existe transacción en ePayco
+    hasta que el cliente paga, no hay nada que consultar: solo se decide
+    si ya pasó el plazo razonable de espera.
+    """
+
+
+    ventas_ids = Ventas.objects.filter(
+        estado_venta='en_proceso',
+        fecha_creacion__lte=timezone.now(),
+    ).values_list('id', flat=True) # devuelve solo los id en una lista
+
+    for venta_id in ventas_ids:
+        with transaction.atomic():
+            venta = Ventas.objects.select_for_update().filter(id=venta_id).first()
+
+            if venta is None:
+                continue
+
+            # Se valida el estado por si acaso
+            if venta.estado_venta != 'en_proceso' or venta.estado_venta != 'creada':
+                continue
+
+            items_venta = ItemsVentas.objects.filter(venta=venta)
+            _expirar_venta(venta, items_venta)
+
 
 def _confirmar_venta(items_venta):
     """Descuenta stock real y libera lo reservado. Solo se llama si el pago quedó aceptado."""
@@ -129,3 +160,20 @@ def _vaciar_carrito(usuario_id):
 
     if carrito.exists():
         ItemsCarritoCompras.objects.filter(carrito_compra_id=carrito.first().id).delete()
+
+def _expirar_venta(venta, items_venta):
+    """
+    Se llama cuando, de NUESTRO lado, decidimos dejar de esperar una venta
+    que sigue sin resolverse (no porque ePayco haya reportado que el
+    usuario abandonó, sino porque ya pasó el tiempo razonable de espera).
+
+    Libera el stock reservado y marca la venta como expirada.
+
+    IMPORTANTE: esta función asume que quien la llama YA tiene el lock
+    de la venta (select_for_update dentro de un transaction.atomic),
+    así que aquí no se vuelve a bloquear ni a re-consultar el estado.
+    """
+    _liberar_stock(items_venta)
+    venta.estado_venta = 'expirado'
+    venta.save()
+    logger.info(f"Venta {venta.id} expirada por tiempo de espera excedido")

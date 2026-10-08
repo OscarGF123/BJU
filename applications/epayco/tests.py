@@ -1,21 +1,23 @@
 from hashlib import sha256
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 from django.test import TestCase
 from applications.epayco.models import Ventas
 from applications.epayco.services import EpaycoService
 from applications.productos.models import Producto
+from django.utils import timezone
 
 load_dotenv()
 
 # Create your tests here.
 
-
-epayco = EpaycoService()
-# Ventas.objects.all().delete()
-for i in Ventas.objects.all():
-    print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
+print(timezone.now() - timedelta(days=5))
+# epayco = EpaycoService()
+# # Ventas.objects.all().delete()
+# for i in Ventas.objects.all():
+#     print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
 
 # print(Producto.objects.filter(nombre__valor='Jean Baggy Azul Oscuro', talla__valor=30).first().cantidad_reservada)
 
@@ -24,7 +26,7 @@ for i in Ventas.objects.all():
 # producto.cantidad_reservada = 1
 # producto.save()
 
-print(epayco.listar_link('11237447'))
+# print(epayco.listar_link('11237447'))
 
 # Validacion de signature de epayco
 # p_cust_id_cliente = os.getenv('P_CUST_ID_CLIENTE')

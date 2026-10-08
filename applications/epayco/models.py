@@ -1,10 +1,19 @@
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
 
 from applications.usuarios.models import Usuario
 from applications.productos.models import Producto
-# Create your models here.
 
+# Numero de dias que tiene el usuario para completar la transaccion
+DIAS_LIMITE = 5
+@property
+def expiracion_defecto():
+    """
+    Esta funcion retorna una suma de 5 dias a la fecha de creacion de la venta
+    """
+    return timezone.now() + timedelta(days=DIAS_LIMITE)
 class Ventas(models.Model):
 
     ESTADOS = [
@@ -41,6 +50,9 @@ class Ventas(models.Model):
     estado_venta = models.CharField(max_length=150, choices=ESTADOS, verbose_name="Estado de pago")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
+
+    # Fecha de expiracion para la tarea diaria que se encarga de expirar ventas
+    fecha_expiracion = models.DateTimeField(default=expiracion_defecto, verbose_name="Fecha de expiración", null=True)
     # Si el pago tiene el estado pendiente entonces se dara una fecha de expiracion
     # fecha_reserva = models.DateTimeField()
     class Meta:
