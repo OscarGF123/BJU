@@ -16,9 +16,11 @@ load_dotenv()
 print(timezone.now() - timedelta(days=5))
 # epayco = EpaycoService()
 # # Ventas.objects.all().delete()
-# for i in Ventas.objects.all():
-#     print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
+for i in Ventas.objects.all():
+    print(f'id: {i.id} estado: {i.estado_venta} ref_epayco: {i.referencia_pago} link_cobro: {i.link_cobro}')
+# venta = Ventas.objects.filter(id=11).update(fecha_expiracion=timezone.now() - timedelta(days=6), estado_venta="en_proceso")
 
+# print(f"Fecha expiración {Ventas.objects.filter(id=11).first().fecha_expiracion}")
 # print(Producto.objects.filter(nombre__valor='Jean Baggy Azul Oscuro', talla__valor=30).first().cantidad_reservada)
 
 # producto = Producto.objects.filter(talla__valor=28).first()

@@ -63,7 +63,12 @@ services:
   # Celery Worker
   celery:
     build: .
-    command: celery -A config worker --loglevel=debug
+    command: >
+      bash -c "
+      celery -A config worker -l info --concurrency=1 &
+      celery -A config beat -l info &
+      wait -n
+      "
     volumes:
       - .:/BJU:z #z es para indicarle a SELinux que etiquete los archivos para que los Contenedores accedan a ellos
     environment:

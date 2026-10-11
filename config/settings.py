@@ -232,9 +232,17 @@ CELERY_ENABLE_UTC = True if os.getenv("CELERY_ENABLE_UTC").lower() == 'true' els
 CELERY_BEAT_SCHEDULE = {
     'expirar-ventas-pendientes': {
         'task': 'applications.epayco.tasks.expirar_ventas_pendientes',
-        'schedule': crontab(hour=3, minute=0),   # todos los días a las 3:00 a.m.
+        'schedule': crontab(hour=19, minute=9),   # todos los días a las 3:00 a.m.
     },
 }
+
+"""
+comandos para celery al momento de desplegar a railway:
+
+Web (Django)	el que ya tienes (gunicorn, probablemente)
+Celery worker	celery -A config worker -l info | esto para activar las tareas (creo)
+Celery beat	celery -A config beat -l info | esto para activar tareas periodicas
+"""
 
 # Configuración general
 SITE_NAME = 'BOX JEANS URBAN'
