@@ -110,8 +110,6 @@ def expirar_ventas_pendientes():
     si ya pasó el plazo razonable de espera.
     """
 
-    print('Iniciando a expirar ventas')
-
     ventas_ids = Ventas.objects.filter(
         estado_venta__in=['en_proceso', 'creada'],
         fecha_creacion__lte=timezone.now(),
@@ -120,7 +118,6 @@ def expirar_ventas_pendientes():
     print(f'ventas por expirar {ventas_ids}')
 
     for venta_id in ventas_ids:
-        print('ostia tio')
         with transaction.atomic():
             venta = Ventas.objects.select_for_update().filter(id=venta_id).first()
 

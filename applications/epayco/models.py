@@ -8,7 +8,7 @@ from applications.productos.models import Producto
 
 # Numero de dias que tiene el usuario para completar la transaccion
 DIAS_LIMITE = 5
-@property
+
 def expiracion_defecto():
     """
     Esta funcion retorna una suma de 5 dias a la fecha de creacion de la venta

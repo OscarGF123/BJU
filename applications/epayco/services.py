@@ -53,8 +53,6 @@ class EpaycoService:
         response = requests.request("GET", url="http://ngrok:4040/api/tunnels")
         url_ngrok = [i["public_url"] for i in response.json()["tunnels"] if i["public_url"]][0]
 
-        fecha_expiracion = _fecha_expiracion(venta)
-
         payload = json.dumps({
             "quantity": 1,
             "onePayment":True,
@@ -69,7 +67,7 @@ class EpaycoService:
             "urlResponse": f'{url_ngrok}/carrito/',
             "urlConfirmation": f'{url_ngrok}/pago/confirmacion/?venta_id={venta.id}',
             "methodConfirmation": "POST",
-            'expirationDate': fecha_expiracion
+            'expirationDate': venta.fecha_expiracion.strftime('%Y-%m-%d %H:%M:%S')
         })
         
         response = requests.request("POST", url=url, headers=headers, data=payload).json()
@@ -79,7 +77,7 @@ class EpaycoService:
         
         elif response.get('success') == False: 
             print(f'Respuesta Epayco {response}')
-            return {'status': "error", 'type': 'Error interno (Epayco)', 'message': response.get('textResponse')}
+            return {'status': "error", 'type': 'Error interno (Epayco)', 'message': response.get('text_response')}
         
         elif response.get('success') == False and response.get('lastAction') == 'create new sell':
             return {'status': "success", 'link_cobro': 'link_ya_existente'}
@@ -130,7 +128,3 @@ class EpaycoService:
         except requests.RequestException as e:
             print(f"Error consultando estado de {id}: {e}")
             return None
-def _fecha_expiracion(venta):
-    """24 horas después de la fecha de creación de la venta."""
-    fecha_expiracion = venta.fecha_creacion + timedelta(hours=24)
-    return fecha_expiracion.strftime('%Y-%m-%d %H:%M:%S')
