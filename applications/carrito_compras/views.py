@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.views.generic import ListView, View
@@ -123,7 +125,7 @@ class AgregarItem(View):
                     'imagen': str(imagen.first().link_imagen) if imagen else None,
                     'talla': talla.valor,
                     'precio': str(producto.precio_unitario),
-                    'precio_mayorista':  producto.precio_mayorista,
+                    'precio_mayorista':  str(producto.precio_mayorista),
                     'cant_max': int(producto.cantidad),
                     'logueado': False,
                     'id': producto_id,
@@ -276,7 +278,6 @@ class EliminarItem(VistaBaseEliminar):
             for i, v in enumerate(carrito_compras_session):
                 if v['producto_id'] == id:
                     del carrito_compras_session[i]
-                total = sum(int(i['cantidad']) * int(i['precio']) for i in carrito_compras_session if i['seleccionado'])
             request.session.modified = True
             return JsonResponse({"status": "success", "id": id, 'calcular_venta': calcular_venta(request)})
         else:
@@ -431,13 +432,13 @@ def calcular_venta(request):
     else:
 
         items = request.session.get('carrito', [])
-        subtotal = sum(i['cantidad'] * int(i['precio']) for i in items if i['seleccionado'])
+        subtotal = str(sum(i['cantidad'] * Decimal(i['precio']) for i in items if i['seleccionado']))
 
         cant_productos = sum(i['cantidad'] for i in items)
         descuento = 0
 
         if cant_productos >= 6:
-            total = sum(i['cantidad'] * i['precio_mayorista'] for i in items if i['seleccionado'])
+            total = sum(i['cantidad'] * Decimal(i['precio_mayorista']) for i in items if i['seleccionado'])
             descuento = subtotal - total
         else:
             total = subtotal
