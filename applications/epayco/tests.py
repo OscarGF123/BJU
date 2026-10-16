@@ -14,10 +14,13 @@ load_dotenv()
 # Create your tests here.
 
 print(timezone.now() - timedelta(days=5))
-epayco = EpaycoService()
+for i in range(0, 100):
+    print(f'[FORZAR ERROR DE INICIO DE SESION EN EPAYCO] intento {i}')
+    epayco = EpaycoService()._obtener_token()
 # # Ventas.objects.all().delete()
-for i in Ventas.objects.all():
-    print(f'id: {i.id} estado: {i.estado_venta} | ref_epayco: {i.referencia_pago} | link_cobro: {i.link_cobro} | fecha_expiracion {i.fecha_expiracion}')
+# for i in Ventas.objects.all():
+#     print(f'id: {i.id} estado: {i.estado_venta} | ref_epayco: {i.referencia_pago} | link_cobro: {i.link_cobro} | fecha_expiracion {i.fecha_expiracion}')
+
 
 
 # venta = Ventas.objects.filter(id=41).update(fecha_expiracion=timezone.now() - timedelta(days=6), estado_venta="en_proceso")

@@ -29,9 +29,7 @@ ESTADOS_FINALES = {'aceptado', 'rechazado', 'fallido', 'reversado', 'caducada', 
 EPAYCO = EpaycoService()
 @shared_task
 def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
-
-
-
+    
     estado_recibido = ESTADOS.get(str(estado_epayco), 'desconocido')
     with transaction.atomic():
         venta = Ventas.objects.select_for_update().filter(id=venta_id)
@@ -40,11 +38,13 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
             logger.error(f"procesar_pago: no existe la venta {venta_id}")
             return f'La venta con el id {venta_id} no existe'
 
+        venta = venta.first()
+
         # Validacion en caso de duplicidad webhooks
         if venta.estado_venta in ESTADOS_FINALES:
             print(f"Venta {venta_id} ya está en estado final ({venta.estado_venta}), se ignora")
             return 
-        venta = venta.first()
+        
         venta.estado_venta = estado_recibido
         venta.referencia_pago = ref_epayco
         venta.save()
