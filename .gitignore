@@ -17,3 +17,6 @@ prueba.js
 cspell.json
 
 .vscode
+
+# Ignorar el archivo de celery
+celerybeat-schedule
