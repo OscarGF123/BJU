@@ -128,19 +128,22 @@ class IniciarPago(View, ClienteRequiredMixin):
 
         # Crear el link de cobro
         
-        epayco = EpaycoService()
-        generar_link = epayco.generar_link_cobro(venta=venta, precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
+        if not venta.link_cobro:
+            print(f'la venta id:{venta.id} no posee link de cobro\ngenerando link de cobro...')
+            epayco = EpaycoService()
+            generar_link = epayco.generar_link_cobro(venta=venta, precio=cobro.get('total'), email=usuario.email, id_compra=venta.id)
 
-        if generar_link.get('status') == "success":
-            venta.estado_venta = 'en_proceso'
-            venta.referencia_pago = generar_link.get('referencia')
-            venta.link_cobro = generar_link.get('link_cobro')
-            print(f'invoice number: {generar_link.get('referencia')}')
-            venta.save()
-            return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
-        elif generar_link.get('status') == 'success' and generar_link.get('link_cobro') == 'link_ya_existente':
-            return JsonResponse()
-        elif generar_link.get('status') == "error":
+            if generar_link.get('status') == "success":
+                venta.estado_venta = 'en_proceso'
+                venta.referencia_pago = generar_link.get('referencia')
+                venta.link_cobro = generar_link.get('link_cobro')
+                print(f'invoice number: {generar_link.get('referencia')}')
+                venta.save()
+                return JsonResponse({'status': "success", 'link_cobro': generar_link.get('link_cobro')})
+            elif generar_link.get('status') == 'success' and generar_link.get('link_cobro') == 'link_ya_existente':
+                return JsonResponse()
+            elif generar_link.get('status') == "error":
 
-            return JsonResponse(generar_link)
-
+                return JsonResponse(generar_link)
+            
+        return JsonResponse({'status': "success", 'link_cobro': venta.link_cobro})
