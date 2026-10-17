@@ -7,7 +7,7 @@ from applications.usuarios.models import Usuario
 from applications.productos.models import Producto
 
 # Numero de dias que tiene el usuario para completar la transaccion
-DIAS_LIMITE = 5
+DIAS_LIMITE = 2
 
 def expiracion_defecto():
     """
