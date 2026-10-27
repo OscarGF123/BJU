@@ -129,8 +129,48 @@
 
                         {% block boton_login %}
                             {% if login %}
-                                <a href="/logout/"><img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user" title="Perfil de usuario"></a>
-                            {% else %}  
+                                <!-- DROPDOWN USUARIO -->
+                                <div class="user-dropdown-wrapper" id="userDropdownWrapper">
+                                    <button class="user-dropdown-btn" id="userDropdownBtn">
+                                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMjAiIGZpbGw9InVybCgjZ3JhZGllbnQwKSIvPgo8Y2lyY2xlIGN4PSIyMCIgY3k9IjE1IiByPSI2IiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTIgMzJDMTIgMjcuNTggMTUuNTggMjQgMjAgMjRTMjggMjcuNTggMjggMzJIMTJaIiBmaWxsPSJ3aGl0ZSIvPgo8ZGVmcz4KPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudDAiIHgxPSIwIiB5MT0iMCIgeDI9IjQwIiB5Mj0iNDAiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIj4KPHN0b3Agc3RvcC1jb2xvcj0iI0RDMzU0NSIvPgo8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNDODIzMzMiLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8L3N2Zz4K" alt="Usuario" class="bj-user">
+                                        <i class="fas fa-chevron-down user-chevron" id="userChevron"></i>
+                                    </button>
+
+                                    <!-- PANEL DROPDOWN -->
+                                    <div class="user-dropdown-panel" id="userDropdownPanel">
+                                        <!-- INFO USUARIO -->
+                                        <div class="user-dropdown-info">
+                                            <div class="user-dropdown-avatar">
+                                                {{ request.user.first_name|first|upper }}{{ request.user.last_name|first|upper }}
+                                            </div>
+                                            <div class="user-dropdown-datos">
+                                                <span class="user-dropdown-nombre">{{ request.user.get_full_name }}</span>
+                                                <span class="user-dropdown-email">{{ request.user.email }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="user-dropdown-divider"></div>
+
+                                        <!-- OPCIONES -->
+                                        <a href="/perfil/" class="user-dropdown-item">
+                                            <i class="fas fa-user"></i>
+                                            <span>Mis datos</span>
+                                        </a>
+                                        <a href="/compras/" class="user-dropdown-item">
+                                            <i class="fas fa-box"></i>
+                                            <span>Mis compras</span>
+                                        </a>
+
+                                        <div class="user-dropdown-divider"></div>
+
+                                        <a href="/logout/" class="user-dropdown-item user-dropdown-salir">
+                                            <i class="fas fa-sign-out-alt"></i>
+                                            <span>Cerrar sesión</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            {% else %}
                                 <a href="/login/">Iniciar Sesión</a>
                             {% endif %}
                             <button class="bju-mobile-menu-btn" onclick="BJU.toggleMobileMenu()">☰</button>
@@ -138,7 +178,29 @@
                     {% endblock %}
                 </div>
             </nav>
-        
+    <script>
+        // USER DROPDOWN
+        const userBtn = document.querySelector('#userDropdownBtn');
+        const userPanel = document.getElementById('userDropdownPanel');
+        const userChevron = document.getElementById('userChevron');
+        console.log(userBtn)
+        if (userBtn) {
+            
+            userBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                userPanel.classList.toggle('open');
+                userChevron.classList.toggle('open');
+            });
+
+            // Cierra al hacer click fuera
+            document.addEventListener('click', function(e) {
+                if (!userBtn.contains(e.target) && !userPanel.contains(e.target)) {
+                    userPanel.classList.remove('open');
+                    userChevron.classList.remove('open');
+                }
+            });
+        }
+    </script>
     </header>
 {% endblock %}
 

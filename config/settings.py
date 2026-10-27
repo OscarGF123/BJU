@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     # apps del proyecto
     'applications.carrito_compras',
     'applications.usuarios',
-    'applications.envios',
+    'applications.compras',
     'applications.productos',
     'applications.login',
     'applications.epayco',
