@@ -1,0 +1,485 @@
+/* ── BASE ── */
+compras-body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #fff;
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+.compras-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+}
+
+/* ── ENCABEZADO ── */
+.compras-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.compras-titulo {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 1px;
+    position: relative;
+    padding-bottom: 0.6rem;
+}
+
+.compras-titulo::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #dc3545, #ff6b7a);
+    border-radius: 2px;
+}
+
+.compras-contador {
+    font-size: 0.95rem;
+    color: #888;
+    margin-top: 0.3rem;
+}
+
+/* ── FILTROS ── */
+.compras-filtros {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filtro-search {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: #2d2d2d;
+    border: 1px solid rgba(220,53,69,0.25);
+    border-radius: 25px;
+    padding: 0.55rem 1.2rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filtro-search i { color: #888; font-size: 0.85rem; }
+
+.filtro-search input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 0.95rem;
+    outline: none;
+    width: 100%;
+}
+
+.filtro-search input::placeholder { color: #666; }
+
+.filtro-btns {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filtro-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #aaa;
+    padding: 0.45rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.filtro-btn:hover,
+.filtro-btn.active {
+    background: rgba(220,53,69,0.15);
+    border-color: #dc3545;
+    color: #fff;
+}
+
+/* ── FECHA GRUPO ── */
+.fecha-grupo {
+    margin: 1.8rem 0 0.8rem;
+}
+
+.fecha-label {
+    font-size: 0.85rem;
+    color: #888;
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    border-left: 3px solid #dc3545;
+    padding-left: 0.7rem;
+}
+
+/* ── CARD DE COMPRA ── */
+.compra-card {
+    background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+    border: 1px solid rgba(220,53,69,0.15);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.2rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.compra-card:hover {
+    border-color: rgba(220,53,69,0.45);
+    box-shadow: 0 6px 24px rgba(220,53,69,0.12);
+}
+
+/* ── FRANJA DE ESTADO ── */
+.estado-franja {
+    padding: 0.55rem 1.4rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.estado-entregado  { background: rgba(76,175,80,0.12);  color: #66bb6a; border-bottom: 1px solid rgba(76,175,80,0.2); }
+.estado-en_camino  { background: rgba(33,150,243,0.12); color: #42a5f5; border-bottom: 1px solid rgba(33,150,243,0.2); }
+.estado-pendiente  { background: rgba(255,193,7,0.1);   color: #ffd54f; border-bottom: 1px solid rgba(255,193,7,0.15); }
+.estado-cancelado  { background: rgba(220,53,69,0.1);   color: #ef5350; border-bottom: 1px solid rgba(220,53,69,0.15); }
+
+/* ── CUERPO ── */
+.compra-body {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    gap: 1.2rem;
+    align-items: center;
+    padding: 1.2rem 1.4rem;
+}
+
+.compra-imagen {
+    width: 90px;
+    height: 90px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #333;
+    flex-shrink: 0;
+}
+
+.compra-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.compra-nombre {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.3rem;
+}
+
+.compra-detalle {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.4rem;
+}
+
+.compra-precio {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+/* ── ACCIONES ── */
+.compra-acciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    min-width: 140px;
+}
+
+.btn-ver {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+    text-align: center;
+    padding: 0.55rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.btn-ver:hover {
+    box-shadow: 0 4px 14px rgba(220,53,69,0.4);
+    transform: translateY(-1px);
+    color: #fff;
+}
+
+.btn-recomprar {
+    background: transparent;
+    border: 1px solid rgba(220,53,69,0.4);
+    color: #dc3545;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-recomprar:hover {
+    background: rgba(220,53,69,0.1);
+    color: #dc3545;
+}
+
+/* ── TRACKER ── */
+.compra-tracker {
+    display: flex;
+    align-items: center;
+    padding: 0.9rem 1.4rem 1.1rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    gap: 0;
+}
+
+.tracker-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+}
+
+.tracker-step span {
+    font-size: 0.72rem;
+    color: #555;
+    white-space: nowrap;
+}
+
+.tracker-step.activo span { color: #aaa; }
+
+.tracker-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #333;
+    border: 2px solid #444;
+    transition: all 0.3s;
+}
+
+.tracker-step.activo .tracker-dot {
+    background: #dc3545;
+    border-color: #dc3545;
+    box-shadow: 0 0 8px rgba(220,53,69,0.5);
+}
+
+.tracker-linea {
+    flex: 1;
+    height: 2px;
+    background: #333;
+    margin-bottom: 1.1rem;
+    transition: background 0.3s;
+}
+
+.tracker-linea.activa { background: #dc3545; }
+
+/* ── VACÍO ── */
+.compras-vacio {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+    border-radius: 16px;
+    border: 1px solid rgba(220,53,69,0.15);
+}
+
+.vacio-icono { font-size: 4rem; margin-bottom: 1rem; opacity: 0.4; }
+
+.vacio-texto { font-size: 1.3rem; color: #888; margin-bottom: 1.5rem; }
+
+.btn-ir-tienda {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: box-shadow 0.2s;
+}
+
+.btn-ir-tienda:hover {
+    box-shadow: 0 8px 24px rgba(220,53,69,0.4);
+    color: #fff;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 640px) {
+    .compra-body {
+        grid-template-columns: 70px 1fr;
+    }
+
+    .compra-acciones {
+        grid-column: 1 / -1;
+        flex-direction: row;
+    }
+
+    .btn-ver, .btn-recomprar { flex: 1; }
+
+    .compras-filtros { flex-direction: column; align-items: stretch; }
+
+    .filtro-btns { justify-content: flex-start; }
+}
+/* ── MODAL DETALLE DE COMPRA ── */
+.modal-compra-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-compra-overlay.open { display: flex; }
+
+.modal-compra {
+    background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
+    border: 1px solid rgba(220,53,69,0.35);
+    border-radius: 18px;
+    width: 100%;
+    max-width: 620px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: modalCompraIn 0.25s ease;
+}
+
+@keyframes modalCompraIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: none; }
+}
+
+.modal-compra-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1.3rem 1.5rem 1rem;
+}
+
+.modal-compra-header h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+}
+
+.modal-compra-header h2 span { color: #dc3545; }
+
+.modal-compra-fecha { font-size: 0.82rem; color: #888; }
+
+.modal-compra-cerrar {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #aaa;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.modal-compra-cerrar:hover {
+    border-color: #dc3545;
+    color: #dc3545;
+    transform: rotate(90deg);
+}
+
+.modal-compra-estado {
+    padding: 0.55rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.modal-compra-body {
+    padding: 1rem 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.mc-cargando { color: #888; text-align: center; padding: 2rem 0; }
+
+.mc-producto {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 0.8rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+}
+
+.mc-producto img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #333;
+}
+
+.mc-producto-nombre { font-size: 0.95rem; font-weight: 600; color: #fff; margin: 0 0 0.2rem; }
+.mc-producto-detalle { font-size: 0.8rem; color: #888; margin: 0; }
+.mc-producto-precio { font-weight: 700; color: #dc3545; white-space: nowrap; }
+
+.mc-datos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem 1rem;
+    padding-top: 0.6rem;
+    font-size: 0.85rem;
+}
+
+.mc-dato small { display: block; color: #777; font-size: 0.75rem; }
+.mc-dato span  { color: #ddd; }
+
+.modal-compra-footer {
+    padding: 1rem 1.5rem 1.3rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.mc-resumen-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+.mc-verde { color: #4CAF50; }
+
+.mc-total {
+    margin-top: 0.5rem;
+    padding-top: 0.7rem;
+    border-top: 2px solid rgba(220,53,69,0.5);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.mc-total span:last-child { color: #dc3545; }
+
+@media (max-width: 500px) {
+    .mc-producto { grid-template-columns: 52px 1fr; }
+    .mc-producto img { width: 52px; height: 52px; }
+    .mc-producto-precio { grid-column: 2; }
+    .mc-datos { grid-template-columns: 1fr; }
+}

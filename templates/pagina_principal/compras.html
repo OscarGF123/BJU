@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block body %}
-<body>
+<body class="compras-body">
 
     <div class="compras-wrapper">
 
@@ -67,16 +67,17 @@
                         </div>
 
                         <div class="compra-acciones">
-                            {% comment %}
-                            <!-- <a href="{% url 'detalle_compra' compra.id %}" class="btn-ver"> -->
+                            <button type="button" class="btn-ver" onclick="abrirModalCompra('{{ compra.id }}')">
                                 Ver compra
-                            </a>
-                            
-                            <a href="{% url 'detalle_producto' compra.producto_id %}" class="btn-recomprar">
+                            </button>
+                            <p>{{compra.id}}</p>
+                            {% comment %}
+                            <a href="{% url 'detalle_producto' compra.id %}" class="btn-recomprar">
                                 <i class="fas fa-redo-alt"></i> Volver a comprar
                             </a>
                             {% endcomment %}
                         </div>
+
                     </div>
 
                     <!-- TRACKER DE ESTADO -->
@@ -111,342 +112,32 @@
         </div>
     </div>
 
-    <style>
-        /* ── BASE ── */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: #fff;
-            min-height: 100vh;
-            padding-top: 80px;
-        }
+    <div class="modal-compra-overlay" id="modalCompra" onclick="if(event.target===this) cerrarModalCompra()">
+        <div class="modal-compra" role="dialog" aria-modal="true" aria-labelledby="modalCompraTitulo">
+            <div class="modal-compra-header">
+                <div>
+                    <h2 id="modalCompraTitulo">Compra <span id="mcNumero"></span></h2>
+                    <span class="modal-compra-fecha" id="mcFecha"></span>
+                </div>
+                <button type="button" class="modal-compra-cerrar" onclick="cerrarModalCompra()" aria-label="Cerrar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
 
-        .compras-wrapper {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 2.5rem 1.5rem;
-        }
+            <div class="modal-compra-estado" id="mcEstado"></div>
 
-        /* ── ENCABEZADO ── */
-        .compras-header {
-            display: flex;
-            align-items: baseline;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
+            <div class="modal-compra-body" id="mcBody">
+                <p class="mc-cargando">Cargando detalle...</p>
+            </div>
 
-        .compras-titulo {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: #fff;
-            letter-spacing: 1px;
-            position: relative;
-            padding-bottom: 0.6rem;
-        }
-
-        .compras-titulo::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(90deg, #dc3545, #ff6b7a);
-            border-radius: 2px;
-        }
-
-        .compras-contador {
-            font-size: 0.95rem;
-            color: #888;
-            margin-top: 0.3rem;
-        }
-
-        /* ── FILTROS ── */
-        .compras-filtros {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .filtro-search {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            background: #2d2d2d;
-            border: 1px solid rgba(220,53,69,0.25);
-            border-radius: 25px;
-            padding: 0.55rem 1.2rem;
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filtro-search i { color: #888; font-size: 0.85rem; }
-
-        .filtro-search input {
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-size: 0.95rem;
-            outline: none;
-            width: 100%;
-        }
-
-        .filtro-search input::placeholder { color: #666; }
-
-        .filtro-btns {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filtro-btn {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: #aaa;
-            padding: 0.45rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .filtro-btn:hover,
-        .filtro-btn.active {
-            background: rgba(220,53,69,0.15);
-            border-color: #dc3545;
-            color: #fff;
-        }
-
-        /* ── FECHA GRUPO ── */
-        .fecha-grupo {
-            margin: 1.8rem 0 0.8rem;
-        }
-
-        .fecha-label {
-            font-size: 0.85rem;
-            color: #888;
-            text-transform: capitalize;
-            letter-spacing: 0.5px;
-            border-left: 3px solid #dc3545;
-            padding-left: 0.7rem;
-        }
-
-        /* ── CARD DE COMPRA ── */
-        .compra-card {
-            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
-            border: 1px solid rgba(220,53,69,0.15);
-            border-radius: 14px;
-            overflow: hidden;
-            margin-bottom: 1.2rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .compra-card:hover {
-            border-color: rgba(220,53,69,0.45);
-            box-shadow: 0 6px 24px rgba(220,53,69,0.12);
-        }
-
-        /* ── FRANJA DE ESTADO ── */
-        .estado-franja {
-            padding: 0.55rem 1.4rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .estado-entregado  { background: rgba(76,175,80,0.12);  color: #66bb6a; border-bottom: 1px solid rgba(76,175,80,0.2); }
-        .estado-en_camino  { background: rgba(33,150,243,0.12); color: #42a5f5; border-bottom: 1px solid rgba(33,150,243,0.2); }
-        .estado-pendiente  { background: rgba(255,193,7,0.1);   color: #ffd54f; border-bottom: 1px solid rgba(255,193,7,0.15); }
-        .estado-cancelado  { background: rgba(220,53,69,0.1);   color: #ef5350; border-bottom: 1px solid rgba(220,53,69,0.15); }
-
-        /* ── CUERPO ── */
-        .compra-body {
-            display: grid;
-            grid-template-columns: 90px 1fr auto;
-            gap: 1.2rem;
-            align-items: center;
-            padding: 1.2rem 1.4rem;
-        }
-
-        .compra-imagen {
-            width: 90px;
-            height: 90px;
-            border-radius: 10px;
-            overflow: hidden;
-            background: #333;
-            flex-shrink: 0;
-        }
-
-        .compra-imagen img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .compra-nombre {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 0.3rem;
-        }
-
-        .compra-detalle {
-            font-size: 0.85rem;
-            color: #888;
-            margin-bottom: 0.4rem;
-        }
-
-        .compra-precio {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: #dc3545;
-        }
-
-        /* ── ACCIONES ── */
-        .compra-acciones {
-            display: flex;
-            flex-direction: column;
-            gap: 0.6rem;
-            min-width: 140px;
-        }
-
-        .btn-ver {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: #fff;
-            text-align: center;
-            padding: 0.55rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: box-shadow 0.2s, transform 0.2s;
-        }
-
-        .btn-ver:hover {
-            box-shadow: 0 4px 14px rgba(220,53,69,0.4);
-            transform: translateY(-1px);
-            color: #fff;
-        }
-
-        .btn-recomprar {
-            background: transparent;
-            border: 1px solid rgba(220,53,69,0.4);
-            color: #dc3545;
-            text-align: center;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-decoration: none;
-            transition: background 0.2s;
-        }
-
-        .btn-recomprar:hover {
-            background: rgba(220,53,69,0.1);
-            color: #dc3545;
-        }
-
-        /* ── TRACKER ── */
-        .compra-tracker {
-            display: flex;
-            align-items: center;
-            padding: 0.9rem 1.4rem 1.1rem;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            gap: 0;
-        }
-
-        .tracker-step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.4rem;
-            flex-shrink: 0;
-        }
-
-        .tracker-step span {
-            font-size: 0.72rem;
-            color: #555;
-            white-space: nowrap;
-        }
-
-        .tracker-step.activo span { color: #aaa; }
-
-        .tracker-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #333;
-            border: 2px solid #444;
-            transition: all 0.3s;
-        }
-
-        .tracker-step.activo .tracker-dot {
-            background: #dc3545;
-            border-color: #dc3545;
-            box-shadow: 0 0 8px rgba(220,53,69,0.5);
-        }
-
-        .tracker-linea {
-            flex: 1;
-            height: 2px;
-            background: #333;
-            margin-bottom: 1.1rem;
-            transition: background 0.3s;
-        }
-
-        .tracker-linea.activa { background: #dc3545; }
-
-        /* ── VACÍO ── */
-        .compras-vacio {
-            text-align: center;
-            padding: 5rem 2rem;
-            background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
-            border-radius: 16px;
-            border: 1px solid rgba(220,53,69,0.15);
-        }
-
-        .vacio-icono { font-size: 4rem; margin-bottom: 1rem; opacity: 0.4; }
-
-        .vacio-texto { font-size: 1.3rem; color: #888; margin-bottom: 1.5rem; }
-
-        .btn-ir-tienda {
-            background: linear-gradient(45deg, #dc3545, #c82333);
-            color: #fff;
-            padding: 0.8rem 2rem;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-block;
-            transition: box-shadow 0.2s;
-        }
-
-        .btn-ir-tienda:hover {
-            box-shadow: 0 8px 24px rgba(220,53,69,0.4);
-            color: #fff;
-        }
-
-        /* ── RESPONSIVE ── */
-        @media (max-width: 640px) {
-            .compra-body {
-                grid-template-columns: 70px 1fr;
-            }
-
-            .compra-acciones {
-                grid-column: 1 / -1;
-                flex-direction: row;
-            }
-
-            .btn-ver, .btn-recomprar { flex: 1; }
-
-            .compras-filtros { flex-direction: column; align-items: stretch; }
-
-            .filtro-btns { justify-content: flex-start; }
-        }
-    </style>
+            <div class="modal-compra-footer">
+                <div class="mc-resumen-row"><span>Subtotal</span><span id="mcSubtotal"></span></div>
+                <div class="mc-resumen-row"><span>Descuento</span><span id="mcDescuento" class="mc-verde"></span></div>
+                <div class="mc-resumen-row"><span>Envío</span><span id="mcEnvio" class="mc-verde"></span></div>
+                <div class="mc-resumen-row mc-total"><span>Total</span><span id="mcTotal"></span></div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // Filtro por estado
@@ -468,6 +159,71 @@
                 const nombre = card.querySelector('.compra-nombre')?.textContent.toLowerCase() || '';
                 card.style.display = nombre.includes(q) ? 'block' : 'none';
             });
+        });
+        const formatoCOP = n => '$' + Number(n || 0).toLocaleString('es-CO');
+        const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+        const clasesEstado = {
+            entregado: 'estado-entregado',
+            en_camino: 'estado-en_camino',
+            pendiente: 'estado-pendiente',
+            cancelado: 'estado-cancelado'
+        };
+
+        function abrirModalCompra(ventaId) {
+            const modal = document.getElementById('modalCompra');
+            document.getElementById('mcBody').innerHTML = '<p class="mc-cargando">Cargando detalle...</p>';
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+
+            fetch(`/compras/detalle/${ventaId}/`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.status !== 'success') throw new Error(data.error || 'Error');
+                const v = data.venta;
+
+                document.getElementById('mcNumero').textContent = '#' + v.id;
+                document.getElementById('mcFecha').textContent = v.fecha;
+
+                const estado = document.getElementById('mcEstado');
+                estado.className = 'modal-compra-estado ' + (clasesEstado[v.estado] || '');
+                estado.textContent = v.estado_display;
+
+                document.getElementById('mcBody').innerHTML =
+                    v.productos.map(p => `
+                        <div class="mc-producto">
+                            <img src="${esc(p.imagen)}" alt="${esc(p.nombre)}">
+                            <div>
+                                <p class="mc-producto-nombre">${esc(p.nombre)}</p>
+                                <p class="mc-producto-detalle">Talla ${esc(p.talla)} · ${esc(p.cantidad)} u. · ${formatoCOP(p.precio_unitario)} c/u</p>
+                            </div>
+                            <span class="mc-producto-precio">${formatoCOP(p.subtotal)}</span>
+                        </div>`).join('') +
+                    `<div class="mc-datos">
+                        <div class="mc-dato"><small>Método de pago</small><span>${esc(v.metodo_pago)}</span></div>
+                        <div class="mc-dato"><small>Dirección de envío</small><span>${esc(v.direccion)}</span></div>
+                    </div>`;
+
+                document.getElementById('mcSubtotal').textContent = formatoCOP(v.subtotal);
+                document.getElementById('mcDescuento').textContent = '-' + formatoCOP(v.descuento);
+                document.getElementById('mcEnvio').textContent = v.envio > 0 ? formatoCOP(v.envio) : 'GRATIS';
+                document.getElementById('mcTotal').textContent = formatoCOP(v.total);
+            })
+            .catch(() => {
+                document.getElementById('mcBody').innerHTML =
+                    '<p class="mc-cargando">No pudimos cargar el detalle. Intenta de nuevo.</p>';
+            });
+        }
+
+        function cerrarModalCompra() {
+            document.getElementById('modalCompra').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') cerrarModalCompra();
         });
     </script>
 </body>
