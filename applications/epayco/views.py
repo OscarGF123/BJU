@@ -49,12 +49,17 @@ class ConfirmacionPago(View):
             print(f"[ConfirmacionPago] No se encontró venta con id={venta_id}")
             return HttpResponse(status=400)
 
+        venta = venta.first()
+
         if firma_calculada != firma_recibida:
             for i in venta:
                 i.estado_venta = 'cobro_sin_generar'
             return HttpResponse(status=400)
 
-        procesar_pago.delay(venta.first().id, codigo_respuesta, ref_payco)
+        venta.metodo_pago = datos.get("x_franchise")
+        venta.save()
+
+        procesar_pago.delay(venta.id, codigo_respuesta, ref_payco)
         
         return HttpResponse(status=200)
 
@@ -80,14 +85,22 @@ class IniciarPago(View, ClienteRequiredMixin):
         # Se usa la transaccion atomica para evitar reservas de varios usuarios al mismo tiempo para 1 solo producto
         with transaction.atomic():
 
-            # Crear Venta
+            carrito = {i.producto_id_id: i.cantidad for i in items}
+            venta = (
+                Ventas.objects.select_for_update()
+                .filter(usuario=usuario, estado_venta__in=['creada', 'en_proceso'])
+                .first()
+            )
+            if venta:
+                en_venta = {iv.producto_id: iv.cantidad for iv in venta.itemsventas_set.all()}
 
-            verificar_venta = Ventas.objects.filter(usuario=usuario.id, estado_venta__in=['creada', 'en_proceso'])
+                if en_venta != carrito:
+                    liberar_reservas(venta)
+                    venta.estado_venta = 'Link de cobro no generado'
+                    venta.save()
+                    venta = None
 
-            if verificar_venta.exists():
-
-                venta = verificar_venta.first()
-            else:
+            if venta is None:
                 venta = Ventas.objects.create(
                     usuario=usuario,
                     subtotal=cobro.get('subtotal'),
@@ -147,3 +160,9 @@ class IniciarPago(View, ClienteRequiredMixin):
                 return JsonResponse(generar_link)
             
         return JsonResponse({'status': "success", 'link_cobro': venta.link_cobro})
+
+def liberar_reservas(venta):
+    for item in venta.itemsventas_set.select_related('producto'):
+        producto = Producto.objects.select_for_update().get(id=item.producto_id)
+        producto.cantidad_reservada = max(0, producto.cantidad_reservada - item.cantidad)
+        producto.save()

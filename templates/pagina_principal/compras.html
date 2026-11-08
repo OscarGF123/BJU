@@ -34,10 +34,6 @@
             {% regroup compras by fecha_compra as compras_por_fecha %}
             {% for grupo in compras_por_fecha %}
 
-                <div class="fecha-grupo">
-                    <span class="fecha-label">{{ grupo.grouper|date:"j \d\e F" }}</span>
-                </div>
-
                 {% for compra in grupo.list %}
                 <div class="compra-card" data-estado="{{ compra.estado }}">
 
@@ -57,25 +53,30 @@
                     <!-- CUERPO DE LA CARD -->
                     <div class="compra-body">
                         <div class="compra-imagen">
-                            <img src="{{ compra.imagen }}" alt="{{ compra.producto_nombre }}">
+                            <img src="{{MEDIA_URL}}{{ compra.imagen }}" alt="{{ compra.producto_nombre }}">
                         </div>
 
                         <div class="compra-info">
-                            <p class="compra-nombre">{{ compra.producto_nombre }}</p>
-                            <p class="compra-detalle">{{ compra.cantidad }} u. | Talla {{ compra.talla }}</p>
-                            <p class="compra-precio">${{ compra.precio_total|intcomma }}</p>
+                            {% if compra.total_items > 1 %}
+                                <p class="compra-nombre">{{ compra.producto_nombre }} y {{compra.total_items}} productos mas...</p>
+                            {% else %}
+                                <p class="compra-nombre">{{ compra.producto_nombre }}</p>
+                            {% endif %}
+                            
+                            <p class="compra-detalle">{{ compra.total_items }} unds</p>
+                            <p class="compra-precio">${{ compra.total|intcomma }}</p>
                         </div>
 
                         <div class="compra-acciones">
                             <button type="button" class="btn-ver" onclick="abrirModalCompra('{{ compra.id }}')">
                                 Ver compra
                             </button>
-                            <p>{{compra.id}}</p>
-                            {% comment %}
-                            <a href="{% url 'detalle_producto' compra.id %}" class="btn-recomprar">
+
+                            
+                            <a href="{% url 'compras:detalle_compra' compra.id %}" class="btn-recomprar">
                                 <i class="fas fa-redo-alt"></i> Volver a comprar
                             </a>
-                            {% endcomment %}
+                            
                         </div>
 
                     </div>
@@ -194,10 +195,10 @@
                 document.getElementById('mcBody').innerHTML =
                     v.productos.map(p => `
                         <div class="mc-producto">
-                            <img src="${esc(p.imagen)}" alt="${esc(p.nombre)}">
+                            <img src="/media/${esc(p.imagen)}" alt="${esc(p.nombre)}">
                             <div>
                                 <p class="mc-producto-nombre">${esc(p.nombre)}</p>
-                                <p class="mc-producto-detalle">Talla ${esc(p.talla)} · ${esc(p.cantidad)} u. · ${formatoCOP(p.precio_unitario)} c/u</p>
+                                <p class="mc-producto-detalle">Talla ${esc(p.talla)} · ${esc(p.cantidad)} unds · ${formatoCOP(p.precio_unitario)} c/u</p>
                             </div>
                             <span class="mc-producto-precio">${formatoCOP(p.subtotal)}</span>
                         </div>`).join('') +

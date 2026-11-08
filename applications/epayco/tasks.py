@@ -47,6 +47,7 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
         
         venta.estado_venta = estado_recibido
         venta.referencia_pago = ref_epayco
+        venta.fecha_actualizacion = timezone.now()
         venta.save()
 
     items_venta = ItemsVentas.objects.filter(venta=venta_id).select_related('producto')

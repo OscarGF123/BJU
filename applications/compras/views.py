@@ -3,10 +3,12 @@ from django.views.generic import DetailView, ListView
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
+from django.db.models import Count, OuterRef, Subquery
 
 from applications.common.mixins import ClienteRequiredMixin
 from applications.epayco.models import Ventas, ItemsVentas
 from applications.productos.models import Imagen
+from applications.usuarios.models import Usuario
 
 # Create your views here.
 
@@ -18,9 +20,37 @@ class Compras(ListView):
 
     def get_queryset(self):
         usuario_id = self.request.session.get("_auth_user_id")
-        return Ventas.objects.filter(
-            usuario_id=usuario_id
-        ).order_by('-fecha_creacion')  
+        imagen_del_producto = (
+            Imagen.objects
+            .filter(producto_id=OuterRef('producto_id'), portada="Si")
+            .values('link_imagen')[:1]
+        )
+        
+        imagen_primer_item = (
+            ItemsVentas.objects
+            .filter(venta=OuterRef('pk'))
+            .order_by('id')
+            .annotate(img=Subquery(imagen_del_producto))
+            .values('img')[:1]
+        )
+
+        nombre_primer_item = (
+            ItemsVentas.objects
+            .filter(venta=OuterRef('pk'))
+            .order_by('id')
+            .values('producto__nombre__valor')[:1]
+        )
+        
+        return (
+            Ventas.objects
+            .filter(usuario_id=usuario_id)
+            .order_by('-fecha_creacion')
+            .annotate(
+                 imagen=Subquery(imagen_primer_item),
+                 producto_nombre=Subquery(nombre_primer_item),
+                 total_items=Count('itemsventas'),
+                 )
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,15 +72,14 @@ class DetalleCompraView(View):
 
         productos = []
         for item in items:
-                imagen = Imagen.objects.filter(producto_id=item.producto.id, portada='Si')
-                precio = item.precio_mayorista if items.length >= 6 else item.precio_unitario
+                imagen = Imagen.objects.filter(producto_id__nombre=item.producto.nombre, producto_id__pagina_principal="Si", portada='Si')
                 productos.append({
-                    'nombre': item.producto_id.nombre.valor,
-                    'talla': str(item.producto_id.talla),
+                    'nombre': item.producto.nombre.valor,
+                    'talla': str(item.producto.talla),
                     'cantidad': item.cantidad,
-                    'precio_unitario': precio,
-                    'subtotal': item.cantidad * precio,
-                    'imagen': str(imagen.first().link_imagen) if imagen.exist() else None          
+                    'precio_unitario': item.producto.precio_unitario,
+                    'subtotal': item.cantidad * item.producto.precio_unitario,
+                    'imagen': str(imagen.first().link_imagen) if imagen.exists() else 'holaaa'         
                 })
 
                 
@@ -58,16 +87,16 @@ class DetalleCompraView(View):
         return JsonResponse({
             'status': 'success',
             'venta': {
-                'id': items.venta.id,
-                'fecha': items.venta.fecha_compra.strftime('%d/%m/%Y %H:%M'),
-                'estado': items.venta.estado,
-                'estado_display': items.venta.get_estado_display(),
-                'metodo_pago': items.venta.metodo_pago,
-                'direccion': items.venta.direccion,
-                'subtotal': items.venta.subtotal,
-                'descuento': items.venta.descuento,
-                'envio': items.venta.envio,
-                'total': items.venta.total,
+                'id': item.venta.id,
+                'fecha': item.venta.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
+                'estado': item.venta.estado_venta,
+                'estado_display': item.venta.get_estado_venta_display(),
+                'metodo_pago': item.venta.metodo_pago,
+                'direccion': Usuario.objects.filter(id=usuario_id).first().direccion,
+                'subtotal': item.venta.subtotal,
+                'descuento': item.venta.descuento,
+                # 'envio': item.venta.envio,
+                'total': item.venta.total,
                 'productos': productos,
             }
         })
