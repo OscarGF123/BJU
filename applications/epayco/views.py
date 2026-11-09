@@ -69,75 +69,68 @@ class IniciarPago(View, ClienteRequiredMixin):
         
         # Validar si hay por lo menos un producto seleccionado antes de pagar
         usuario = request.user
-        items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario.id, seleccionado=True).select_related('producto_id')
+            # Crear Venta
 
-        if not items.exists():
+        venta = Ventas.objects.filter(usuario=usuario.id, estado_venta__in=['creada', 'en_proceso'])
 
-            return JsonResponse({
-                'status': "error", 
-                "type": "unselected_items", 
-                'message': "No existe ningun item seleccionado, por favor, seleccione por lo menos 1"
-                })
+        if not venta.exists():
 
-        cobro = calcular_venta(request)
+            items = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario.id, seleccionado=True).select_related('producto_id')
 
-        # Reservar los productos seleccionados:
-        # Se usa la transaccion atomica para evitar reservas de varios usuarios al mismo tiempo para 1 solo producto
-        with transaction.atomic():
+            if not items.exists():
 
-            carrito = {i.producto_id_id: i.cantidad for i in items}
-            venta = (
-                Ventas.objects.select_for_update()
-                .filter(usuario=usuario, estado_venta__in=['creada', 'en_proceso'])
-                .first()
-            )
-            if venta:
-                en_venta = {iv.producto_id: iv.cantidad for iv in venta.itemsventas_set.all()}
+                return JsonResponse({
+                    'status': "error", 
+                    "type": "unselected_items", 
+                    'message': "No existe ningun item seleccionado, por favor, seleccione por lo menos 1"
+                    })
 
-                if en_venta != carrito:
-                    liberar_reservas(venta)
-                    venta.estado_venta = 'Link de cobro no generado'
-                    venta.save()
-                    venta = None
+            cobro = calcular_venta(request)
 
-            if venta is None:
-                venta = Ventas.objects.create(
-                    usuario=usuario,
-                    subtotal=cobro.get('subtotal'),
-                    total=cobro.get('total'),
-                    descuento=cobro.get('descuento'),
-                    estado_venta='creada'
-                )
-
-                for item in items:
+            # Reservar los productos seleccionados:
+            # Se usa la transaccion atomica para evitar reservas de varios usuarios al mismo tiempo para 1 solo producto
+            with transaction.atomic():
 
 
-                    # Agregar item a la venta
-                    precio_unitario = item.producto_id.precio_mayorista if cobro.get('descuento') != 0 else item.producto_id.precio_unitario
-                        
-                    ItemsVentas.objects.create(
-                        venta=venta,
-                        producto=item.producto_id,
-                        cantidad=item.cantidad,
-                        precio_unitario=precio_unitario,
-                        precio_total=precio_unitario * item.cantidad
+                    venta = Ventas.objects.create(
+                        usuario=usuario,
+                        subtotal=cobro.get('subtotal'),
+                        total=cobro.get('total'),
+                        descuento=cobro.get('descuento'),
+                        estado_venta='creada'
                     )
 
-                    # Reservar producto
-                    producto = Producto.objects.select_for_update().get(
-                        id=item.producto_id.id
-                    )
+                    for item in items:
 
-                    if producto.cantidad_disponible < item.cantidad:
-                        return JsonResponse({
-                            'status': 'error',
-                            'type': 'out_of_stock',
-                            'message': f'Stock insuficiente para {producto.nombre}'
-                        })
 
-                    producto.cantidad_reservada += item.cantidad
-                    producto.save()
-                    print(f'cantidad reservada inicio de pago {producto.cantidad_reservada}')
+                        # Agregar item a la venta
+                        precio_unitario = item.producto_id.precio_mayorista if cobro.get('descuento') != 0 else item.producto_id.precio_unitario
+                            
+                        ItemsVentas.objects.create(
+                            venta=venta,
+                            producto=item.producto_id,
+                            cantidad=item.cantidad,
+                            precio_unitario=precio_unitario,
+                            precio_total=precio_unitario * item.cantidad
+                        )
+
+                        # Reservar producto
+                        producto = Producto.objects.select_for_update().get(
+                            id=item.producto_id.id
+                        )
+
+                        if producto.cantidad_disponible < item.cantidad:
+                            return JsonResponse({
+                                'status': 'error',
+                                'type': 'out_of_stock',
+                                'message': f'Stock insuficiente para {producto.nombre}'
+                            })
+
+                        producto.cantidad_reservada += item.cantidad
+                        producto.save()
+                        print(f'cantidad reservada inicio de pago {producto.cantidad_reservada}')
+
+        venta = venta.first()
 
         # Crear el link de cobro
         

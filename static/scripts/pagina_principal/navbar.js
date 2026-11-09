@@ -8,10 +8,12 @@ let timer
 // Cambiar estilo del header al hacer scroll
 window.addEventListener('scroll', function() {
     const header = document.getElementById('header');
-    if (window.scrollY > 100) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
+    if (header){
+        if (window.scrollY > 100) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
+        }
     }
 });
 
@@ -175,7 +177,7 @@ window.addEventListener('load', function() {
     setTimeout(() => {
         const heroTitle = document.querySelector('.hero-title');
         if (heroTitle) {
-            typeWriter(heroTitle, 'BOX JEANS URBAN', 150);
+                typeWriter(heroTitle, 'BOX JEANS URBAN', 150);
         }
     }, 500);
 });

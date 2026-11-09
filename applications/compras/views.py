@@ -22,7 +22,7 @@ class Compras(ListView):
         usuario_id = self.request.session.get("_auth_user_id")
         imagen_del_producto = (
             Imagen.objects
-            .filter(producto_id=OuterRef('producto_id'), portada="Si")
+            .filter(producto_id__nombre=OuterRef('producto_id__nombre'), producto_id__pagina_principal='Si', portada="Si")
             .values('link_imagen')[:1]
         )
         

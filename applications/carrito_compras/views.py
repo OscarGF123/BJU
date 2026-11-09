@@ -6,6 +6,7 @@ from django.views.generic import ListView, View
 
 from applications.common.views import VistaBaseEliminar
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
+from applications.epayco.models import ItemsVentas, Ventas
 from applications.productos.models import Imagen, Producto, Talla, Imagen
 from applications.common.mixins import ClienteRequiredMixin
 from applications.usuarios.models import Usuario
@@ -246,6 +247,17 @@ class ActualizarItem(View):
 
         item = ItemsCarritoCompras.objects.filter(carrito_compra_id__usuario_id=usuario_id, id=item_id)
         item.update(cantidad=cantidad)
+
+        # Actualizar en la venta
+
+        item_venta = ItemsVentas.objects.filter(
+                venta__usuario_id=self.request.user.id, 
+                proucto=item.first().producto, 
+                venta__estado_venta__in=['creada', 'en_proceso']
+            )
+        if item_venta.exists():
+            item_venta.update(cantidad=cantidad)
+
         # Valor total de la compra
         return JsonResponse({
             'status': 'success', 
@@ -283,6 +295,16 @@ class EliminarItem(VistaBaseEliminar):
         else:
 
             self.object = self.get_object()
+
+            # Eliminar el item de la venta
+            item = ItemsVentas.objects.filter(
+                    venta__usuario_id=self.request.user.id, 
+                    proucto=self.object.id, 
+                    venta__estado_venta__in=['creada', 'en_proceso']
+                )
+            if item.exists():
+                item.delete()
+
             id = self.object.id
             self.object.delete()
 
