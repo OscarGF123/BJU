@@ -7,6 +7,7 @@ from django.views.generic import ListView, View
 from applications.common.views import VistaBaseEliminar
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.epayco.models import ItemsVentas, Ventas
+from applications.epayco.services import EpaycoService
 from applications.productos.models import Imagen, Producto, Talla, Imagen
 from applications.common.mixins import ClienteRequiredMixin
 from applications.usuarios.models import Usuario
@@ -148,6 +149,13 @@ class AgregarItem(View):
                 verificar_item.cantidad += 1
                 verificar_item.save()
 
+                # Actualizar item  de la venta
+                item_venta = ItemsVentas.objects.filter(
+                    producto=verificar_item.producto_id,
+                    venta__usuario_id=usuario_id.id,
+                    venta__estado_venta__in=['creada', 'en_proceso']
+                ).update(cantidad=verificar_item.cantidad)
+
                 item = {
                     'cantidad': verificar_item.cantidad,
                     'seleccionado': True,
@@ -174,6 +182,17 @@ class AgregarItem(View):
 
             carrito, _ = CarritoCompras.objects.get_or_create(usuario_id=usuario_id)
             new_item = ItemsCarritoCompras.objects.create(carrito_compra_id=carrito, producto_id=producto)
+            venta = Ventas.objects.filter(usuario=usuario_id.id, estado_venta__in=['creada', 'en_proceso'])
+            print(f"la venta {venta} {usuario_id}")
+            if venta.exists():
+                print(f'encontro venta')
+                ItemsVentas.objects.create(
+                    venta=venta.first(),
+                    producto=producto, cantidad=1, 
+                    precio_unitario=producto.precio_unitario, 
+                    precio_total=producto.precio_unitario
+                )
+
 
             item = {
 
@@ -252,10 +271,12 @@ class ActualizarItem(View):
 
         item_venta = ItemsVentas.objects.filter(
                 venta__usuario_id=self.request.user.id, 
-                proucto=item.first().producto, 
+                producto=item.first().producto_id, 
                 venta__estado_venta__in=['creada', 'en_proceso']
             )
+        print("!hola")
         if item_venta.exists():
+            print('actualizando')
             item_venta.update(cantidad=cantidad)
 
         # Valor total de la compra
@@ -298,12 +319,26 @@ class EliminarItem(VistaBaseEliminar):
 
             # Eliminar el item de la venta
             item = ItemsVentas.objects.filter(
-                    venta__usuario_id=self.request.user.id, 
-                    proucto=self.object.id, 
+                    venta__usuario__id=self.request.user.id, 
+                    producto=self.object.producto_id, 
                     venta__estado_venta__in=['creada', 'en_proceso']
                 )
+            
             if item.exists():
                 item.delete()
+
+                # Eliminar la venta si no quedan mas productos  
+                if not item.exists():
+                    venta = Ventas.objects.filter(
+                        usuario=self.request.user.id, 
+                        estado_venta__in=['creada', 'en_proceso']
+                    ).first()
+                    
+                    # Inactivar link de cobro para evitar confusiones
+                    epayco = EpaycoService()
+                    epayco.inactivar_link(venta.referencia_pago, request.user.email)
+
+                    venta.delete()
 
             id = self.object.id
             self.object.delete()
@@ -394,6 +429,21 @@ def seleccionar_item(request):
             })
 
     if seleccionar_todo:
+        
+        if seleccionar_todo != 'true':
+
+            # Eliminar la venta si no quedan mas productos  
+            venta = Ventas.objects.filter(
+                usuario=request.user.id, 
+                estado_venta__in=['creada', 'en_proceso']
+            ).first()
+            
+            # Inactivar link de cobro para evitar confusiones
+            epayco = EpaycoService()
+            epayco.inactivar_link(venta.referencia_pago, request.user.email)
+
+            venta.delete()
+
         ItemsCarritoCompras.objects.filter(
             carrito_compra_id__usuario_id=request.user.id
             ).update(seleccionado=True if seleccionar_todo == 'true' else False)
@@ -417,6 +467,34 @@ def seleccionar_item(request):
             })
 
     items.update(seleccionado=seleccionado)
+
+    # Eliminar de la venta
+    item = ItemsVentas.objects.filter(
+            venta__usuario__id=request.user.id, 
+            producto=items.first().producto_id,
+            venta__estado_venta__in=['creada', 'en_proceso']
+        )
+    print(f"item seleccion  {item}")
+    if item.exists():
+
+        item.delete()
+        print(f'items {item}')
+        # Eliminar la venta si no quedan mas productos  
+        item = ItemsVentas.objects.filter(
+                venta__usuario__id=request.user.id, 
+                venta__estado_venta__in=['creada', 'en_proceso']
+            )
+        if not item.exists():
+            venta = Ventas.objects.filter(
+                usuario=request.user.id, 
+                estado_venta__in=['creada', 'en_proceso']
+            ).first()
+            
+            # Inactivar link de cobro para evitar confusiones
+            epayco = EpaycoService()
+            epayco.inactivar_link(venta.referencia_pago, request.user.email)
+
+            venta.delete()
 
     return JsonResponse({'status': 'success', 'calcular_venta': calcular_venta(request)})
 

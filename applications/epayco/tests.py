@@ -21,7 +21,7 @@ Ventas.objects.all().delete()
 # for i in Ventas.objects.all():
 #     print(f'id: {i.id} estado: {i.estado_venta} | ref_epayco: {i.referencia_pago} | link_cobro: {i.link_cobro} | fecha_expiracion {i.fecha_expiracion}')
 
-
+print(epayco.inactivar_link(11743161, 'a@gmail.com'))
 
 # venta = Ventas.objects.filter(id=41).update(fecha_expiracion=timezone.now() - timedelta(days=6), estado_venta="en_proceso")
 

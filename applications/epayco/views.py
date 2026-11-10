@@ -72,6 +72,7 @@ class IniciarPago(View, ClienteRequiredMixin):
             # Crear Venta
 
         venta = Ventas.objects.filter(usuario=usuario.id, estado_venta__in=['creada', 'en_proceso'])
+        cobro = calcular_venta(request)
 
         if not venta.exists():
 
@@ -84,8 +85,6 @@ class IniciarPago(View, ClienteRequiredMixin):
                     "type": "unselected_items", 
                     'message': "No existe ningun item seleccionado, por favor, seleccione por lo menos 1"
                     })
-
-            cobro = calcular_venta(request)
 
             # Reservar los productos seleccionados:
             # Se usa la transaccion atomica para evitar reservas de varios usuarios al mismo tiempo para 1 solo producto
@@ -129,8 +128,9 @@ class IniciarPago(View, ClienteRequiredMixin):
                         producto.cantidad_reservada += item.cantidad
                         producto.save()
                         print(f'cantidad reservada inicio de pago {producto.cantidad_reservada}')
+        else:
 
-        venta = venta.first()
+            venta = venta.first()
 
         # Crear el link de cobro
         

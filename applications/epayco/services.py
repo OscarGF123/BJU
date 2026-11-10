@@ -1,4 +1,5 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
+from django.utils import timezone
 import os
 import redis
 import requests
@@ -156,3 +157,29 @@ class EpaycoService:
         except requests.RequestException as e:
             print(f"Error consultando estado de {id}: {e}")
             return None
+
+
+    def inactivar_link(self, link_id, email):
+        """Inutiliza un link de cobro poniéndole una fecha de expiración con 10 segundos de diferencia"""
+        if not link_id:
+            return {'status': 'error', 'message': 'Sin link_id'}
+
+        expiracion = (datetime.now() + timedelta(seconds=10)).strftime('%Y-%m-%d %H:%M:%S')
+        payload = {
+            'id': link_id,
+            'quantity': 1,
+            'amount': str(0),
+            'currency': 'COP',
+            'description': 'link cancelado',
+            'title': 'Link de Cobro BOX JEANS CANCELADO',
+            'typeSell': 1,
+            'email': email,
+            'expirationDate': expiracion
+        }
+        # AJUSTAR: método, URL, headers y body según la doc del endpoint de edición
+        respuesta = self._request(          # usa el mismo método que ya usas para autenticarte
+            'POST',
+            f'/collection/link/update',   # <- ejemplo, verifica la ruta real
+            json=payload,        # <- verifica el nombre real del campo
+        )
+        return respuesta
