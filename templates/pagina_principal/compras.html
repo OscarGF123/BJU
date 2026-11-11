@@ -71,12 +71,14 @@
                             <button type="button" class="btn-ver" onclick="abrirModalCompra('{{ compra.id }}')">
                                 Ver compra
                             </button>
-
                             
-                            <a href="{% url 'compras:detalle_compra' compra.id %}" class="btn-recomprar">
+                            <button class="btn-recomprar" id="{{compra.id}}">
                                 <i class="fas fa-redo-alt"></i> Volver a comprar
-                            </a>
+                            </button>
                             
+                            <button type="button" class="btn-cancelar" id="{{compra.id}}" >
+                                <i class="fas fa-ban"></i> Cancelar compra
+                            </button>
                         </div>
 
                     </div>
@@ -225,6 +227,64 @@
 
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape') cerrarModalCompra();
+        });
+
+        // En abrirModalCompra, justo al inicio de la función, agrega:
+        //     ventaActualId = ventaId;
+
+        document.querySelectorAll('.btn-recomprar').forEach(e => {
+            e.addEventListener('click', function () {
+                
+                let ventaActualId = this.id
+                const btn = this;
+                btn.disabled = true;
+
+                fetch(`/compras/recomprar/${ventaActualId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status !== 'success') throw new Error(data.error || 'Error');
+
+                    // Si algún producto no tenía stock, avisa antes de ir al carrito
+                    if (data.omitidos.length) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Algunos productos no están disponibles',
+                            text: 'Sin stock: ' + data.omitidos.join(', '),
+                            background: '#1e1e1e',
+                            color: '#fff',
+                            confirmButtonColor: '#dc3545'
+                        }).then(() => window.location.href = '/carrito/');
+                    } else if (data.status == 'error'){
+                        btn.disabled = false;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No pudimos agregar los productos',
+                            text: data.message,
+                            background: '#1e1e1e',
+                            color: '#fff',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    } else {
+                        window.location.href = '/carrito/';
+                    }
+                })
+                .catch(() => {
+                    btn.disabled = false;
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No pudimos agregar los productos',
+                        background: '#1e1e1e',
+                        color: '#fff',
+                        confirmButtonColor: '#dc3545'
+                    });
+                });
+            });
         });
     </script>
 </body>

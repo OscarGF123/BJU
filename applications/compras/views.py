@@ -1,10 +1,13 @@
+from django.db import transaction
 from django.shortcuts import render
 from django.views.generic import DetailView, ListView
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.generic import View
 from django.db.models import Count, OuterRef, Subquery
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
 from applications.epayco.models import Ventas, ItemsVentas
 from applications.productos.models import Imagen
@@ -99,4 +102,74 @@ class DetalleCompraView(View):
                 'total': item.venta.total,
                 'productos': productos,
             }
+        })
+
+class RecomprarView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        usuario = Usuario.objects.filter(id=request.session.get("_auth_user_id")).first()
+        # Filtrar por usuario evita recomprar ventas ajenas
+        venta_origen = Ventas.objects.filter(pk=pk, usuario=usuario.id)
+
+        if not venta_origen.exists():
+            return JsonResponse({'status': 'error', 'message': 'La compra no existe.'})
+
+        venta_origen = venta_origen.first()
+
+        carrito, _ = CarritoCompras.objects.get_or_create(usuario_id=usuario)
+        venta_abierta = Ventas.objects.filter(
+            usuario=usuario.id,
+            estado_venta__in=['creada', 'en_proceso']
+        )
+
+        agregados, omitidos = [], []
+
+        with transaction.atomic():
+            for d in ItemsVentas.objects.filter(venta=venta_origen).select_related('producto'):
+                producto = d.producto
+                nombre = producto.nombre.valor
+
+                if producto.cantidad < 1:
+                    omitidos.append(nombre)
+                    continue
+
+                item = ItemsCarritoCompras.objects.filter(
+                    carrito_compra_id=carrito, producto_id=producto
+                )
+
+                if item.exists():
+                    item = item.first()
+                    # Ya estaba en el carrito: suma sin pasar del stock
+                    cantidad = min(item.cantidad + d.cantidad, producto.cantidad)
+                    item.cantidad = cantidad
+                    item.seleccionado = True
+                    item.save()
+                else:
+                    cantidad = min(d.cantidad, producto.cantidad)
+                    ItemsCarritoCompras.objects.create(
+                        carrito_compra_id=carrito,
+                        producto_id=producto,
+                        cantidad=cantidad,
+                        seleccionado=True,
+                    )
+
+                # Mantiene sincronizada la venta abierta, como hace AgregarItem
+                if venta_abierta.exists():
+                    ItemsVentas.objects.update_or_create(
+                        venta=venta_abierta.first(),
+                        producto=producto,
+                        defaults={
+                            'cantidad': cantidad,
+                            'precio_unitario': producto.precio_unitario,
+                            'precio_total': producto.precio_unitario * cantidad,
+                        },
+                    )
+
+                agregados.append(nombre)
+
+
+        print(f'[COMPRAS] items agregados: {agregados} - items omitidos {omitidos}')
+        return JsonResponse({
+            'status': 'success',
+            'agregados': agregados,
+            'omitidos': omitidos,
         })
