@@ -75,8 +75,11 @@
                             <button class="btn-recomprar" id="{{compra.id}}">
                                 <i class="fas fa-redo-alt"></i> Volver a comprar
                             </button>
-                            
-                            <button type="button" class="btn-cancelar" id="{{compra.id}}" >
+
+                            <button type="button" class="btn-cancelar" id="{{compra.id}}" 
+                            {% if compra.estado_venta != "creada" and compra.estado_venta != "en_proceso" %} ==  %}}
+                                style="display: none;" 
+                            {% endif %}>
                                 <i class="fas fa-ban"></i> Cancelar compra
                             </button>
                         </div>
@@ -284,6 +287,52 @@
                         confirmButtonColor: '#dc3545'
                     });
                 });
+            });
+        });
+
+        document.querySelectorAll(".btn-cancelar").forEach(e => {
+            e.addEventListener('click', function () {
+
+                fetch(`/compras/cancelar/${this.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.status === "success"){
+                        this.style.display = 'none';
+                        Swal.fire({
+                            icon: 'success',
+                            title: '¡Exito!',
+                            text: data.message,
+                            background: '#1e1e1e',
+                            color: '#fff',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    } else if (data.status === "error") {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'No se pudo cancelar la venta',
+                            text: data.message,
+                            background: '#1e1e1e',
+                            color: '#fff',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ha ocurrido un error inesperado.',
+                        text: error,
+                        background: '#1e1e1e',
+                        color: '#fff',
+                        confirmButtonColor: '#dc3545'
+                    });
+                })
             });
         });
     </script>

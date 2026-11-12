@@ -10,6 +10,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
 from applications.epayco.models import Ventas, ItemsVentas
+from applications.epayco.services import EpaycoService
 from applications.productos.models import Imagen
 from applications.usuarios.models import Usuario
 
@@ -173,3 +174,29 @@ class RecomprarView(LoginRequiredMixin, View):
             'agregados': agregados,
             'omitidos': omitidos,
         })
+
+class CancelarCompra(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        """Pasar la venta como cancelada_por_usuario"""
+
+        compra = Ventas.objects.filter(id=pk, usuario=request.user.id)
+
+        if not compra.exists():
+            return JsonResponse({'status': 'error', 'message': f'La compra #{pk} no existe en el sistema.'})
+        compra = compra.first()
+        ESTADOS_CANCELABLES = ['creada', 'en_proceso']
+        if not (compra.estado_venta in ESTADOS_CANCELABLES):
+            return JsonResponse({'status': 'error', 'message': 'Esta compra ya no se puede cancelar.'})
+        
+        # Inhabilitar link de cobro de la venta
+        if compra.link_cobro:
+            try:
+                EpaycoService().inactivar_link(compra.referencia_pago, request.user.email)
+            except Exception:
+                return JsonResponse({'status': 'error', 'message': 'No pudimos inactivar el link de pago. Intenta de nuevo.'}) 
+
+        # Cambiar de estado
+        compra.estado_venta = 'cancelado_por_usuario'
+        compra.save()
+
+        return JsonResponse({'status': 'success', 'message': 'Compra cancelada.'})

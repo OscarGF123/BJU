@@ -21,12 +21,12 @@ class Ventas(models.Model):
         ('creada',     'Creada'),       # venta creada, sin link aún
         ('en_proceso', 'En proceso'),   # link generado, esperando que el usuario pague
 
-        # Estados de ePayco (llegan por el webhook)
-        ('aceptado',   'Aceptado'),     # ✅ pago confirmado
-        ('pendiente',  'Pendiente'),    # ⏳ banco recibió pero no confirma aún
-        ('rechazado',  'Rechazado'),    # ❌ banco rechazó
-        ('fallido',    'Fallido'),      # ❌ error en el proceso
-        ('reversado',  'Reversado'),    # 🔄 pago devuelto
+        # Estados de ePayco 
+        ('aceptado',   'Aceptado'),     # pago confirmado
+        ('pendiente',  'Pendiente'),    # banco recibió pero no confirma aún
+        ('rechazado',  'Rechazado'),    # banco rechazó
+        ('fallido',    'Fallido'),      # error en el proceso
+        ('reversado',  'Reversado'),    # pago devuelto
         ('retenido',   'Retenido'), 
         ('iniciada', 'Iniciada'),
         ('caducada', 'Caducada'),
@@ -35,8 +35,9 @@ class Ventas(models.Model):
 
         ('cobro_sin_generar', 'Validacion de confirmacion de epayco fallida'), # Se recibio una signature diferente a la de epayco
 
-        # Estado tuyo (posterior)
+
         ('expirado',   'Expirado'),     # ⌛ no pagó a tiempo
+        ('cancelado_por_usuario', 'Cancelado por el usuario'),
         ('desconocido', 'Desconocido')
     ]
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)

@@ -233,7 +233,7 @@ compras-body {
     transition: background 0.2s;
 }
 
-.btn-cancelar, .btn-recomprar:hover {
+.btn-cancelar:hover, .btn-recomprar:hover {
     background: rgba(220,53,69,0.1);
     color: #dc3545;
 }
