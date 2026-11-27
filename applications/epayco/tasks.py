@@ -58,7 +58,7 @@ def procesar_pago(venta_id, estado_epayco, ref_epayco, intento=0):
                 print('Estado de pago aceptado')
                 _vaciar_carrito(venta.usuario)
                 # Seguir con la logica de pedidos en este block
-                # Enviar Email
+                notificar_admins_nuevo_envio.delay(venta_id)
         case 'pendiente' | 'retenido':
             print(f'Estado de pago pendiente. Procesando...')
             if intento < MAX_REINTENTOS:
@@ -179,3 +179,66 @@ def _expirar_venta(venta, items_venta):
     venta.estado_venta = 'expirado'
     venta.save()
     logger.info(f"Venta {venta.id} expirada por tiempo de espera excedido")
+
+from django.conf import settings
+from django.core.mail import send_mail
+
+from applications.usuarios.models import Usuario
+
+
+def _correos_administradores():
+    # AJUSTA este filtro a cómo identificas a un administrador en tu modelo
+    return list(
+        Usuario.objects
+        .filter(is_active=True, rol="administrador")
+        .exclude(email="")
+        .values_list("email", flat=True)
+    )
+
+
+@shared_task(bind=True, max_retries=3)
+def notificar_admins_nuevo_envio(self, venta_id):
+    venta = (
+        Ventas.objects
+        .select_related("usuario")
+        .filter(id=venta_id)
+        .first()
+    )
+    if venta is None:
+        logger.error(f"notificar_admins_nuevo_envio: no existe la venta {venta_id}")
+        return
+
+    destinatarios = _correos_administradores()
+    if not destinatarios:
+        logger.warning(f"Venta {venta_id} pagada pero no hay administradores con correo")
+        return
+
+    items = ItemsVentas.objects.filter(venta=venta).select_related("producto")
+    lineas = "\n".join(
+        f"  - {i.producto.nombre.valor} | Talla {i.producto.talla} | {i.cantidad} und."
+        for i in items
+    )
+
+    cliente = venta.usuario
+    mensaje = (
+        f"La venta #{venta.id} fue pagada y está lista para despachar.\n\n"
+        f"Cliente: {cliente.get_full_name() or cliente.email}\n"
+        f"Dirección de envío: {cliente.direccion}\n"
+        f"Método de pago: {venta.metodo_pago}\n"
+        f"Total: ${venta.total:,.0f}\n\n"
+        f"Productos:\n{lineas}\n\n"
+        f"Cuando tengas el número de guía, regístralo en la venta #{venta.id} "
+        f"desde el panel de ventas para iniciar el seguimiento."
+    )
+
+    try:
+        send_mail(
+            subject=f"[Box Jeans Urban] Nuevo envío por realizar - Venta #{venta.id}",
+            message=mensaje,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=destinatarios,
+            fail_silently=False,
+        )
+    except Exception as exc:
+        logger.error(f"Error enviando correo de la venta {venta_id}: {exc}")
+        raise self.retry(exc=exc, countdown=120)

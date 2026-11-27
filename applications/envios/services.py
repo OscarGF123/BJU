@@ -1,8 +1,16 @@
 import threading
 import time
-
 import requests
+from datetime import datetime
+
+from django.db.models import Case, CharField, Count, F, OuterRef, Subquery, Value, When
+from django.utils import timezone
+from django.db import transaction
+from django.utils import timezone
 from django.conf import settings
+
+from .models import EventoEnvio
+
 
 URL_IMPORTAR = "https://api.track123.com/gateway/open-api/tk/v2/track/import"
 
@@ -60,3 +68,39 @@ def registrar_guias(guias: list[dict], max_reintentos: int = 5):
         time.sleep(2 ** intento)  # espera 1s, 2s, 4s, 8s, 16s
 
     raise RuntimeError("Track123: se superó el límite de peticiones tras varios reintentos")
+
+ESTADOS = {
+    "INFO_RECEIVED": "pendiente",
+    "IN_TRANSIT": "en_camino",
+    "DELIVERED": "entregado",
+}
+
+
+def _parsear_fecha(texto):
+    naive = datetime.strptime(texto, "%Y-%m-%d %H:%M:%S")
+    return timezone.make_aware(naive)
+
+
+@transaction.atomic
+def sincronizar_pedido(pedido, data):
+    detalles = data.get("localLogisticsInfo", {}).get("trackingDetails", [])
+
+    eventos = [
+        EventoEnvio(
+            pedido=pedido,
+            fecha=_parsear_fecha(d["eventTime"]),
+            descripcion=d.get("eventDetail", "")[:200],
+            ubicacion=d.get("address", "")[:100],
+        )
+        for d in detalles
+        if d.get("eventTime")
+    ]
+    EventoEnvio.objects.bulk_create(eventos, ignore_conflicts=True)
+
+    nuevo_estado = ESTADOS.get(data.get("transitStatus"))
+    if nuevo_estado:
+        pedido.estado_envio = nuevo_estado
+    if data.get("deliveredTime"):
+        pedido.fecha_entrega = _parsear_fecha(data["deliveredTime"])
+    pedido.save(update_fields=["estado_envio", "fecha_entrega"])
+

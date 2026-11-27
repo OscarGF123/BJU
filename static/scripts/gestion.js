@@ -146,7 +146,6 @@ function agregar(url, agregarFila) {
     })
     .then(response => response.json())
     .then(data => {
-        console.log(data);
         if (data.status === "success" && agregarFila) {
             let fila = [];
             
@@ -305,6 +304,7 @@ function editar() {
 
             // Tomamos todos los datos editados
             for (const clave in data) {
+                console.log(clave);
                 if (clave !== "status") {
                     if (extensionesValidas.some(extension => extension === re.exec(data[clave])[1])){
                         console.log('Hola');
@@ -519,7 +519,7 @@ $(document).on('click', '#btn-editar', function(e) {
     // IMPORTANTE: Usar la API de DataTables para obtener TODOS los datos
     // incluso los que están ocultos por el responsive
     const datosCompletos = tableInstance.row(fila_edicion).data();
-
+    console.log(tableInstance.row(fila_edicion).data());
     // El primer elemento es el ID
     id_edicion = datosCompletos[0];
     

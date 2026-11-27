@@ -17,7 +17,7 @@ def expiracion_defecto():
 class Ventas(models.Model):
 
     ESTADOS = [
-        # Estados tuyos (antes de que ePayco intervenga)
+        # Estados propios antes de la llamada a epayco
         ('creada',     'Creada'),       # venta creada, sin link aún
         ('en_proceso', 'En proceso'),   # link generado, esperando que el usuario pague
 
@@ -35,7 +35,7 @@ class Ventas(models.Model):
 
         ('cobro_sin_generar', 'Validacion de confirmacion de epayco fallida'), # Se recibio una signature diferente a la de epayco
 
-
+        # Otros estados propios
         ('expirado',   'Expirado'),     # ⌛ no pagó a tiempo
         ('cancelado_por_usuario', 'Cancelado por el usuario'),
         ('desconocido', 'Desconocido')
@@ -45,13 +45,14 @@ class Ventas(models.Model):
     # Este campo es usado para identificar un link de cobro de Epayco 
     referencia_pago = models.CharField(max_length=150, verbose_name="Referencia de pago")
     link_cobro = models.CharField(max_length=300,default=None, verbose_name='Link de Cobro', null=True)
+    numero_guia = models.CharField(max_length=105, null=True, unique=True)
     subtotal = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Subtotal", default=0)
     total = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Total", default=0)
     descuento = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Total", default=0)
     estado_venta = models.CharField(max_length=150, choices=ESTADOS, verbose_name="Estado de pago")
     fecha_creacion = models.DateTimeField(default=timezone.now, verbose_name="Fecha de Creación")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Fecha de Actualización")
-
+    
     # Fecha de expiracion para la tarea diaria que se encarga de expirar ventas
     fecha_expiracion = models.DateTimeField(default=expiracion_defecto, verbose_name="Fecha de expiración", null=True)
     # Si el pago tiene el estado pendiente entonces se dara una fecha de expiracion

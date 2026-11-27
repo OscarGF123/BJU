@@ -214,7 +214,7 @@
 
                 document.getElementById('mcSubtotal').textContent = formatoCOP(v.subtotal);
                 document.getElementById('mcDescuento').textContent = '-' + formatoCOP(v.descuento);
-                document.getElementById('mcEnvio').textContent = v.envio > 0 ? formatoCOP(v.envio) : 'GRATIS';
+                document.getElementById('mcEnvio').textContent = 'GRATIS';
                 document.getElementById('mcTotal').textContent = formatoCOP(v.total);
             })
             .catch(() => {

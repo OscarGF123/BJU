@@ -68,6 +68,7 @@ INSTALLED_APPS = [
     'applications.login',
     'applications.epayco',
     'applications.tienda',
+    'applications.envios'
 ]
 
 AUTH_USER_MODEL = 'usuarios.Usuario'

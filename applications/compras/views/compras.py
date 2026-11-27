@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import View
 from django.db.models import Count, OuterRef, Subquery
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Case, CharField, Count, F, OuterRef, Subquery, Value, When
+from django.utils import timezone
 
 from applications.carrito_compras.models import CarritoCompras, ItemsCarritoCompras
 from applications.common.mixins import ClienteRequiredMixin
@@ -14,7 +16,29 @@ from applications.epayco.services import EpaycoService
 from applications.productos.models import Imagen
 from applications.usuarios.models import Usuario
 
-# Create your views here.
+
+
+ESTADOS_CANCELADOS = [
+    'cancelado_por_usuario',
+    'pendiente'
+    'rechazado'
+    'fallido'
+    'reversado'
+    'retenido'
+    'caducada'
+    'abandonada'
+    'cancelada'
+]
+
+def estado_para_cliente(venta):
+    """Traduce estado_venta + estado del envío a uno de los 4 que muestra el template."""
+    if venta.estado_venta in ESTADOS_CANCELADOS:
+        return 'cancelado'
+    pedido = getattr(venta, 'pedido', None)
+    if pedido and pedido.estado_envio in ('en_camino', 'entregado'):
+        return pedido.estado_envio
+    return 'pendiente'
+
 
 class Compras(ListView):
 
@@ -50,10 +74,18 @@ class Compras(ListView):
             .filter(usuario_id=usuario_id)
             .order_by('-fecha_creacion')
             .annotate(
-                 imagen=Subquery(imagen_primer_item),
-                 producto_nombre=Subquery(nombre_primer_item),
-                 total_items=Count('itemsventas'),
-                 )
+                imagen=Subquery(imagen_primer_item),
+                producto_nombre=Subquery(nombre_primer_item),
+                total_items=Count('itemsventas'),
+                estado=Case(
+                    When(estado_venta__in=ESTADOS_CANCELADOS, then=Value('cancelado')),
+                    When(pedido__estado_envio='entregado', then=Value('entregado')),
+                    When(pedido__estado_envio='en_camino', then=Value('en_camino')),
+                    default=Value('pendiente'),
+                    output_field=CharField(),
+                ),
+                fecha_entrega=F('pedido__fecha_entrega'),
+            )
         )
 
     def get_context_data(self, **kwargs):
@@ -64,8 +96,11 @@ class Compras(ListView):
 class DetalleCompraView(View):
     def get(self, request, pk):
         usuario_id = request.session.get("_auth_user_id")
-        # Filtrar por usuario evita que alguien vea compras ajenas cambiando el id
-        items =  ItemsVentas.objects.filter(venta=pk, venta__usuario=usuario_id).select_related('producto', 'venta')
+        items = (
+            ItemsVentas.objects
+            .filter(venta=pk, venta__usuario=usuario_id)
+            .select_related('producto', 'venta', 'venta__pedido')
+        )
 
         if not items.exists():
             return JsonResponse({
@@ -76,32 +111,46 @@ class DetalleCompraView(View):
 
         productos = []
         for item in items:
-                imagen = Imagen.objects.filter(producto_id__nombre=item.producto.nombre, producto_id__pagina_principal="Si", portada='Si')
-                productos.append({
-                    'nombre': item.producto.nombre.valor,
-                    'talla': str(item.producto.talla),
-                    'cantidad': item.cantidad,
-                    'precio_unitario': item.producto.precio_unitario,
-                    'subtotal': item.cantidad * item.producto.precio_unitario,
-                    'imagen': str(imagen.first().link_imagen) if imagen.exists() else 'holaaa'         
-                })
+            imagen = Imagen.objects.filter(producto_id__nombre=item.producto.nombre, producto_id__pagina_principal="Si", portada='Si')
+            productos.append({
+                'nombre': item.producto.nombre.valor,
+                'talla': str(item.producto.talla),
+                'cantidad': item.cantidad,
+                'precio_unitario': item.producto.precio_unitario,
+                'subtotal': item.cantidad * item.producto.precio_unitario,
+                'imagen': str(imagen.first().link_imagen) if imagen.exists() else 'holaaa'
+            })
 
-                
+        venta = item.venta  # todos los items comparten la misma venta
+        print(f'la venta: {venta}')
+
+        # Historial del envío (vacío si aún no hay guía/pedido)
+        pedido = getattr(venta, 'pedido', None)
+        eventos = []
+        if pedido:
+            eventos = [
+                {
+                    'fecha': timezone.localtime(e.fecha).strftime('%d/%m/%Y %H:%M'),
+                    'descripcion': e.descripcion,
+                    'ubicacion': e.ubicacion,
+                }
+                for e in pedido.eventos.all()
+            ]
 
         return JsonResponse({
             'status': 'success',
             'venta': {
-                'id': item.venta.id,
-                'fecha': item.venta.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
-                'estado': item.venta.estado_venta,
-                'estado_display': item.venta.get_estado_venta_display(),
-                'metodo_pago': item.venta.metodo_pago,
+                'id': venta.id,
+                'fecha': venta.fecha_creacion.strftime('%d/%m/%Y %H:%M'),
+                'estado': estado_para_cliente(venta),
+                'estado_display': venta.get_estado_venta_display(),
+                'metodo_pago': venta.metodo_pago,
                 'direccion': Usuario.objects.filter(id=usuario_id).first().direccion,
-                'subtotal': item.venta.subtotal,
-                'descuento': item.venta.descuento,
-                # 'envio': item.venta.envio,
-                'total': item.venta.total,
+                'subtotal': venta.subtotal,
+                'descuento': venta.descuento,
+                'total': venta.total,
                 'productos': productos,
+                'eventos': eventos,
             }
         })
 

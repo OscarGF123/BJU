@@ -8,6 +8,7 @@ from applications.productos.views.marca.views import ListarMarca, CrearMarca, Ed
 from applications.productos.views.imagen_view import ListarImagen, CrearImagen, EditarImagen, EliminarImagen
 from applications.productos.views.tipo_view import ListarTipo, CrearTipo, EditarTipo, EliminarTipo
 from applications.productos.views.nombre_view import ListarNombre, CrearNombre, EditarNombre, EliminarNombre
+from applications.compras.views.ventas_crud import ListarVenta, CrearVenta, EliminarVenta, EditarVenta
 # from applications.productos.views.imagen_producto_view import ListarImagenProducto, CrearImagenProducto, EditarImagenProducto, EliminarImagenProducto
 
 app_name = "productos"
@@ -62,9 +63,10 @@ urlpatterns = [
     path("editar_nombre/<int:pk>", EditarNombre.as_view(), name="editar_nombre"),
     path("eliminar_nombre/<int:pk>", EliminarNombre.as_view(), name="eliminar_nombre"),
 
-    # # Modulo ImagenProducto
-    # path("listar_imagen_productos/", ListarImagenProducto.as_view(), name="listar_imagen_productos"),
-    # path("crear_imagen_producto/", CrearImagenProducto.as_view(), name="crear_imagen_producto"),
-    # path("editar_imagen_producto/<int:pk>", EditarImagenProducto.as_view(), name="editar_imagen_producto"),
-    # path("eliminar_imagen_producto/<int:pk>", EliminarImagenProducto.as_view(), name="eliminar_imagen_producto"),
+    # Modelo Ventas
+    path('listar_ventas/', ListarVenta.as_view(), name="listar_ventas"),
+    path('crear_venta/', CrearVenta.as_view(), name="crear_venta"),
+    path('editar_venta/<int:pk>', EditarVenta.as_view(), name="editar_venta"),
+    path('eliminar_venta/<int:pk>', EliminarVenta.as_view(), name="eliminar_venta"),
+
 ]
